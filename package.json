@@ -1,17 +1,28 @@
 {
-  "name": "dominus-site",
-  "version": "0.1.0",
+  "name": "the-dominus-code",
+  "version": "1.0.0",
   "private": true,
+  "description": "The Dominus Code - Digital Fortress. F*ck Monogamy. Build A Dynasty.",
+  "author": "Spencer Tarring",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@prisma/client": "^7.1.0",
+    "framer-motion": "^12.23.25",
+    "lucide-react": "^0.555.0",
     "next": "16.0.7",
+    "next-auth": "^4.24.13",
+    "prisma": "^7.1.0",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
