@@ -8,52 +8,49 @@ type Status = "DEEP_WORK" | "TRAINING" | "FAMILY" | "BUILDING" | "REST";
 
 interface StatusConfig {
   label: string;
-  color: string;
-  dotClass: string;
+  time: string;
   description: string;
 }
 
 const statusConfigs: Record<Status, StatusConfig> = {
   DEEP_WORK: {
     label: "DEEP WORK",
-    color: "text-gold",
-    dotClass: "deep-work",
-    description: "Currently in focused creation mode",
+    time: "08:00",
+    description: "Focused creation. No interruptions.",
   },
   TRAINING: {
     label: "TRAINING",
-    color: "text-blood",
-    dotClass: "training",
-    description: "Physical protocol in session",
+    time: "05:00",
+    description: "Physical protocol. Iron therapy.",
   },
   FAMILY: {
-    label: "FAMILY TIME",
-    color: "text-green-500",
-    dotClass: "active",
-    description: "With the dynasty",
+    label: "FAMILY",
+    time: "18:00",
+    description: "Dynasty time. Present and accountable.",
   },
   BUILDING: {
     label: "BUILDING",
-    color: "text-gold",
-    dotClass: "deep-work",
-    description: "Constructing the empire",
+    time: "14:00",
+    description: "Empire construction. Calls and strategy.",
   },
   REST: {
-    label: "REST PROTOCOL",
-    color: "text-slate",
-    dotClass: "",
-    description: "Recovery and restoration",
+    label: "REST",
+    time: "21:00",
+    description: "Recovery protocol. Restoration.",
   },
 };
 
-const weekProtocol = [
-  { day: "MON", blocks: ["DEEP_WORK", "TRAINING", "FAMILY"] },
-  { day: "TUE", blocks: ["BUILDING", "DEEP_WORK", "FAMILY"] },
-  { day: "WED", blocks: ["TRAINING", "DEEP_WORK", "BUILDING"] },
-  { day: "THU", blocks: ["DEEP_WORK", "TRAINING", "FAMILY"] },
-  { day: "FRI", blocks: ["BUILDING", "DEEP_WORK", "REST"] },
-  { day: "SAT", blocks: ["FAMILY", "TRAINING", "REST"] },
-  { day: "SUN", blocks: ["REST", "FAMILY", "BUILDING"] },
+// The One Week Protocol - visual representation
+const protocolBlocks = [
+  { time: "05:00", label: "WAKE", status: "TRAINING" as Status },
+  { time: "05:15", label: "COLD WATER", status: "TRAINING" as Status },
+  { time: "05:30", label: "TRAIN", status: "TRAINING" as Status },
+  { time: "07:00", label: "FUEL", status: "REST" as Status },
+  { time: "08:00", label: "DEEP WORK", status: "DEEP_WORK" as Status },
+  { time: "12:00", label: "BREAK", status: "REST" as Status },
+  { time: "13:00", label: "BUILD", status: "BUILDING" as Status },
+  { time: "17:00", label: "FAMILY", status: "FAMILY" as Status },
+  { time: "21:00", label: "REST", status: "REST" as Status },
 ];
 
 export function StatusDashboard() {
@@ -62,6 +59,7 @@ export function StatusDashboard() {
   const { mode } = useApp();
   const [currentStatus, setCurrentStatus] = useState<Status>("DEEP_WORK");
   const [currentTime, setCurrentTime] = useState("");
+  const [activeBlockIndex, setActiveBlockIndex] = useState(4);
 
   useEffect(() => {
     const updateTime = () => {
@@ -70,18 +68,34 @@ export function StatusDashboard() {
         now.toLocaleTimeString("en-US", {
           hour: "2-digit",
           minute: "2-digit",
-          timeZoneName: "short",
+          hour12: false,
         })
       );
 
-      // Simulate status based on time of day
+      // Determine current status and active block based on time
       const hour = now.getHours();
-      if (hour >= 5 && hour < 8) setCurrentStatus("TRAINING");
-      else if (hour >= 8 && hour < 12) setCurrentStatus("DEEP_WORK");
-      else if (hour >= 12 && hour < 14) setCurrentStatus("FAMILY");
-      else if (hour >= 14 && hour < 18) setCurrentStatus("BUILDING");
-      else if (hour >= 18 && hour < 21) setCurrentStatus("FAMILY");
-      else setCurrentStatus("REST");
+      if (hour >= 5 && hour < 7) {
+        setCurrentStatus("TRAINING");
+        setActiveBlockIndex(hour === 5 ? (now.getMinutes() < 15 ? 0 : now.getMinutes() < 30 ? 1 : 2) : 2);
+      } else if (hour >= 7 && hour < 8) {
+        setCurrentStatus("REST");
+        setActiveBlockIndex(3);
+      } else if (hour >= 8 && hour < 12) {
+        setCurrentStatus("DEEP_WORK");
+        setActiveBlockIndex(4);
+      } else if (hour >= 12 && hour < 13) {
+        setCurrentStatus("REST");
+        setActiveBlockIndex(5);
+      } else if (hour >= 13 && hour < 17) {
+        setCurrentStatus("BUILDING");
+        setActiveBlockIndex(6);
+      } else if (hour >= 17 && hour < 21) {
+        setCurrentStatus("FAMILY");
+        setActiveBlockIndex(7);
+      } else {
+        setCurrentStatus("REST");
+        setActiveBlockIndex(8);
+      }
     };
 
     updateTime();
@@ -91,125 +105,118 @@ export function StatusDashboard() {
 
   const config = statusConfigs[currentStatus];
 
+  // Slow, heavy animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, delayChildren: 0.3 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 1, ease: [0.25, 0.1, 0.25, 1] }
+    }
+  };
+
   return (
-    <section ref={ref} className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-obsidian via-obsidian/95 to-obsidian" />
+    <section ref={ref} className="relative py-32 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-void via-void/98 to-void" />
 
       <div className="relative max-w-6xl mx-auto px-6">
+        {/* Section Header */}
         <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
+          className="text-center mb-20"
+          initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          <h2 className="font-display text-3xl md:text-4xl tracking-[0.1em] text-ivory mb-4">
-            LIVE PROTOCOL
+          <p className="font-system text-xs tracking-[0.4em] text-concrete/50 uppercase mb-4">
+            Real-Time Status
+          </p>
+          <h2 className="font-law text-3xl md:text-4xl tracking-[0.12em] text-empire mb-6">
+            THE PROTOCOL
           </h2>
-          <p className="font-body text-ivory/60">
-            Real-time status from The House
+          <p className="font-scripture text-lg text-empire/50 italic">
+            &ldquo;No chaos, just function. Rhythm is baked into the walls.&rdquo;
           </p>
         </motion.div>
 
-        {/* Current Status */}
+        {/* Current Status Display */}
         <motion.div
-          className="max-w-2xl mx-auto mb-16"
+          className="max-w-xl mx-auto mb-20"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ delay: 0.2, duration: 0.8 }}
+          transition={{ delay: 0.3, duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          <div className="glass p-8 text-center">
-            <div className="flex items-center justify-center gap-4 mb-4">
+          <div className="glass p-10 text-center border-arch">
+            <div className="flex items-center justify-center gap-4 mb-6">
               <span
-                className={`status-dot ${config.dotClass}`}
+                className="w-2 h-2 animate-slow-pulse"
                 style={{
                   background:
-                    config.dotClass === ""
-                      ? "var(--slate)"
-                      : config.dotClass === "training"
+                    currentStatus === "TRAINING"
                       ? "var(--blood)"
-                      : config.dotClass === "active"
+                      : currentStatus === "FAMILY"
                       ? "#22c55e"
-                      : "var(--gold)",
+                      : currentStatus === "REST"
+                      ? "var(--concrete)"
+                      : "var(--sovereign)",
                 }}
               />
-              <span
-                className={`font-display text-2xl md:text-3xl tracking-[0.2em] ${config.color}`}
-              >
+              <span className="font-system text-2xl md:text-3xl tracking-[0.2em] font-light text-empire">
                 {config.label}
               </span>
             </div>
-            <p className="font-body text-ivory/60 mb-4">{config.description}</p>
-            <p className="font-display text-sm tracking-[0.3em] text-ivory/40">
+            <p className="font-scripture text-empire/50 mb-6 italic">
+              {config.description}
+            </p>
+            <p className="font-system text-sm tracking-[0.3em] text-concrete/40">
               {currentTime}
             </p>
           </div>
         </motion.div>
 
-        {/* Week Protocol Grid */}
+        {/* The One Week Protocol Timeline */}
         <motion.div
-          className="grid grid-cols-7 gap-2 md:gap-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.4, duration: 0.8 }}
+          className="mb-16"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
         >
-          {weekProtocol.map((day, dayIndex) => (
-            <div key={day.day} className="text-center">
-              <p
-                className={`font-display text-xs tracking-[0.2em] mb-3 ${
-                  dayIndex === new Date().getDay() - 1
-                    ? mode === "dominus"
-                      ? "text-blood"
-                      : "text-gold"
-                    : "text-ivory/40"
-                }`}
+          <p className="font-system text-xs tracking-[0.3em] text-concrete/40 uppercase text-center mb-8">
+            Daily Protocol Structure
+          </p>
+          
+          <div className="grid grid-cols-3 md:grid-cols-9 gap-2">
+            {protocolBlocks.map((block, index) => (
+              <motion.div
+                key={block.time}
+                variants={itemVariants}
+                className={`protocol-block ${index === activeBlockIndex ? 'active' : ''}`}
               >
-                {day.day}
-              </p>
-              <div className="space-y-1">
-                {day.blocks.map((block, blockIndex) => {
-                  const blockConfig = statusConfigs[block as Status];
-                  return (
-                    <div
-                      key={blockIndex}
-                      className="h-8 md:h-12 flex items-center justify-center border border-gold/10 bg-obsidian/50 group relative"
-                    >
-                      <span
-                        className="w-2 h-2 rounded-full opacity-50"
-                        style={{
-                          background:
-                            block === "TRAINING"
-                              ? "var(--blood)"
-                              : block === "FAMILY"
-                              ? "#22c55e"
-                              : block === "REST"
-                              ? "var(--slate)"
-                              : "var(--gold)",
-                        }}
-                      />
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-obsidian border border-gold/30 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                        <span className="font-display text-[10px] tracking-wider text-ivory">
-                          {blockConfig.label}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+                <p className="protocol-time">{block.time}</p>
+                <p className="protocol-label">{block.label}</p>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
 
-        {/* Legend */}
+        {/* Status Legend */}
         <motion.div
-          className="flex flex-wrap justify-center gap-6 mt-8"
+          className="flex flex-wrap justify-center gap-8"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.6, duration: 0.8 }}
+          transition={{ delay: 1, duration: 1 }}
         >
           {Object.entries(statusConfigs).map(([key, value]) => (
-            <div key={key} className="flex items-center gap-2">
+            <div key={key} className="flex items-center gap-3">
               <span
-                className="w-3 h-3 rounded-full"
+                className="w-2 h-2"
                 style={{
                   background:
                     key === "TRAINING"
@@ -217,11 +224,11 @@ export function StatusDashboard() {
                       : key === "FAMILY"
                       ? "#22c55e"
                       : key === "REST"
-                      ? "var(--slate)"
-                      : "var(--gold)",
+                      ? "var(--concrete)"
+                      : "var(--sovereign)",
                 }}
               />
-              <span className="font-display text-[10px] tracking-wider text-ivory/50">
+              <span className="font-system text-[10px] tracking-[0.2em] text-concrete/40 uppercase">
                 {value.label}
               </span>
             </div>
@@ -231,4 +238,3 @@ export function StatusDashboard() {
     </section>
   );
 }
-

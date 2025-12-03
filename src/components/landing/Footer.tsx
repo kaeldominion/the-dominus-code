@@ -29,18 +29,18 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative py-20 border-t border-gold/10">
+    <footer className="relative py-24 border-t border-concrete/10">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-12 mb-16">
+        <div className="grid md:grid-cols-4 gap-16 mb-20">
           {/* Brand */}
           <div className="md:col-span-1">
-            <Link href="/" className="inline-block mb-6">
+            <Link href="/" className="inline-block mb-8">
               <Crown
-                size={48}
-                className={mode === "dominus" ? "text-blood" : "text-gold"}
+                size={40}
+                className={mode === "dominus" ? "text-blood" : "text-sovereign"}
               />
             </Link>
-            <p className="font-body text-ivory/50 text-sm leading-relaxed">
+            <p className="font-scripture text-empire/40 text-sm leading-relaxed italic">
               The Dominus Code is a manifesto for men who refuse to negotiate
               with mediocrity.
             </p>
@@ -48,15 +48,15 @@ export function Footer() {
 
           {/* Navigation */}
           <div>
-            <h4 className="font-display text-xs tracking-[0.3em] text-gold mb-6 uppercase">
+            <h4 className="font-system text-[10px] tracking-[0.4em] text-concrete/40 mb-8 uppercase">
               Navigate
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {footerLinks.navigation.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="font-body text-sm text-ivory/50 hover:text-gold transition-colors"
+                    className="font-system text-xs font-light text-empire/40 hover:text-sovereign transition-colors duration-500"
                   >
                     {link.label}
                   </Link>
@@ -67,15 +67,15 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="font-display text-xs tracking-[0.3em] text-gold mb-6 uppercase">
+            <h4 className="font-system text-[10px] tracking-[0.4em] text-concrete/40 mb-8 uppercase">
               Legal
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {footerLinks.legal.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="font-body text-sm text-ivory/50 hover:text-gold transition-colors"
+                    className="font-system text-xs font-light text-empire/40 hover:text-sovereign transition-colors duration-500"
                   >
                     {link.label}
                   </Link>
@@ -86,17 +86,17 @@ export function Footer() {
 
           {/* Social */}
           <div>
-            <h4 className="font-display text-xs tracking-[0.3em] text-gold mb-6 uppercase">
+            <h4 className="font-system text-[10px] tracking-[0.4em] text-concrete/40 mb-8 uppercase">
               Connect
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {footerLinks.social.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-body text-sm text-ivory/50 hover:text-gold transition-colors"
+                    className="font-system text-xs font-light text-empire/40 hover:text-sovereign transition-colors duration-500"
                   >
                     {link.label}
                   </a>
@@ -107,14 +107,14 @@ export function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent mb-8" />
+        <div className="divider mb-10" />
 
         {/* Bottom */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="font-body text-xs text-ivory/30">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="font-system text-[10px] font-light text-concrete/30 tracking-wider">
             © {currentYear} Spencer Tarring. All rights reserved.
           </p>
-          <p className="font-display text-xs tracking-[0.2em] text-ivory/30 uppercase">
+          <p className="font-law text-[10px] tracking-[0.3em] text-concrete/20 uppercase">
             Strengthen the bloodline. Protect the name.
           </p>
         </div>
@@ -122,4 +122,3 @@ export function Footer() {
     </footer>
   );
 }
-
