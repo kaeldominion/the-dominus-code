@@ -33,9 +33,18 @@
   --transition-dramatic: 1800ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Dominus Mode - Blood Activated */
+/* ═══════════════════════════════════════════════════════════════
+   DOMINUS MODE - Light Mode with Blood Accents
+   The harsh light of truth. No shadows to hide in.
+   ═══════════════════════════════════════════════════════════════ */
+
 [data-mode="dominus"] {
+  --void: #F0F0F0;            /* Inverted - Light background */
+  --empire: #0a0a0a;          /* Inverted - Dark text */
+  --concrete: #2a2a2a;        /* Darker concrete for contrast */
   --accent: var(--blood);
+  --background: var(--void);
+  --foreground: var(--empire);
 }
 
 @theme inline {
@@ -48,6 +57,7 @@
   --color-obsidian: var(--void);
   --color-ivory: var(--empire);
   --color-slate: var(--concrete);
+  --color-accent: var(--accent);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -74,11 +84,18 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.6s ease, color 0.6s ease;
 }
 
 ::selection {
-  background: var(--sovereign);
+  background: var(--accent);
   color: var(--void);
+}
+
+/* Dominus mode selection */
+[data-mode="dominus"] ::selection {
+  background: var(--blood);
+  color: #ffffff;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -162,7 +179,12 @@ nav, button, .btn, input, label, .ui-text, .data-text {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--sovereign);
+  background: var(--accent);
+}
+
+/* Dominus mode scrollbar */
+[data-mode="dominus"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--blood);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -739,4 +761,165 @@ nav, button, .btn, input, label, .ui-text, .data-text {
 .gold-line-solid {
   height: 1px;
   background: rgba(229, 195, 114, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DOMINUS MODE - Component Overrides
+   Light background, blood accents, inverted aesthetics
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Background texture in Dominus mode - lighter, more subtle */
+[data-mode="dominus"] .bg-texture {
+  opacity: 0.05;
+  filter: invert(1);
+}
+
+/* Noise overlay in Dominus mode */
+[data-mode="dominus"] .noise-overlay {
+  opacity: 0.03;
+  mix-blend-mode: multiply;
+}
+
+/* Glass effect in Dominus mode */
+[data-mode="dominus"] .glass {
+  background: rgba(240, 240, 240, 0.9);
+  border-color: rgba(42, 42, 42, 0.15);
+}
+
+/* Card brutal in Dominus mode */
+[data-mode="dominus"] .card-brutal {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(42, 42, 42, 0.15);
+}
+
+[data-mode="dominus"] .card-brutal::before {
+  background: var(--blood);
+}
+
+[data-mode="dominus"] .card-brutal:hover {
+  border-color: rgba(42, 42, 42, 0.3);
+}
+
+/* Buttons in Dominus mode */
+[data-mode="dominus"] .btn-primary {
+  background: var(--blood);
+  border-color: var(--blood);
+  color: #ffffff;
+}
+
+[data-mode="dominus"] .btn-primary::before {
+  background: #0a0a0a;
+}
+
+[data-mode="dominus"] .btn-primary:hover {
+  color: #ffffff;
+}
+
+[data-mode="dominus"] .btn-secondary {
+  color: var(--empire);
+  border-color: rgba(42, 42, 42, 0.3);
+}
+
+[data-mode="dominus"] .btn-secondary:hover {
+  border-color: var(--empire);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Input in Dominus mode */
+[data-mode="dominus"] .input-brutal {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(42, 42, 42, 0.2);
+  color: var(--empire);
+}
+
+[data-mode="dominus"] .input-brutal:focus {
+  border-color: var(--blood);
+}
+
+[data-mode="dominus"] .input-brutal::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+/* Borders in Dominus mode */
+[data-mode="dominus"] .border-arch {
+  border-color: rgba(42, 42, 42, 0.15);
+}
+
+[data-mode="dominus"] .border-arch-strong {
+  border-color: rgba(42, 42, 42, 0.3);
+}
+
+/* Dividers in Dominus mode */
+[data-mode="dominus"] .divider {
+  background: linear-gradient(90deg, transparent, rgba(42, 42, 42, 0.2), transparent);
+}
+
+[data-mode="dominus"] .divider-solid {
+  background: rgba(42, 42, 42, 0.15);
+}
+
+[data-mode="dominus"] .crown-divider::before,
+[data-mode="dominus"] .crown-divider::after {
+  background: linear-gradient(90deg, transparent, rgba(42, 42, 42, 0.3));
+}
+
+[data-mode="dominus"] .crown-divider::after {
+  background: linear-gradient(90deg, rgba(42, 42, 42, 0.3), transparent);
+}
+
+/* Mode toggle in Dominus mode */
+[data-mode="dominus"] .mode-toggle {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(42, 42, 42, 0.2);
+}
+
+/* Audio control in Dominus mode */
+[data-mode="dominus"] .audio-control {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(42, 42, 42, 0.15);
+}
+
+[data-mode="dominus"] .audio-control:hover {
+  border-color: var(--blood);
+}
+
+/* Protocol blocks in Dominus mode */
+[data-mode="dominus"] .protocol-block {
+  border-color: rgba(42, 42, 42, 0.1);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+[data-mode="dominus"] .protocol-block::before {
+  background: var(--blood);
+}
+
+[data-mode="dominus"] .protocol-block.active {
+  border-color: rgba(138, 3, 3, 0.3);
+  background: rgba(138, 3, 3, 0.05);
+}
+
+[data-mode="dominus"] .protocol-time {
+  color: var(--blood);
+}
+
+/* Video background in Dominus mode */
+[data-mode="dominus"] .video-bg::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 240, 240, 0.7) 0%,
+    rgba(240, 240, 240, 0.5) 50%,
+    rgba(240, 240, 240, 0.9) 100%
+  );
+}
+
+/* Oath signatures in Dominus mode */
+[data-mode="dominus"] .oath-signature {
+  color: rgba(42, 42, 42, 0.6);
+  border-color: rgba(42, 42, 42, 0.1);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+[data-mode="dominus"] .oath-signature:hover {
+  color: var(--blood);
+  border-color: rgba(138, 3, 3, 0.3);
 }
