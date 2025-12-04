@@ -67,22 +67,22 @@ const products = [
 
 const axisProducts = [
   {
-    name: "The Uniform Tee",
-    price: 65,
+    name: "Devotion Dress",
+    price: 185,
     image: null,
-    description: "Premium cotton. Minimalist design. The daily armor.",
+    description: "Elegant silhouette. Feminine power. For the woman who leads beside him.",
   },
   {
-    name: "Protocol Hoodie",
+    name: "Dynasty Loungewear",
     price: 120,
     image: null,
-    description: "Heavyweight fleece. Embroidered crown. Built for the grind.",
+    description: "Silk-touch comfort. Refined leisure. The uniform of the Deae.",
   },
   {
-    name: "Dynasty Cap",
-    price: 45,
+    name: "Crown Athleisure",
+    price: 95,
     image: null,
-    description: "Structured fit. Gold hardware. Crown your head.",
+    description: "Move with purpose. Train with grace. Strength in softness.",
   },
 ];
 
@@ -248,7 +248,7 @@ export default function ArmoryPage() {
       </section>
 
       {/* AXIS Ethos Section */}
-      <section className="py-20 border-t border-gold/10">
+      <section className="py-20 border-t border-concrete/10">
         <div className="max-w-6xl mx-auto px-6">
           <motion.div
             className="text-center mb-16"
@@ -257,11 +257,16 @@ export default function ArmoryPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="font-display text-3xl md:text-4xl tracking-[0.1em] text-ivory mb-4">
-              THE UNIFORM
+            <p className="font-system text-xs tracking-[0.4em] text-concrete/50 uppercase mb-4">
+              A Separate Brand by Spencer Tarring
+            </p>
+            <h2 className="font-law text-3xl md:text-4xl tracking-[0.12em] text-empire mb-6">
+              AXIS ETHOS
             </h2>
-            <p className="font-body text-ivory/60 max-w-xl mx-auto">
-              AXIS Ethos. The aesthetic of the movement. Wear the code.
+            <p className="font-scripture text-empire/50 max-w-2xl mx-auto italic leading-relaxed">
+              A female clothing and lifestyle brand. Run by the Deae themselves. 
+              Purpose creates harmony. Without it, even devotion becomes restless.
+              AXIS gives the women of the dynasty their own empire to build.
             </p>
           </motion.div>
 
@@ -275,26 +280,45 @@ export default function ArmoryPage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.8 }}
               >
-                <div className="w-full aspect-square bg-obsidian/50 border border-gold/10 mb-6 flex items-center justify-center">
-                  <Package className="w-16 h-16 text-gold/20" />
+                <div className="w-full aspect-square bg-void/50 border border-concrete/10 mb-6 flex items-center justify-center">
+                  <Package className="w-16 h-16 text-concrete/10" strokeWidth={1} />
                 </div>
-                <h3 className="font-display text-lg tracking-[0.1em] text-ivory mb-2">
+                <h3 className="font-law text-base tracking-[0.15em] text-empire mb-2">
                   {product.name}
                 </h3>
-                <p className="font-body text-sm text-ivory/50 mb-4">
+                <p className="font-scripture text-sm text-empire/40 mb-4 italic">
                   {product.description}
                 </p>
-                <p className="font-impact text-2xl text-gold">${product.price}</p>
+                <p className="font-system text-xl tracking-wider text-sovereign">${product.price}</p>
               </motion.div>
             ))}
           </div>
+
+          {/* AXIS Philosophy */}
+          <motion.blockquote
+            className="max-w-2xl mx-auto mt-16 text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+          >
+            <p className="font-scripture text-lg text-empire/50 italic leading-relaxed">
+              &ldquo;Without purpose they get bored, fight, cause problems. 
+              Give them something to build and watch them flourish.&rdquo;
+            </p>
+            <footer className="mt-4">
+              <cite className="font-system text-[10px] tracking-[0.3em] text-sovereign not-italic uppercase">
+                — The Dominus Code
+              </cite>
+            </footer>
+          </motion.blockquote>
 
           <motion.div
             className="text-center mt-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.5, duration: 0.8 }}
+            transition={{ delay: 0.7, duration: 0.8 }}
           >
             <Button variant="secondary" icon>
               Visit AXIS Ethos

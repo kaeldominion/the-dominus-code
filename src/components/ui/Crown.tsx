@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface CrownProps {
   className?: string;
@@ -9,47 +10,29 @@ interface CrownProps {
 }
 
 export function Crown({ className = "", animate = false, size = 80 }: CrownProps) {
-  const svg = (
-    <svg
+  const imageElement = (
+    <Image
+      src="/images/tdc-icon-gold.png"
+      alt="The Dominus Code"
       width={size}
       height={size}
-      viewBox="0 0 1024 1024"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
       className="crown-icon"
-    >
-      <path
-        d="M108 680L228 280L412 440L512 200L612 440L796 280L916 680"
-        stroke="currentColor"
-        strokeWidth="48"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <line
-        x1="140"
-        y1="780"
-        x2="884"
-        y2="780"
-        stroke="currentColor"
-        strokeWidth="48"
-        strokeLinecap="round"
-      />
-    </svg>
+      style={{ width: size, height: size }}
+    />
   );
 
   if (animate) {
     return (
       <motion.div
         className={className}
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
       >
-        {svg}
+        {imageElement}
       </motion.div>
     );
   }
 
-  return <div className={className}>{svg}</div>;
+  return <div className={className}>{imageElement}</div>;
 }
