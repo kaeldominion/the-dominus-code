@@ -125,12 +125,11 @@ export function HeroSection() {
               <motion.div 
                 variants={slowScale}
                 transition={slowTransition}
+                className="animate-slow-pulse"
               >
                 <Crown
                   size={90}
-                  className={`${
-                    mode === "dominus" ? "text-blood" : "text-sovereign"
-                  } animate-slow-pulse`}
+                  variant={mode === "dominus" ? "blood" : "gold"}
                 />
               </motion.div>
 

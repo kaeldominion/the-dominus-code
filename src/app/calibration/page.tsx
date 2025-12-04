@@ -222,7 +222,7 @@ export default function CalibrationPage() {
                 <div className="crown-divider mb-8">
                   <Crown
                     size={48}
-                    className={mode === "dominus" ? "text-blood" : "text-gold"}
+                    variant={mode === "dominus" ? "blood" : "gold"}
                   />
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl tracking-[0.1em] text-ivory mb-6">
@@ -404,7 +404,7 @@ export default function CalibrationPage() {
               >
                 <Crown
                   size={64}
-                  className={mode === "dominus" ? "text-blood" : "text-gold"}
+                  variant={mode === "dominus" ? "blood" : "gold"}
                 />
                 <div className="mt-8 mb-4">
                   <span className="font-impact text-8xl md:text-9xl text-gold">

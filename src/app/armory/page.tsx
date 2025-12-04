@@ -104,7 +104,7 @@ export default function ArmoryPage() {
             <div className="crown-divider mb-8">
               <Crown
                 size={48}
-                className={mode === "dominus" ? "text-blood" : "text-gold"}
+                variant={mode === "dominus" ? "blood" : "gold"}
               />
             </div>
             <h1 className="font-display text-4xl md:text-6xl tracking-[0.1em] text-ivory mb-6">

@@ -44,9 +44,7 @@ export function Header() {
           <Link href="/" className="flex items-center gap-3 group">
             <Crown
               size={32}
-              className={`transition-colors duration-500 ${
-                mode === "dominus" ? "text-blood" : "text-sovereign"
-              }`}
+              variant={mode === "dominus" ? "blood" : "gold"}
             />
             <span className="font-system text-xs tracking-[0.4em] uppercase text-empire/80 hidden sm:block">
               Dominus
@@ -99,7 +97,7 @@ export function Header() {
           >
             <div className="flex flex-col h-full p-6">
               <div className="flex items-center justify-between">
-                <Crown size={32} className="text-sovereign" />
+                <Crown size={32} variant="gold" />
                 <button
                   onClick={() => setMobileOpen(false)}
                   className="p-2 text-concrete/60 hover:text-empire transition-colors"

@@ -3,16 +3,26 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
+export type CrownVariant = "gold" | "black" | "blood" | "white";
+
 interface CrownProps {
   className?: string;
   animate?: boolean;
   size?: number;
+  variant?: CrownVariant;
 }
 
-export function Crown({ className = "", animate = false, size = 80 }: CrownProps) {
+const iconPaths: Record<CrownVariant, string> = {
+  gold: "/images/tdc-icon-gold.png",
+  black: "/images/tdc-icon-black.png",
+  blood: "/images/tdc-icon-blood.png",
+  white: "/images/tdc-icon-white.png",
+};
+
+export function Crown({ className = "", animate = false, size = 80, variant = "gold" }: CrownProps) {
   const imageElement = (
     <Image
-      src="/images/tdc-icon-gold.png"
+      src={iconPaths[variant]}
       alt="The Dominus Code"
       width={size}
       height={size}
@@ -25,9 +35,9 @@ export function Crown({ className = "", animate = false, size = 80 }: CrownProps
     return (
       <motion.div
         className={className}
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.5, ease: "easeOut" }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
       >
         {imageElement}
       </motion.div>

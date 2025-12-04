@@ -96,7 +96,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-4 mb-4">
               <Crown
                 size={32}
-                className={mode === "dominus" ? "text-blood" : "text-gold"}
+                variant={mode === "dominus" ? "blood" : "gold"}
               />
               <h1 className="font-display text-3xl tracking-[0.1em] text-ivory">
                 WELCOME, SOVEREIGN

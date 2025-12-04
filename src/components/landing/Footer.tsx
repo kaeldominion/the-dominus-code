@@ -37,7 +37,7 @@ export function Footer() {
             <Link href="/" className="inline-block mb-8">
               <Crown
                 size={40}
-                className={mode === "dominus" ? "text-blood" : "text-sovereign"}
+                variant={mode === "dominus" ? "blood" : "gold"}
               />
             </Link>
             <p className="font-scripture text-empire/40 text-sm leading-relaxed italic">

@@ -238,7 +238,8 @@ export default function CouncilPage() {
           >
             <Crown
               size={48}
-              className={mode === "dominus" ? "text-blood mx-auto mb-8" : "text-gold mx-auto mb-8"}
+              variant={mode === "dominus" ? "blood" : "gold"}
+              className="mx-auto mb-8"
             />
             <h2 className="font-display text-3xl tracking-[0.1em] text-ivory mb-8">
               THE INVESTMENT

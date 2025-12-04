@@ -41,9 +41,8 @@ export default function LoginPage() {
             <div className="text-center mb-12">
               <Crown
                 size={48}
-                className={`mx-auto mb-6 ${
-                  mode === "dominus" ? "text-blood" : "text-gold"
-                }`}
+                variant={mode === "dominus" ? "blood" : "gold"}
+                className="mx-auto mb-6"
               />
               <h1 className="font-display text-2xl tracking-[0.2em] text-ivory">
                 ENTER THE CODE

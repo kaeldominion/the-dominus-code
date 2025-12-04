@@ -69,7 +69,7 @@ export function ManifestoSection() {
           <div className="crown-divider mb-10">
             <Crown
               size={36}
-              className={mode === "dominus" ? "text-blood" : "text-sovereign"}
+              variant={mode === "dominus" ? "blood" : "gold"}
             />
           </div>
           <h2 className="font-law text-3xl md:text-5xl tracking-[0.12em] text-empire mb-8">
