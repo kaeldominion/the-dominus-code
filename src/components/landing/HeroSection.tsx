@@ -212,7 +212,9 @@ export function HeroSection() {
                   variants={slowReveal}
                   transition={{ ...slowTransition, delay: 0.2 }}
                 >
-                  <p className="font-system text-xs tracking-[0.5em] text-sovereign uppercase mb-2">
+                  <p className={`font-law font-normal text-4xl md:text-6xl lg:text-7xl tracking-[0.08em] uppercase mb-2 leading-none ${
+                    mode === "dominus" ? "text-[#050505]" : "text-sovereign"
+                  }`}>
                     The
                   </p>
                   <h1 className="font-law text-5xl md:text-7xl lg:text-8xl tracking-[0.08em] text-empire leading-none">
