@@ -15,6 +15,7 @@ import {
   Check,
   Star,
 } from "lucide-react";
+import Link from "next/link";
 
 const features = [
   {
@@ -255,13 +256,15 @@ export default function CouncilPage() {
               <p className="font-body text-ivory/60 mb-8">
                 or $4,997/year (save 2 months)
               </p>
-              <Button
-                variant={mode === "dominus" ? "blood" : "primary"}
-                size="lg"
-                className="w-full"
-              >
-                Apply for The Council
-              </Button>
+              <Link href="/council/apply" className="block">
+                <Button
+                  variant={mode === "dominus" ? "blood" : "primary"}
+                  size="lg"
+                  className="w-full"
+                >
+                  Apply for The Council
+                </Button>
+              </Link>
               <p className="font-body text-xs text-ivory/30 mt-4">
                 Application required. Not everyone will be accepted.
               </p>
