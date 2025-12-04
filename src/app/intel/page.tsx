@@ -300,8 +300,8 @@ export default function IntelPage() {
     ctx.fillStyle = "rgba(229, 195, 114, 0.15)";
     ctx.font = "bold 200px Georgia, serif";
     ctx.textAlign = "center";
-    ctx.fillText(""", 180, 380);
-    ctx.fillText(""", 900, 750);
+    ctx.fillText("\u201C", 180, 380);
+    ctx.fillText("\u201D", 900, 750);
 
     // ========================================
     // QUOTE TEXT - Main content with glow
