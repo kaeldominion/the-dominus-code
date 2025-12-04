@@ -117,7 +117,7 @@ export default function ArmoryPage() {
         </div>
       </section>
 
-      {/* Products Grid */}
+      {/* Products Grid - HIDDEN FOR NOW
       <section className="py-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-3 gap-8">
@@ -142,7 +142,6 @@ export default function ArmoryPage() {
                       : "border-gold/20"
                   }`}
                 >
-                  {/* Badge */}
                   <div
                     className={`py-2 text-center font-display text-xs tracking-[0.3em] ${
                       product.featured
@@ -155,9 +154,7 @@ export default function ArmoryPage() {
                     {product.badge}
                   </div>
 
-                  {/* Content */}
                   <div className="flex-1 p-8">
-                    {/* Image or Icon */}
                     <div className="mb-6 flex justify-center">
                       {product.image ? (
                         <div className="relative w-32 h-48">
@@ -185,7 +182,6 @@ export default function ArmoryPage() {
                       ) : null}
                     </div>
 
-                    {/* Title */}
                     <h3 className="font-display text-xl tracking-[0.1em] text-ivory text-center mb-2">
                       {product.name}
                     </h3>
@@ -193,7 +189,6 @@ export default function ArmoryPage() {
                       {product.subtitle}
                     </p>
 
-                    {/* Price */}
                     <div className="flex items-center justify-center gap-3 mb-8">
                       <span className="font-impact text-4xl text-ivory">
                         ${product.price}
@@ -205,7 +200,6 @@ export default function ArmoryPage() {
                       )}
                     </div>
 
-                    {/* Features */}
                     <ul className="space-y-3 mb-8">
                       {product.features.map((feature) => (
                         <li
@@ -225,7 +219,6 @@ export default function ArmoryPage() {
                     </ul>
                   </div>
 
-                  {/* CTA */}
                   <div className="p-8 pt-0">
                     <Button
                       variant={
@@ -246,6 +239,7 @@ export default function ArmoryPage() {
           </div>
         </div>
       </section>
+      END HIDDEN PRODUCTS GRID */}
 
       {/* AXIS Ethos Section */}
       <section className="py-20 border-t border-concrete/10">
@@ -327,7 +321,7 @@ export default function ArmoryPage() {
         </div>
       </section>
 
-      {/* Guarantee */}
+      {/* Guarantee - HIDDEN FOR NOW
       <section className="py-20 border-t border-gold/10">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <motion.div
@@ -351,6 +345,7 @@ export default function ArmoryPage() {
           </motion.div>
         </div>
       </section>
+      END HIDDEN GUARANTEE */}
 
       <Footer />
     </main>
