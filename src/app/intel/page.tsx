@@ -457,9 +457,23 @@ export default function IntelPage() {
               Intel for journalists, podcasters, and media professionals.
             </p>
 
-            <p className="font-system text-xs tracking-[0.2em] text-concrete/40 uppercase">
+            <p className="font-system text-xs tracking-[0.2em] text-concrete/40 uppercase mb-10">
               Deploy assets. Extract intelligence. Maintain standards.
             </p>
+
+            <button
+              onClick={() => {
+                document.getElementById("protocol-rider")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className={`inline-flex items-center gap-3 px-8 py-4 border-2 font-system text-xs tracking-[0.2em] uppercase transition-all duration-500 group ${
+                mode === "dominus"
+                  ? "border-blood text-blood hover:bg-blood hover:text-empire"
+                  : "border-sovereign text-sovereign hover:bg-sovereign hover:text-void"
+              }`}
+            >
+              <span>Book Spencer for a Podcast</span>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
           </motion.div>
         </div>
       </section>
@@ -1114,7 +1128,7 @@ export default function IntelPage() {
       </section>
 
       {/* Protocol Rider Section */}
-      <section className="py-20 border-t border-concrete/10">
+      <section id="protocol-rider" className="py-20 border-t border-concrete/10">
         <div className="max-w-3xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
