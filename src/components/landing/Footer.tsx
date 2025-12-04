@@ -7,7 +7,6 @@ import { useApp } from "@/components/Providers";
 const footerLinks = {
   navigation: [
     { href: "/", label: "The Gate" },
-    { href: "/armory", label: "The Armory" },
     { href: "/calibration", label: "Calibration" },
     { href: "/council", label: "The Council" },
     { href: "/oath", label: "The Oath" },

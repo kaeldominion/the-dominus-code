@@ -424,9 +424,9 @@ export default function CalibrationPage() {
                   <Button
                     variant={mode === "dominus" ? "blood" : "primary"}
                     size="lg"
-                    onClick={() => (window.location.href = "/armory")}
+                    onClick={() => (window.location.href = "/")}
                   >
-                    Get The Dominus Code
+                    Enter The Code
                   </Button>
                   <p className="font-body text-sm text-ivory/50">
                     Check your email for the 7-Day Protocol PDF
