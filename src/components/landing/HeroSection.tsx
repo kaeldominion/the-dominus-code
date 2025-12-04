@@ -6,7 +6,6 @@ import { Crown } from "@/components/ui/Crown";
 import { Button } from "@/components/ui/Button";
 import { useApp } from "@/components/Providers";
 import { ChevronDown } from "lucide-react";
-import Image from "next/image";
 
 // Slow, heavy, cinematic transitions - no spring, no bounce
 const slowReveal: Variants = {
@@ -32,9 +31,78 @@ const slowScale: Variants = {
   }
 };
 
+// Release date: January 1st, 2026
+const RELEASE_DATE = new Date("2026-01-01T00:00:00");
+
+function useCountdown(targetDate: Date) {
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const difference = targetDate.getTime() - now.getTime();
+
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        });
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  return timeLeft;
+}
+
+// Retailer icons as simple SVG components
+function AppleBooksIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm-1-13H9v8h2V7zm4 0h-2v8h2V7z"/>
+    </svg>
+  );
+}
+
+function AmazonIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.7-3.182v.685zm3.186 7.705c-.209.189-.512.201-.745.074-1.052-.872-1.238-1.276-1.814-2.106-1.734 1.767-2.962 2.297-5.209 2.297-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.715-.754 4.11-.891 5.942-1.095v-.41c0-.753.058-1.642-.383-2.294-.385-.579-1.124-.82-1.775-.82-1.205 0-2.277.618-2.54 1.897-.054.285-.261.567-.549.582l-3.061-.333c-.259-.056-.548-.266-.472-.66C6.057 2.223 9.005.997 11.615.997c1.334 0 3.078.355 4.132 1.365 1.334 1.251 1.206 2.916 1.206 4.729v4.284c0 1.289.535 1.854 1.039 2.548.177.247.216.544-.003.726-.548.457-1.522 1.307-2.058 1.783l-.787-.637zM21.454 16.386c-1.188.924-2.9 1.414-4.374 1.414-2.07 0-3.932-.765-5.341-2.039-.111-.1-.012-.236.121-.158 1.521.887 3.405 1.421 5.347 1.421 1.312 0 2.754-.272 4.08-.835.2-.086.369.132.167.197z"/>
+    </svg>
+  );
+}
+
+function AudibleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+    </svg>
+  );
+}
+
+function BarnesNobleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/>
+    </svg>
+  );
+}
+
 export function HeroSection() {
   const [phase, setPhase] = useState<"pulse" | "reveal" | "full">("pulse");
   const { mode } = useApp();
+  const countdown = useCountdown(RELEASE_DATE);
 
   useEffect(() => {
     // Slower, more dramatic timing
@@ -49,16 +117,17 @@ export function HeroSection() {
   // Transition config for slow, cinematic feel
   const slowTransition = { duration: 1.5, ease: "easeOut" as const };
 
+  const retailers = [
+    { name: "Apple Books", icon: AppleBooksIcon },
+    { name: "Amazon", icon: AmazonIcon },
+    { name: "Audible", icon: AudibleIcon },
+    { name: "Barnes & Noble", icon: BarnesNobleIcon },
+  ];
+
   return (
     <section className="relative h-screen flex flex-col overflow-hidden">
       {/* Cinematic Video Background */}
       <div className="video-bg">
-        {/* 
-          Replace this div with actual video when ready:
-          <video autoPlay muted loop playsInline>
-            <source src="/videos/hero-loop.mp4" type="video/mp4" />
-          </video>
-        */}
         <div className="w-full h-full bg-void animate-slow-zoom" 
           style={{
             backgroundImage: "url('/textures/tdc-background-upscaled.jpeg')",
@@ -200,23 +269,74 @@ export function HeroSection() {
                   </Button>
                 </motion.div>
 
-                {/* Book Preview - moved closer */}
+                {/* Coming Soon Section */}
                 <motion.div
-                  className="mt-12 relative"
-                  variants={slowScale}
+                  className="mt-12"
+                  variants={slowFade}
                   transition={{ ...slowTransition, delay: 1.6 }}
                 >
-                  <div className="relative w-36 md:w-44 mx-auto">
-                    <div className="absolute -inset-6 bg-gradient-to-b from-sovereign/10 to-transparent blur-2xl" />
-                    <Image
-                      src="/images/book-cover.png"
-                      alt="The Dominus Code - The Manual for the Reconstruction of the Masculine Soul"
-                      width={176}
-                      height={264}
-                      className="relative"
-                      style={{ boxShadow: "0 20px 60px -15px rgba(229, 195, 114, 0.15)" }}
-                      priority
-                    />
+                  {/* Release Date */}
+                  <p className="font-system text-[10px] tracking-[0.4em] text-concrete/50 uppercase mb-4">
+                    Releases January 1, 2026
+                  </p>
+                  
+                  {/* Countdown */}
+                  <div className="flex items-center justify-center gap-4 md:gap-6 mb-6">
+                    <div className="text-center">
+                      <p className="font-system text-2xl md:text-3xl font-light text-sovereign">
+                        {countdown.days}
+                      </p>
+                      <p className="font-system text-[8px] tracking-[0.3em] text-concrete/40 uppercase">
+                        Days
+                      </p>
+                    </div>
+                    <span className="text-concrete/20 text-xl">:</span>
+                    <div className="text-center">
+                      <p className="font-system text-2xl md:text-3xl font-light text-sovereign">
+                        {String(countdown.hours).padStart(2, '0')}
+                      </p>
+                      <p className="font-system text-[8px] tracking-[0.3em] text-concrete/40 uppercase">
+                        Hours
+                      </p>
+                    </div>
+                    <span className="text-concrete/20 text-xl">:</span>
+                    <div className="text-center">
+                      <p className="font-system text-2xl md:text-3xl font-light text-sovereign">
+                        {String(countdown.minutes).padStart(2, '0')}
+                      </p>
+                      <p className="font-system text-[8px] tracking-[0.3em] text-concrete/40 uppercase">
+                        Mins
+                      </p>
+                    </div>
+                    <span className="text-concrete/20 text-xl">:</span>
+                    <div className="text-center">
+                      <p className="font-system text-2xl md:text-3xl font-light text-empire/60">
+                        {String(countdown.seconds).padStart(2, '0')}
+                      </p>
+                      <p className="font-system text-[8px] tracking-[0.3em] text-concrete/40 uppercase">
+                        Secs
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Retailer Icons */}
+                  <div className="flex items-center justify-center gap-6 md:gap-8">
+                    <p className="font-system text-[9px] tracking-[0.2em] text-concrete/30 uppercase hidden sm:block">
+                      Available on
+                    </p>
+                    {retailers.map((retailer) => (
+                      <div 
+                        key={retailer.name}
+                        className="group relative"
+                        title={retailer.name}
+                      >
+                        <retailer.icon className="w-5 h-5 md:w-6 md:h-6 text-concrete/30 group-hover:text-sovereign transition-colors duration-300" />
+                        {/* Tooltip */}
+                        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 font-system text-[8px] tracking-wider text-concrete/40 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          {retailer.name}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </motion.div>
               </motion.div>
