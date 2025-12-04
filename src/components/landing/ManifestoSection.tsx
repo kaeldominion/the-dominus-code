@@ -177,7 +177,7 @@ export function ManifestoSection() {
             states.&rdquo;
           </p>
           <footer className="mt-8">
-            <cite className="font-system text-[11px] tracking-[0.3em] text-blood not-italic uppercase">
+            <cite className={`font-system text-[11px] tracking-[0.3em] not-italic uppercase ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
               — The Dominus Code
             </cite>
           </footer>

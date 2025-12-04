@@ -283,7 +283,7 @@ export function HeroSection() {
                   {/* Countdown */}
                   <div className="flex items-center justify-center gap-4 md:gap-6 mb-6">
                     <div className="text-center">
-                      <p className="font-system text-2xl md:text-3xl font-light text-blood">
+                      <p className={`font-system text-2xl md:text-3xl font-light ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                         {countdown.days}
                       </p>
                       <p className="font-system text-[8px] tracking-[0.3em] text-concrete/40 uppercase">
@@ -292,7 +292,7 @@ export function HeroSection() {
                     </div>
                     <span className="text-concrete/20 text-xl">:</span>
                     <div className="text-center">
-                      <p className="font-system text-2xl md:text-3xl font-light text-blood">
+                      <p className={`font-system text-2xl md:text-3xl font-light ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                         {String(countdown.hours).padStart(2, '0')}
                       </p>
                       <p className="font-system text-[8px] tracking-[0.3em] text-concrete/40 uppercase">
@@ -301,7 +301,7 @@ export function HeroSection() {
                     </div>
                     <span className="text-concrete/20 text-xl">:</span>
                     <div className="text-center">
-                      <p className="font-system text-2xl md:text-3xl font-light text-blood">
+                      <p className={`font-system text-2xl md:text-3xl font-light ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                         {String(countdown.minutes).padStart(2, '0')}
                       </p>
                       <p className="font-system text-[8px] tracking-[0.3em] text-concrete/40 uppercase">
@@ -310,7 +310,7 @@ export function HeroSection() {
                     </div>
                     <span className="text-concrete/20 text-xl">:</span>
                     <div className="text-center">
-                      <p className="font-system text-2xl md:text-3xl font-light text-blood/60">
+                      <p className={`font-system text-2xl md:text-3xl font-light ${mode === "dominus" ? "text-blood/60" : "text-sovereign/60"}`}>
                         {String(countdown.seconds).padStart(2, '0')}
                       </p>
                       <p className="font-system text-[8px] tracking-[0.3em] text-concrete/40 uppercase">
