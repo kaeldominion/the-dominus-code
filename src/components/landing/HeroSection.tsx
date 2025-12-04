@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Crown } from "@/components/ui/Crown";
 import { Button } from "@/components/ui/Button";
 import { useApp } from "@/components/Providers";
@@ -9,29 +9,26 @@ import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 
 // Slow, heavy, cinematic transitions - no spring, no bounce
-const slowReveal = {
+const slowReveal: Variants = {
   hidden: { opacity: 0, y: 50 },
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 1.5, ease: "easeOut" }
   }
 };
 
-const slowFade = {
+const slowFade: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
-    transition: { duration: 1.8, ease: "easeOut" }
   }
 };
 
-const slowScale = {
+const slowScale: Variants = {
   hidden: { opacity: 0, scale: 0.9 },
   visible: { 
     opacity: 1, 
     scale: 1,
-    transition: { duration: 1.5, ease: "easeOut" }
   }
 };
 
@@ -48,6 +45,9 @@ export function HeroSection() {
       clearTimeout(timer2);
     };
   }, []);
+
+  // Transition config for slow, cinematic feel
+  const slowTransition = { duration: 1.5, ease: "easeOut" as const };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -107,6 +107,7 @@ export function HeroSection() {
               <motion.h1
                 className="font-law text-4xl md:text-6xl lg:text-7xl tracking-[0.12em] text-empire"
                 variants={slowReveal}
+                transition={slowTransition}
               >
                 The Boy Must Die.
               </motion.h1>
@@ -121,7 +122,10 @@ export function HeroSection() {
               animate="visible"
             >
               {/* Crown */}
-              <motion.div variants={slowScale}>
+              <motion.div 
+                variants={slowScale}
+                transition={slowTransition}
+              >
                 <Crown
                   size={90}
                   className={`${
@@ -134,7 +138,7 @@ export function HeroSection() {
               <motion.div
                 className="space-y-2"
                 variants={slowReveal}
-                transition={{ delay: 0.3 }}
+                transition={{ ...slowTransition, delay: 0.3 }}
               >
                 <p className="font-system text-xs tracking-[0.5em] text-sovereign uppercase">
                   The
@@ -151,7 +155,7 @@ export function HeroSection() {
               <motion.p
                 className="font-scripture text-xl md:text-2xl text-empire/70 max-w-2xl italic"
                 variants={slowFade}
-                transition={{ delay: 0.8 }}
+                transition={{ duration: 1.8, ease: "easeOut" as const, delay: 0.8 }}
               >
                 F*ck Monogamy. Build A Dynasty.
               </motion.p>
@@ -161,14 +165,14 @@ export function HeroSection() {
                 className="w-40 divider"
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{ delay: 1.2, duration: 1.5, ease: [0.25, 0.1, 0.25, 1] }}
+                transition={{ delay: 1.2, duration: 1.5, ease: "easeOut" as const }}
               />
 
               {/* CTA */}
               <motion.div
                 className="flex flex-col sm:flex-row gap-4"
                 variants={slowReveal}
-                transition={{ delay: 1.5 }}
+                transition={{ ...slowTransition, delay: 1.5 }}
               >
                 <Button
                   variant={mode === "dominus" ? "blood" : "primary"}
@@ -197,7 +201,7 @@ export function HeroSection() {
               <motion.div
                 className="mt-16 relative"
                 variants={slowScale}
-                transition={{ delay: 2 }}
+                transition={{ ...slowTransition, delay: 2 }}
               >
                 <div className="relative w-44 md:w-56 mx-auto">
                   <div className="absolute -inset-8 bg-gradient-to-b from-sovereign/10 to-transparent blur-3xl" />
