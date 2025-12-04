@@ -80,7 +80,8 @@ export function ManifestoSection() {
           </p>
         </motion.div>
 
-        {/* Video Embed Placeholder */}
+        {/* Video Embed Placeholder - Hidden until video is ready */}
+        {/* 
         <motion.div
           className="relative aspect-video max-w-4xl mx-auto mb-28 group cursor-pointer"
           initial={{ opacity: 0, scale: 0.98 }}
@@ -88,7 +89,6 @@ export function ManifestoSection() {
           transition={{ delay: 0.3, duration: 1.5, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <div className="absolute inset-0 bg-void border-arch overflow-hidden">
-            {/* Background with slow zoom */}
             <div 
               className="absolute inset-0 animate-slow-zoom opacity-30"
               style={{
@@ -99,7 +99,6 @@ export function ManifestoSection() {
             />
             <div className="absolute inset-0 bg-void/60" />
             
-            {/* Play Button */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div
                 className={`w-20 h-20 flex items-center justify-center border transition-all duration-700 group-hover:scale-105 ${
@@ -117,7 +116,6 @@ export function ManifestoSection() {
               </div>
             </div>
             
-            {/* Caption */}
             <div className="absolute bottom-8 left-8 right-8">
               <p className="font-system text-[11px] tracking-[0.3em] text-sovereign uppercase">
                 Watch The Manifesto
@@ -128,6 +126,7 @@ export function ManifestoSection() {
             </div>
           </div>
         </motion.div>
+        */}
 
         {/* Three Pillars */}
         <motion.div 
