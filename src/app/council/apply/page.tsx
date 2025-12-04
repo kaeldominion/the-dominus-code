@@ -32,6 +32,14 @@ const questions = [
     required: true,
   },
   {
+    id: "whatsapp",
+    type: "tel",
+    question: "What's your WhatsApp number?",
+    subtext: "Include country code. This is how we'll reach you fastest.",
+    placeholder: "+1 555 123 4567",
+    required: true,
+  },
+  {
     id: "age",
     type: "select",
     question: "What's your age range?",
@@ -222,6 +230,7 @@ export default function CouncilApplyPage() {
             firstName: firstName,
             lastName: lastName,
             email: formData.email,
+            phone: formData.whatsapp,
             name: formData.name,
             source: "The Dominus Code Website",
             
@@ -435,6 +444,17 @@ export default function CouncilApplyPage() {
                   <input
                     ref={inputRef as React.RefObject<HTMLInputElement>}
                     type="email"
+                    value={formData[question.id] || ""}
+                    onChange={(e) => updateFormData(e.target.value)}
+                    placeholder={question.placeholder}
+                    className="w-full bg-transparent border-b-2 border-concrete/20 focus:border-sovereign pb-4 font-scripture text-xl text-empire placeholder:text-concrete/30 outline-none transition-colors"
+                  />
+                )}
+
+                {question.type === "tel" && (
+                  <input
+                    ref={inputRef as React.RefObject<HTMLInputElement>}
+                    type="tel"
                     value={formData[question.id] || ""}
                     onChange={(e) => updateFormData(e.target.value)}
                     placeholder={question.placeholder}
