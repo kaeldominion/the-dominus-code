@@ -276,7 +276,7 @@ nav, button, .btn, input, label, .ui-text, .data-text {
   font-weight: 400;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--void);
+  color: #050505;
   background: var(--sovereign);
   border: 1px solid var(--sovereign);
   cursor: pointer;
@@ -295,7 +295,7 @@ nav, button, .btn, input, label, .ui-text, .data-text {
 }
 
 .btn-primary:hover {
-  color: var(--void);
+  color: #050505;
 }
 
 .btn-primary:hover::before {
@@ -341,7 +341,7 @@ nav, button, .btn, input, label, .ui-text, .data-text {
   font-weight: 400;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--empire);
+  color: #ffffff;
   background: var(--blood);
   border: 1px solid var(--blood);
   cursor: pointer;
@@ -349,8 +349,8 @@ nav, button, .btn, input, label, .ui-text, .data-text {
 }
 
 .btn-blood:hover {
-  background: transparent;
-  color: var(--blood);
+  background: #6a0202;
+  color: #ffffff;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -823,6 +823,17 @@ nav, button, .btn, input, label, .ui-text, .data-text {
 [data-mode="dominus"] .btn-secondary:hover {
   border-color: var(--empire);
   background: rgba(0, 0, 0, 0.05);
+}
+
+[data-mode="dominus"] .btn-blood {
+  background: var(--blood);
+  border-color: var(--blood);
+  color: #ffffff;
+}
+
+[data-mode="dominus"] .btn-blood:hover {
+  background: #6a0202;
+  color: #ffffff;
 }
 
 /* Input in Dominus mode */

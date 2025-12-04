@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Spencer Tarring" }],
   icons: {
     icon: "/images/tdc-icon-gold.png",
+    shortcut: "/images/tdc-icon-gold.png",
     apple: "/images/tdc-icon-gold.png",
   },
   openGraph: {

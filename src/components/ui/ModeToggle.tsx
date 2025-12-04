@@ -40,12 +40,16 @@ export function ModeToggleCompact() {
   return (
     <motion.button
       onClick={toggleMode}
-      className="relative w-12 h-6 rounded-none border border-gold/50 bg-obsidian/80 overflow-hidden"
+      className={`relative w-12 h-6 rounded-none border overflow-hidden transition-colors duration-300 ${
+        isDominus 
+          ? "border-blood/50 bg-white/80" 
+          : "border-gold/50 bg-obsidian/80"
+      }`}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
       <motion.div
-        className="absolute inset-y-0.5 w-5 h-5 bg-gold"
+        className="absolute inset-y-0.5 w-5 h-5"
         animate={{
           left: isDominus ? "calc(100% - 22px)" : "2px",
           backgroundColor: isDominus ? "#8a0303" : "#e5c372",

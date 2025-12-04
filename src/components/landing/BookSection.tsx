@@ -132,7 +132,11 @@ export function BookSection() {
               return (
                 <motion.div
                   key={index}
-                  className="absolute inset-0 bg-[#0a0a0a] border border-concrete/5 p-8 md:p-12 overflow-hidden"
+                  className={`absolute inset-0 border p-8 md:p-12 overflow-hidden ${
+                    mode === "dominus" 
+                      ? "bg-[#f5f5f5] border-concrete/20" 
+                      : "bg-[#0a0a0a] border-concrete/5"
+                  }`}
                   style={{
                     transformStyle: "preserve-3d",
                     transformOrigin: "left center",
@@ -152,16 +156,24 @@ export function BookSection() {
                       </h3>
                     )}
                     <div className="flex-1 overflow-hidden">
-                      <p className="font-scripture text-sm md:text-base text-empire/70 leading-relaxed whitespace-pre-line italic">
+                      <p className={`font-scripture text-sm md:text-base leading-relaxed whitespace-pre-line italic ${
+                        mode === "dominus" ? "text-[#1a1a1a]/80" : "text-empire/70"
+                      }`}>
                         {page.content}
                       </p>
                     </div>
                     {/* Page Number */}
-                    <div className="mt-4 pt-4 border-t border-concrete/10 flex justify-between items-center">
-                      <span className="font-system text-[10px] tracking-[0.3em] text-concrete/30">
+                    <div className={`mt-4 pt-4 border-t flex justify-between items-center ${
+                      mode === "dominus" ? "border-concrete/20" : "border-concrete/10"
+                    }`}>
+                      <span className={`font-system text-[10px] tracking-[0.3em] ${
+                        mode === "dominus" ? "text-[#1a1a1a]/30" : "text-concrete/30"
+                      }`}>
                         THE DOMINUS CODE
                       </span>
-                      <span className="font-system text-[10px] tracking-[0.2em] text-concrete/30">
+                      <span className={`font-system text-[10px] tracking-[0.2em] ${
+                        mode === "dominus" ? "text-[#1a1a1a]/30" : "text-concrete/30"
+                      }`}>
                         {String(index + 1).padStart(2, '0')}
                       </span>
                     </div>
