@@ -50,7 +50,7 @@ export function HeroSection() {
   const slowTransition = { duration: 1.5, ease: "easeOut" as const };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex flex-col overflow-hidden">
       {/* Cinematic Video Background */}
       <div className="video-bg">
         {/* 
@@ -70,8 +70,9 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-void/80 via-void/60 to-void z-10" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-20 max-w-5xl mx-auto px-6 text-center">
+      {/* Content - Fixed position from top for consistency */}
+      <div className="relative z-20 flex-1 flex items-center justify-center pt-20">
+        <div className="max-w-5xl mx-auto px-6 text-center">
         <AnimatePresence mode="wait">
           {phase === "pulse" && (
             <motion.div
@@ -218,6 +219,7 @@ export function HeroSection() {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
 
       {/* Scroll Indicator */}

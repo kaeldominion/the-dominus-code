@@ -179,15 +179,15 @@ export function OathPreview() {
                     key={name}
                     className="py-1.5 px-1 text-center"
                     style={{
-                      background: 'linear-gradient(180deg, rgba(0,0,0,0.06) 0%, transparent 100%)',
+                      background: 'linear-gradient(180deg, rgba(0,0,0,0.08) 0%, transparent 100%)',
                     }}
                     variants={itemVariants}
                   >
                     <span 
-                      className="font-system text-[8px] md:text-[9px] tracking-[0.1em]"
+                      className="font-system text-[8px] md:text-[9px] tracking-[0.1em] font-medium"
                       style={{
-                        color: '#1f1f1f',
-                        textShadow: '1px 1px 0 rgba(255,255,255,0.1)',
+                        color: '#151515',
+                        textShadow: '1px 1px 0 rgba(255,255,255,0.18)',
                       }}
                     >
                       {name}
@@ -203,7 +203,7 @@ export function OathPreview() {
                   >
                     <span 
                       className="font-system text-[8px]"
-                      style={{ color: 'rgba(0,0,0,0.12)' }}
+                      style={{ color: 'rgba(0,0,0,0.18)' }}
                     >
                       ———
                     </span>

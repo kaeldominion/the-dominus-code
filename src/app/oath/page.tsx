@@ -323,11 +323,11 @@ export default function OathPage() {
                       <div className="relative">
                         <p 
                           className="font-system text-[10px] tracking-[0.4em] uppercase mb-5 flex items-center gap-3"
-                          style={{ color: '#555' }}
+                          style={{ color: '#666' }}
                         >
-                          <span className="h-px flex-1 bg-black/20" />
-                          <span style={{ textShadow: '1px 1px 0 rgba(255,255,255,0.1)' }}>THE SWORN</span>
-                          <span className="h-px flex-1 bg-black/20" />
+                          <span className="h-px flex-1 bg-black/25" />
+                          <span style={{ textShadow: '1px 1px 0 rgba(255,255,255,0.15)' }}>THE SWORN</span>
+                          <span className="h-px flex-1 bg-black/25" />
                         </p>
                         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
                           {mockSignatures
@@ -343,14 +343,14 @@ export default function OathPage() {
                                 <div 
                                   className="text-center py-2.5 px-1 relative cursor-default transition-all duration-300"
                                   style={{
-                                    background: 'linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.02) 100%)',
+                                    background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.03) 100%)',
                                   }}
                                 >
                                   <span 
-                                    className="font-system text-[10px] md:text-xs tracking-[0.12em] transition-all duration-300 group-hover:tracking-[0.15em]"
+                                    className="font-system text-[10px] md:text-xs tracking-[0.12em] font-medium transition-all duration-300 group-hover:tracking-[0.15em]"
                                     style={{
-                                      color: '#1f1f1f',
-                                      textShadow: '1px 1px 0 rgba(255,255,255,0.12), -1px -1px 0 rgba(0,0,0,0.3)',
+                                      color: '#151515',
+                                      textShadow: '1px 1px 0 rgba(255,255,255,0.2), 0 0 1px rgba(255,255,255,0.1)',
                                     }}
                                   >
                                     {sig.name}
@@ -371,12 +371,12 @@ export default function OathPage() {
                               key={`empty-${index}`}
                               className="py-2.5 px-1 text-center"
                               style={{
-                                background: 'linear-gradient(180deg, rgba(0,0,0,0.04) 0%, transparent 100%)',
+                                background: 'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, transparent 100%)',
                               }}
                             >
                               <span 
                                 className="font-system text-[10px]"
-                                style={{ color: 'rgba(0,0,0,0.15)' }}
+                                style={{ color: 'rgba(0,0,0,0.2)' }}
                               >
                                 ———
                               </span>
