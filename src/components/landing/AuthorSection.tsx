@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Instagram, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useApp } from "@/components/Providers";
 
-const shortBio = `Spencer Tarring is the author of The Dominus Code and the architect of a sovereign life. A former tech CEO who exited for millions in his twenties, he spent a decade in Shanghai's high-society nightlife before rejecting modern degeneracy to build a legacy of order. Today, he operates Bitcoin infrastructure in Africa, leads a multi-woman dynasty in Bali, and teaches men how to kill the "Boy" to build the "King." He is a Realist, a builder, and a Dominus.`;
+const shortBio = `Spencer Tarring is the author of The Dominus Code and the architect of a sovereign life. A former tech CEO who exited for millions in his twenties, he spent a decade in Shanghai's high-society nightlife before rejecting modern degeneracy to build a legacy of order. Today, he builds critical digital infrastructure, leads a multi-woman dynasty, and teaches men how to kill the "Boy" to build the "King." He is a Realist, a builder, and a Dominus.`;
 
 const longBioSections = [
   {
@@ -23,7 +23,7 @@ On paper, he was a King. In reality, he was hollowing out. He was a man running 
   },
   {
     title: "THE DEATH OF THE BOY",
-    content: `The shift arrived on December 31st, 2020, in Bali. No party. No stage. Just the silence of a villa and the brutal realization that the "dream" was empty.
+    content: `The shift arrived on December 31st, 2020. No party. No stage. Just silence and the brutal realization that the "dream" was empty.
 
 In that silence, the Boy died. Spencer quit alcohol cold turkey and began the slow, violent work of reconstruction. He stripped away the persona and looked at the physics of what makes a man valuable: Strength. Order. Polarity. Legacy.
 
@@ -33,7 +33,7 @@ He stopped chasing "happiness"—the Utopian lie of the modern age—and started
     title: "THE ARCHITECT",
     content: `Today, Spencer operates as a Realist in a world of soft delusions. He is no longer just an investor; he is an Architect of critical systems.
 
-The Business: He builds high-stakes Bitcoin and AI infrastructure in Africa, backed by private equity and hard assets. He understands that in the digital age, you are either the server or the serf.
+The Business: He builds high-stakes Bitcoin and AI infrastructure across emerging markets, backed by private equity and hard assets. He understands that in the digital age, you are either the server or the serf.
 
 The Dynasty: He lives openly as a Dominus, leading a non-monogamous household defined not by hedonism, but by strict hierarchy, devotion, and purpose.
 

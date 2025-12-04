@@ -34,7 +34,7 @@ const bios = {
   short: {
     label: "SHORT",
     sublabel: "For Intro",
-    text: `Spencer Tarring is the author of The Dominus Code and the architect of a sovereign life. A former tech CEO who exited for millions in his twenties, he spent a decade in Shanghai's high-society nightlife before rejecting modern degeneracy to build a legacy of order. Today, he operates Bitcoin infrastructure in Africa, leads a multi-woman dynasty in Bali, and teaches men how to kill the "Boy" to build the "King." He is a Realist, a builder, and a Dominus.`,
+    text: `Spencer Tarring is the author of The Dominus Code and the architect of a sovereign life. A former tech CEO who exited for millions in his twenties, he spent a decade in Shanghai's high-society nightlife before rejecting modern degeneracy to build a legacy of order. Today, he builds critical digital infrastructure, leads a multi-woman dynasty, and teaches men how to kill the "Boy" to build the "King." He is a Realist, a builder, and a Dominus.`,
   },
   long: {
     label: "LONG",
@@ -47,14 +47,14 @@ THE RISE: Spencer's education didn't happen in a university lecture hall. It beg
 
 THE DECADENCE: With capital but no internal order, Spencer drifted into the high-voltage glamour of Shanghai. As the Music Director of M1NT, he became the face of the city's excess—driving a Rolls Royce Ghost, commanding crowds of thousands as a DJ, and living the life every young man thinks he wants. On paper, he was a King. In reality, he was hollowing out—a man running on dopamine, performing success while his internal foundation eroded.
 
-THE AWAKENING: The shift arrived on December 31st, 2020, in Bali. No party. No stage. Just silence. In that silence, the "Boy" died. Spencer quit alcohol cold turkey and began the slow, violent work of reconstruction. He stripped away the persona and looked at the physics of what makes a man valuable: Strength, Order, Polarity, Legacy.
+THE AWAKENING: The shift arrived on December 31st, 2020. No party. No stage. Just silence. In that silence, the "Boy" died. Spencer quit alcohol cold turkey and began the slow, violent work of reconstruction. He stripped away the persona and looked at the physics of what makes a man valuable: Strength, Order, Polarity, Legacy.
 
-THE ARCHITECT: Today, Spencer operates as a Realist. He builds high-stakes Bitcoin and AI infrastructure in Africa. He lives openly as a Dominus, leading a non-monogamous household defined by strict hierarchy and devotion. His mission: to help men kill the "Boy" and build the "King."`,
+THE ARCHITECT: Today, Spencer operates as a Realist. He builds critical digital infrastructure across emerging markets. He lives openly as a Dominus, leading a non-monogamous household defined by strict hierarchy and devotion. His mission: to help men kill the "Boy" and build the "King."`,
   },
   controversial: {
     label: "CONTROVERSIAL",
     sublabel: "For Viral Clips",
-    text: `Spencer Tarring made millions before 30, spent a decade drowning in Shanghai's excess, and woke up empty. Now he runs a "harem" in Bali—multiple women, one household, strict hierarchy—and he's not sorry about it.
+    text: `Spencer Tarring made millions before 30, spent a decade drowning in Shanghai's excess, and woke up empty. Now he leads a non-monogamous household—multiple women, strict hierarchy, absolute devotion—and he's not sorry about it.
 
 He calls monogamy "a tool for state control." He says happiness is "a lie sold to weak men." He believes the West is dying and every smart man should leave.
 
