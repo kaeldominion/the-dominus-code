@@ -189,29 +189,131 @@ export default function IntelPage() {
     canvas.width = 1080;
     canvas.height = 1080;
 
-    // Background - concrete texture simulation
-    ctx.fillStyle = "#0a0a0a";
+    // ========================================
+    // BACKGROUND - Deep void with subtle gradient
+    // ========================================
+    const bgGradient = ctx.createRadialGradient(540, 540, 0, 540, 540, 800);
+    bgGradient.addColorStop(0, "#0d0d0d");
+    bgGradient.addColorStop(0.5, "#080808");
+    bgGradient.addColorStop(1, "#030303");
+    ctx.fillStyle = bgGradient;
     ctx.fillRect(0, 0, 1080, 1080);
 
-    // Add noise texture
+    // ========================================
+    // NOISE TEXTURE - Subtle film grain
+    // ========================================
     const imageData = ctx.getImageData(0, 0, 1080, 1080);
     const data = imageData.data;
     for (let i = 0; i < data.length; i += 4) {
-      const noise = Math.random() * 15 - 7.5;
+      const noise = Math.random() * 12 - 6;
       data[i] = Math.max(0, Math.min(255, data[i] + noise));
       data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + noise));
       data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + noise));
     }
     ctx.putImageData(imageData, 0, 0);
 
-    // Border
-    ctx.strokeStyle = "#e5c372";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(40, 40, 1000, 1000);
+    // ========================================
+    // CORNER ACCENTS - Brutalist frame
+    // ========================================
+    const gold = "#e5c372";
+    const goldDark = "#b8973d";
+    const cornerLength = 80;
+    const cornerThickness = 2;
+    const margin = 60;
 
-    // Quote text
-    ctx.fillStyle = "#e5c372";
-    ctx.font = "bold 56px serif";
+    ctx.strokeStyle = gold;
+    ctx.lineWidth = cornerThickness;
+
+    // Top-left corner
+    ctx.beginPath();
+    ctx.moveTo(margin, margin + cornerLength);
+    ctx.lineTo(margin, margin);
+    ctx.lineTo(margin + cornerLength, margin);
+    ctx.stroke();
+
+    // Top-right corner
+    ctx.beginPath();
+    ctx.moveTo(1080 - margin - cornerLength, margin);
+    ctx.lineTo(1080 - margin, margin);
+    ctx.lineTo(1080 - margin, margin + cornerLength);
+    ctx.stroke();
+
+    // Bottom-left corner
+    ctx.beginPath();
+    ctx.moveTo(margin, 1080 - margin - cornerLength);
+    ctx.lineTo(margin, 1080 - margin);
+    ctx.lineTo(margin + cornerLength, 1080 - margin);
+    ctx.stroke();
+
+    // Bottom-right corner
+    ctx.beginPath();
+    ctx.moveTo(1080 - margin - cornerLength, 1080 - margin);
+    ctx.lineTo(1080 - margin, 1080 - margin);
+    ctx.lineTo(1080 - margin, 1080 - margin - cornerLength);
+    ctx.stroke();
+
+    // ========================================
+    // DECORATIVE LINES - Top and bottom
+    // ========================================
+    ctx.strokeStyle = goldDark;
+    ctx.lineWidth = 1;
+    
+    // Top decorative line
+    ctx.beginPath();
+    ctx.moveTo(200, 180);
+    ctx.lineTo(880, 180);
+    ctx.stroke();
+
+    // Bottom decorative line
+    ctx.beginPath();
+    ctx.moveTo(200, 900);
+    ctx.lineTo(880, 900);
+    ctx.stroke();
+
+    // ========================================
+    // CROWN ICON - Load and draw actual icon
+    // ========================================
+    const crownImg = new Image();
+    crownImg.crossOrigin = "anonymous";
+    
+    await new Promise<void>((resolve) => {
+      crownImg.onload = () => {
+        // Draw crown centered at top
+        const crownSize = 70;
+        ctx.drawImage(crownImg, 540 - crownSize / 2, 100, crownSize, crownSize);
+        resolve();
+      };
+      crownImg.onerror = () => {
+        // Fallback: draw a simple crown shape
+        ctx.fillStyle = gold;
+        ctx.font = "60px serif";
+        ctx.textAlign = "center";
+        ctx.fillText("♔", 540, 145);
+        resolve();
+      };
+      crownImg.src = "/images/tdc-icon-gold.png";
+    });
+
+    // ========================================
+    // QUOTE MARKS - Large decorative
+    // ========================================
+    ctx.fillStyle = "rgba(229, 195, 114, 0.15)";
+    ctx.font = "bold 200px Georgia, serif";
+    ctx.textAlign = "center";
+    ctx.fillText(""", 180, 380);
+    ctx.fillText(""", 900, 750);
+
+    // ========================================
+    // QUOTE TEXT - Main content with glow
+    // ========================================
+    
+    // Dynamic font size based on quote length
+    let fontSize = 58;
+    if (quoteText.length > 80) fontSize = 48;
+    if (quoteText.length > 120) fontSize = 42;
+    if (quoteText.length > 160) fontSize = 36;
+
+    ctx.font = `bold ${fontSize}px "Times New Roman", Georgia, serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
@@ -219,7 +321,7 @@ export default function IntelPage() {
     const words = quoteText.split(" ");
     const lines: string[] = [];
     let currentLine = "";
-    const maxWidth = 900;
+    const maxWidth = 820;
 
     for (const word of words) {
       const testLine = currentLine + (currentLine ? " " : "") + word;
@@ -233,25 +335,49 @@ export default function IntelPage() {
     }
     lines.push(currentLine);
 
-    // Draw lines
-    const lineHeight = 70;
-    const startY = 540 - ((lines.length - 1) * lineHeight) / 2;
+    // Calculate line height and starting position
+    const lineHeight = fontSize * 1.4;
+    const totalTextHeight = lines.length * lineHeight;
+    const startY = 540 - totalTextHeight / 2 + lineHeight / 2;
+
+    // Draw text glow (subtle)
+    ctx.shadowColor = "rgba(229, 195, 114, 0.3)";
+    ctx.shadowBlur = 30;
+    ctx.fillStyle = gold;
+
     lines.forEach((line, i) => {
       ctx.fillText(line, 540, startY + i * lineHeight);
     });
 
-    // Attribution
-    ctx.fillStyle = "#666666";
-    ctx.font = "24px sans-serif";
-    ctx.fillText("— THE DOMINUS CODE", 540, 950);
+    // Reset shadow
+    ctx.shadowBlur = 0;
 
-    // Crown icon placeholder
-    ctx.fillStyle = "#e5c372";
-    ctx.font = "48px serif";
-    ctx.fillText("♔", 540, 120);
+    // ========================================
+    // ATTRIBUTION - Book title
+    // ========================================
+    ctx.font = "300 18px sans-serif";
+    ctx.fillStyle = "rgba(229, 195, 114, 0.6)";
+    ctx.letterSpacing = "4px";
+    ctx.fillText("— T H E   D O M I N U S   C O D E —", 540, 960);
+
+    // ========================================
+    // WEBSITE - Small footer
+    // ========================================
+    ctx.font = "300 12px sans-serif";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
+    ctx.fillText("THEDOMINUSCODE.COM", 540, 1000);
+
+    // ========================================
+    // SUBTLE VIGNETTE
+    // ========================================
+    const vignetteGradient = ctx.createRadialGradient(540, 540, 300, 540, 540, 760);
+    vignetteGradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+    vignetteGradient.addColorStop(1, "rgba(0, 0, 0, 0.4)");
+    ctx.fillStyle = vignetteGradient;
+    ctx.fillRect(0, 0, 1080, 1080);
 
     // Convert to image
-    const dataUrl = canvas.toDataURL("image/png");
+    const dataUrl = canvas.toDataURL("image/png", 1.0);
     setGeneratedImage(dataUrl);
     setIsGenerating(false);
   }, [selectedQuote, customQuote]);
