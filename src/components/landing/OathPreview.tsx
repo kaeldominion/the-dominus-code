@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, type Variants } from "framer-motion";
 import { useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { useApp } from "@/components/Providers";
@@ -15,7 +15,7 @@ const mockSignatures = [
 ];
 
 // Slow, heavy animation variants
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -23,11 +23,10 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
-    transition: { duration: 0.8, ease: "easeOut" }
   }
 };
 

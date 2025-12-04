@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, type Variants } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useApp } from "@/components/Providers";
 
@@ -106,7 +106,7 @@ export function StatusDashboard() {
   const config = statusConfigs[currentStatus];
 
   // Slow, heavy animation variants
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -114,12 +114,11 @@ export function StatusDashboard() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { duration: 1, ease: [0.25, 0.1, 0.25, 1] }
     }
   };
 

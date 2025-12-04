@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, type Variants } from "framer-motion";
 import { useRef } from "react";
 import { Crown } from "@/components/ui/Crown";
 import { useApp } from "@/components/Providers";
@@ -25,7 +25,7 @@ const manifestoPoints = [
 ];
 
 // Slow, heavy animation variants
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -33,12 +33,11 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 40 },
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }
   }
 };
 
