@@ -4,7 +4,7 @@ import { ManifestoSection } from "@/components/landing/ManifestoSection";
 import { BookSection } from "@/components/landing/BookSection";
 import { AuthorSection } from "@/components/landing/AuthorSection";
 import { StatusDashboard } from "@/components/landing/StatusDashboard";
-import { OathPreview } from "@/components/landing/OathPreview";
+import { CouncilPreview } from "@/components/landing/CouncilPreview";
 import { Footer } from "@/components/landing/Footer";
 import { AudioControl } from "@/components/ui/AudioControl";
 
@@ -17,7 +17,7 @@ export default function Home() {
       <BookSection />
       <AuthorSection />
       <StatusDashboard />
-      <OathPreview />
+      <CouncilPreview />
       <Footer />
       <AudioControl />
     </main>
