@@ -22,7 +22,7 @@ const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.03, delayChildren: 0.5 }
+    transition: { staggerChildren: 0.05, delayChildren: 0.5 }
   }
 };
 
@@ -30,9 +30,12 @@ const itemVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
-    transition: { duration: 0.4 }
+    transition: { duration: 0.5 }
   }
 };
+
+// Stone texture SVG
+const stoneTexture = `url("data:image/svg+xml,%3Csvg viewBox='0 0 500 500' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`;
 
 export function OathPreview() {
   const ref = useRef(null);
@@ -54,11 +57,8 @@ export function OathPreview() {
     <section ref={ref} className="relative py-32 overflow-hidden">
       {/* Atmospheric background */}
       <div className="absolute inset-0 bg-gradient-to-b from-void via-void/95 to-void pointer-events-none" />
-      
-      {/* Vertical light beam */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-sovereign/20 via-sovereign/5 to-transparent pointer-events-none" />
 
-      <div className="relative max-w-6xl mx-auto px-6">
+      <div className="relative max-w-5xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
           className="text-center mb-16"
@@ -79,41 +79,53 @@ export function OathPreview() {
 
         {/* The Monolith Preview */}
         <motion.div
-          className="relative max-w-4xl mx-auto"
+          className="relative max-w-3xl mx-auto"
           initial={{ opacity: 0, y: 60 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.3, duration: 1.4, ease: "easeOut" }}
         >
-          {/* Stone texture effect */}
+          {/* Shadow beneath */}
+          <div className="absolute -inset-4 bg-black/40 blur-2xl -z-10" />
+          
+          {/* Main monolith body - GREY STONE */}
           <div 
-            className="absolute inset-0 opacity-15 pointer-events-none"
+            className="relative overflow-hidden"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='stone'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23stone)'/%3E%3C/svg%3E")`,
+              background: 'linear-gradient(180deg, #3a3a3a 0%, #2d2d2d 50%, #252525 100%)',
             }}
-          />
-          
-          {/* Top edge lighting */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-concrete/30 to-transparent" />
-          
-          {/* Main monolith body */}
-          <div className="relative bg-gradient-to-b from-[#0a0a0a] via-[#080808] to-[#050505] border border-concrete/10">
+          >
+            {/* Stone texture overlay */}
+            <div 
+              className="absolute inset-0 opacity-40 mix-blend-overlay pointer-events-none"
+              style={{ backgroundImage: stoneTexture }}
+            />
+            
+            {/* Top bevel */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-b from-white/15 to-transparent" />
+            
+            {/* Side shadows */}
+            <div className="absolute top-0 bottom-0 left-0 w-6 bg-gradient-to-r from-black/25 to-transparent pointer-events-none" />
+            <div className="absolute top-0 bottom-0 right-0 w-6 bg-gradient-to-l from-black/25 to-transparent pointer-events-none" />
             
             {/* Header inscription */}
-            <div className="relative py-6 px-6 border-b border-concrete/10 text-center">
-              <div className="absolute inset-0 bg-gradient-to-b from-sovereign/5 to-transparent pointer-events-none" />
-              <p className="font-law text-[10px] md:text-xs tracking-[0.4em] text-sovereign/50 relative z-10">
+            <div className="relative py-5 px-6 border-b border-black/25 text-center">
+              <p 
+                className="font-law text-[10px] md:text-xs tracking-[0.4em] relative z-10"
+                style={{
+                  color: '#1a1a1a',
+                  textShadow: '1px 1px 0 rgba(255,255,255,0.1)',
+                }}
+              >
                 THOSE WHO HAVE SWORN
               </p>
             </div>
             
             {/* Names - Condensed Preview */}
-            <div className="relative p-6 md:p-8">
-              {/* Vignette */}
-              <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(0,0,0,0.7)] pointer-events-none z-10" />
+            <div className="relative p-5 md:p-6">
               
               {/* Founders Row */}
               <motion.div 
-                className="flex justify-center gap-4 md:gap-6 mb-6"
+                className="flex justify-center gap-4 md:gap-6 mb-4"
                 variants={containerVariants}
                 initial="hidden"
                 animate={isInView ? "visible" : "hidden"}
@@ -121,7 +133,11 @@ export function OathPreview() {
                 {founderNames.map((name) => (
                   <motion.span
                     key={name}
-                    className="font-system text-[9px] md:text-[10px] tracking-[0.2em] text-blood/60"
+                    className="font-system text-[10px] md:text-xs tracking-[0.15em] font-medium"
+                    style={{
+                      color: '#6a0202',
+                      textShadow: '1px 1px 0 rgba(255,255,255,0.12), -1px -1px 0 rgba(0,0,0,0.35)',
+                    }}
                     variants={itemVariants}
                   >
                     {name}
@@ -131,7 +147,7 @@ export function OathPreview() {
               
               {/* Elite Row */}
               <motion.div 
-                className="flex flex-wrap justify-center gap-3 md:gap-4 mb-6"
+                className="flex flex-wrap justify-center gap-3 md:gap-4 mb-4"
                 variants={containerVariants}
                 initial="hidden"
                 animate={isInView ? "visible" : "hidden"}
@@ -139,7 +155,11 @@ export function OathPreview() {
                 {eliteNames.map((name) => (
                   <motion.span
                     key={name}
-                    className="font-system text-[8px] md:text-[9px] tracking-[0.15em] text-sovereign/50"
+                    className="font-system text-[9px] md:text-[10px] tracking-[0.12em] font-medium"
+                    style={{
+                      color: '#8a7020',
+                      textShadow: '1px 1px 0 rgba(255,255,255,0.1), -1px -1px 0 rgba(0,0,0,0.3)',
+                    }}
                     variants={itemVariants}
                   >
                     {name}
@@ -149,7 +169,7 @@ export function OathPreview() {
               
               {/* Sworn Grid */}
               <motion.div 
-                className="grid grid-cols-3 sm:grid-cols-5 gap-px bg-concrete/5"
+                className="grid grid-cols-3 sm:grid-cols-5 gap-1"
                 variants={containerVariants}
                 initial="hidden"
                 animate={isInView ? "visible" : "hidden"}
@@ -157,10 +177,19 @@ export function OathPreview() {
                 {swornNames.map((name) => (
                   <motion.div
                     key={name}
-                    className="bg-void py-2 px-1 text-center"
+                    className="py-1.5 px-1 text-center"
+                    style={{
+                      background: 'linear-gradient(180deg, rgba(0,0,0,0.06) 0%, transparent 100%)',
+                    }}
                     variants={itemVariants}
                   >
-                    <span className="font-system text-[7px] md:text-[8px] tracking-[0.1em] text-concrete/25">
+                    <span 
+                      className="font-system text-[8px] md:text-[9px] tracking-[0.1em]"
+                      style={{
+                        color: '#1f1f1f',
+                        textShadow: '1px 1px 0 rgba(255,255,255,0.1)',
+                      }}
+                    >
                       {name}
                     </span>
                   </motion.div>
@@ -170,20 +199,33 @@ export function OathPreview() {
                 {Array.from({ length: 5 }).map((_, index) => (
                   <div
                     key={`empty-${index}`}
-                    className="bg-void py-2 px-1 text-center"
+                    className="py-1.5 px-1 text-center"
                   >
-                    <span className="font-system text-[7px] text-concrete/10">—</span>
+                    <span 
+                      className="font-system text-[8px]"
+                      style={{ color: 'rgba(0,0,0,0.12)' }}
+                    >
+                      ———
+                    </span>
                   </div>
                 ))}
               </motion.div>
               
               {/* Fade to more names hint */}
-              <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#080808] to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#2d2d2d] to-transparent pointer-events-none" />
             </div>
+            
+            {/* Bottom edge */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-t from-black/25 to-transparent" />
           </div>
           
-          {/* Bottom shadow */}
-          <div className="absolute -bottom-3 left-4 right-4 h-6 bg-gradient-to-b from-void/40 to-transparent blur-md" />
+          {/* Base/pedestal */}
+          <div 
+            className="h-2 mx-3"
+            style={{
+              background: 'linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%)',
+            }}
+          />
         </motion.div>
 
         {/* Counter */}
@@ -194,16 +236,16 @@ export function OathPreview() {
           transition={{ delay: 1, duration: 1, ease: "easeOut" }}
         >
           <div className="relative inline-block">
-            <p className="font-system text-7xl md:text-8xl lg:text-9xl font-extralight tracking-wider text-concrete/8 leading-none">
+            <p className="font-system text-7xl md:text-8xl lg:text-9xl font-extralight tracking-wider text-concrete/10 leading-none">
               {displayCount}
             </p>
             <div className="absolute inset-0 flex items-center justify-center">
-              <p className="font-system text-6xl md:text-7xl lg:text-8xl font-extralight tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-concrete/12 to-concrete/4 leading-none">
+              <p className="font-system text-6xl md:text-7xl lg:text-8xl font-extralight tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-concrete/15 to-concrete/5 leading-none">
                 {displayCount}
               </p>
             </div>
           </div>
-          <p className="font-system text-[9px] tracking-[0.5em] text-concrete/30 uppercase mt-4">
+          <p className="font-system text-[9px] tracking-[0.5em] text-concrete/35 uppercase mt-4">
             Sovereigns Sworn
           </p>
         </motion.div>
