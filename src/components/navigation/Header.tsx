@@ -14,6 +14,7 @@ const navLinks = [
   { href: "/calibration", label: "Calibration" },
   { href: "/council", label: "The Council" },
   { href: "/oath", label: "The Oath" },
+  { href: "/intel", label: "Intel" },
 ];
 
 export function Header() {
