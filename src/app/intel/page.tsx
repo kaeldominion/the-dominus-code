@@ -20,6 +20,10 @@ import {
   Lock,
   Unlock,
   ExternalLink,
+  Palette,
+  Type,
+  Ban,
+  CheckCircle,
 } from "lucide-react";
 
 // ============================================
@@ -608,6 +612,331 @@ export default function IntelPage() {
                   </div>
                 </motion.button>
               ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Visual Identity Section */}
+      <section className="py-20 border-t border-concrete/10">
+        <div className="max-w-5xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="flex items-center gap-4 mb-8">
+              <Palette
+                className={`w-8 h-8 ${
+                  mode === "dominus" ? "text-blood" : "text-sovereign"
+                }`}
+              />
+              <h2 className="font-law text-2xl tracking-[0.1em] text-empire">
+                VISUAL IDENTITY
+              </h2>
+            </div>
+
+            <p className="font-scripture text-lg text-empire/50 mb-12">
+              The Dominus Code is not just a book; it is an aesthetic. All media coverage should align with this visual language.
+            </p>
+
+            {/* The Vibe */}
+            <div className="mb-16">
+              <h3 className="font-system text-xs tracking-[0.3em] text-concrete/50 uppercase mb-6">
+                The Vibe
+              </h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="border border-concrete/20 p-8">
+                  <p className="font-law text-xl tracking-[0.1em] text-empire mb-4">
+                    BRUTALIST LUXURY
+                  </p>
+                  <p className="font-scripture text-empire/60 leading-relaxed">
+                    Raw concrete meets Italian marble. High contrast. Shadow and light. Cinematic stillness.
+                  </p>
+                </div>
+                <div className="border border-concrete/20 p-8">
+                  <p className="font-system text-xs tracking-[0.2em] text-concrete/50 uppercase mb-4">
+                    Keywords
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {["Weight", "Architecture", "Silence", "Power", "Order", "Legacy"].map((word) => (
+                      <span
+                        key={word}
+                        className={`px-4 py-2 border font-system text-xs tracking-wider uppercase ${
+                          mode === "dominus"
+                            ? "border-blood/30 text-blood"
+                            : "border-sovereign/30 text-sovereign"
+                        }`}
+                      >
+                        {word}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Color Palette */}
+            <div className="mb-16">
+              <h3 className="font-system text-xs tracking-[0.3em] text-concrete/50 uppercase mb-6">
+                Color Palette
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {[
+                  { name: "Dominus Gold", hex: "#E5C372", usage: "THE MAIN. Headers, accents, CTAs", isPrimary: true },
+                  { name: "Void Black", hex: "#000000", usage: "Backgrounds, negative space", isPrimary: false },
+                  { name: "Concrete Grey", hex: "#2A2A2A", usage: "Text, secondary elements", isPrimary: false },
+                  { name: "Paper White", hex: "#F0F0F0", usage: "Body text for readability", isPrimary: false },
+                  { name: "Blood Red", hex: "#8A0000", usage: "Warnings, emphasis (use sparingly)", isPrimary: false },
+                ].map((color) => (
+                  <div key={color.name} className="group">
+                    <div
+                      className={`aspect-square border-2 mb-3 relative overflow-hidden ${
+                        color.isPrimary ? "border-sovereign" : "border-concrete/20"
+                      }`}
+                      style={{ backgroundColor: color.hex }}
+                    >
+                      {color.isPrimary && (
+                        <div className="absolute top-2 right-2">
+                          <span className="font-system text-[8px] tracking-wider uppercase bg-void/80 px-2 py-1 text-sovereign">
+                            Primary
+                          </span>
+                        </div>
+                      )}
+                      <div className="absolute bottom-0 left-0 right-0 bg-void/90 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(color.hex);
+                          }}
+                          className="font-system text-[10px] text-empire/80 hover:text-sovereign transition-colors flex items-center gap-1"
+                        >
+                          <Copy className="w-3 h-3" />
+                          {color.hex}
+                        </button>
+                      </div>
+                    </div>
+                    <p className="font-system text-xs tracking-wider text-empire mb-1">
+                      {color.name}
+                    </p>
+                    <p className="font-scripture text-[11px] text-concrete/50 leading-tight">
+                      {color.usage}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Typography */}
+            <div className="mb-16">
+              <div className="flex items-center gap-4 mb-6">
+                <Type className={`w-5 h-5 ${mode === "dominus" ? "text-blood" : "text-sovereign"}`} />
+                <h3 className="font-system text-xs tracking-[0.3em] text-concrete/50 uppercase">
+                  Typography
+                </h3>
+              </div>
+              
+              <div className="space-y-6">
+                {/* Font: Cinzel */}
+                <div className="border border-concrete/20 p-6">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                    <div>
+                      <p className="font-law text-2xl tracking-[0.15em] text-empire">
+                        CINZEL
+                      </p>
+                      <p className="font-system text-[10px] tracking-wider text-concrete/50 uppercase mt-1">
+                        The Law — Display & Headlines
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="px-3 py-1 bg-sovereign/10 border border-sovereign/30 font-system text-[10px] tracking-wider text-sovereign uppercase">
+                        Headers
+                      </span>
+                      <span className="px-3 py-1 bg-sovereign/10 border border-sovereign/30 font-system text-[10px] tracking-wider text-sovereign uppercase">
+                        Titles
+                      </span>
+                    </div>
+                  </div>
+                  <p className="font-law text-4xl tracking-[0.1em] text-empire/80 mb-2">
+                    THE DOMINUS CODE
+                  </p>
+                  <p className="font-scripture text-sm text-concrete/50">
+                    Used for all headlines, section titles, and impactful statements. Always uppercase. Wide letter-spacing (0.1em - 0.2em).
+                  </p>
+                </div>
+
+                {/* Font: Cormorant Garamond */}
+                <div className="border border-concrete/20 p-6">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                    <div>
+                      <p className="font-scripture text-2xl text-empire">
+                        Cormorant Garamond
+                      </p>
+                      <p className="font-system text-[10px] tracking-wider text-concrete/50 uppercase mt-1">
+                        The Scripture — Body & Quotes
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="px-3 py-1 bg-sovereign/10 border border-sovereign/30 font-system text-[10px] tracking-wider text-sovereign uppercase">
+                        Body
+                      </span>
+                      <span className="px-3 py-1 bg-sovereign/10 border border-sovereign/30 font-system text-[10px] tracking-wider text-sovereign uppercase">
+                        Quotes
+                      </span>
+                    </div>
+                  </div>
+                  <p className="font-scripture text-xl text-empire/80 italic mb-2">
+                    &ldquo;The boy wants recognition. The man wants mastery.&rdquo;
+                  </p>
+                  <p className="font-scripture text-sm text-concrete/50">
+                    Used for body text, quotes, and descriptive content. Elegant and readable. Often italicized for quotes.
+                  </p>
+                </div>
+
+                {/* Font: Montserrat */}
+                <div className="border border-concrete/20 p-6">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                    <div>
+                      <p className="font-system text-lg tracking-[0.1em] text-empire">
+                        MONTSERRAT LIGHT
+                      </p>
+                      <p className="font-system text-[10px] tracking-wider text-concrete/50 uppercase mt-1">
+                        The System — UI & Labels
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="px-3 py-1 bg-sovereign/10 border border-sovereign/30 font-system text-[10px] tracking-wider text-sovereign uppercase">
+                        Labels
+                      </span>
+                      <span className="px-3 py-1 bg-sovereign/10 border border-sovereign/30 font-system text-[10px] tracking-wider text-sovereign uppercase">
+                        UI
+                      </span>
+                      <span className="px-3 py-1 bg-sovereign/10 border border-sovereign/30 font-system text-[10px] tracking-wider text-sovereign uppercase">
+                        Buttons
+                      </span>
+                    </div>
+                  </div>
+                  <p className="font-system text-sm tracking-[0.2em] uppercase text-empire/80 mb-2">
+                    APPLICATION REQUIRED • ENTER THE CODE
+                  </p>
+                  <p className="font-scripture text-sm text-concrete/50">
+                    Used for UI elements, buttons, labels, and system text. Always uppercase with wide letter-spacing (0.2em - 0.4em). Light weight (300).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Imagery Rules */}
+            <div className="mb-16">
+              <h3 className="font-system text-xs tracking-[0.3em] text-concrete/50 uppercase mb-6">
+                Imagery Rules
+              </h3>
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* DO */}
+                <div className="border border-green-500/30 p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <p className="font-system text-xs tracking-[0.2em] text-green-500 uppercase">
+                      Do Use
+                    </p>
+                  </div>
+                  <ul className="space-y-3">
+                    {[
+                      "Black and white portraits",
+                      "Silhouettes against light",
+                      "Images of physical strength (gym, nature)",
+                      "Architectural lines and structures",
+                      "Sharp, fitted clothing (black t-shirts, tailored suits)",
+                      "Training gear and athletic imagery",
+                      "High contrast, cinematic lighting",
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                        <span className="font-scripture text-sm text-empire/70">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* DON'T */}
+                <div className="border border-blood/30 p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Ban className="w-5 h-5 text-blood" />
+                    <p className="font-system text-xs tracking-[0.2em] text-blood uppercase">
+                      Never Use
+                    </p>
+                  </div>
+                  <ul className="space-y-3">
+                    {[
+                      "Bright, commercial smiles",
+                      "Generic stock photos of 'businessmen'",
+                      "Cluttered or busy backgrounds",
+                      "Rounded corners or soft edges",
+                      "Pastel or muted color palettes",
+                      "Casual or sloppy appearance",
+                      "Low-quality or pixelated images",
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <Ban className="w-4 h-4 text-blood mt-0.5 shrink-0" />
+                        <span className="font-scripture text-sm text-empire/70">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Design Principles */}
+            <div>
+              <h3 className="font-system text-xs tracking-[0.3em] text-concrete/50 uppercase mb-6">
+                Design Principles
+              </h3>
+              <div className="grid md:grid-cols-3 gap-6">
+                {[
+                  {
+                    title: "No Rounded Corners",
+                    description: "Everything is sharp. Buttons, cards, images—all use 0px border-radius. Brutalism demands edges.",
+                  },
+                  {
+                    title: "1px Borders",
+                    description: "Thin, precise borders define structure. Never thick or heavy. Subtle separation, not division.",
+                  },
+                  {
+                    title: "Slow Animations",
+                    description: "Transitions are deliberate and weighty. 0.8s - 1.5s duration. Ease-out timing. Nothing bouncy or playful.",
+                  },
+                  {
+                    title: "High Contrast",
+                    description: "Gold on black. White on void. No muddy mid-tones. Text must be immediately legible.",
+                  },
+                  {
+                    title: "Generous Spacing",
+                    description: "Let elements breathe. Large padding. Negative space is a feature, not waste. Luxury needs room.",
+                  },
+                  {
+                    title: "Texture & Grain",
+                    description: "Subtle noise overlay on backgrounds. Film grain aesthetic. Never flat or sterile.",
+                  },
+                ].map((principle, index) => (
+                  <motion.div
+                    key={principle.title}
+                    className="border border-concrete/20 p-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                  >
+                    <p className={`font-system text-sm tracking-wider uppercase mb-3 ${
+                      mode === "dominus" ? "text-blood" : "text-sovereign"
+                    }`}>
+                      {principle.title}
+                    </p>
+                    <p className="font-scripture text-sm text-empire/60 leading-relaxed">
+                      {principle.description}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
