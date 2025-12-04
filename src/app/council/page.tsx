@@ -92,11 +92,21 @@ export default function CouncilPage() {
             <p className="font-body text-xl text-ivory/60 max-w-2xl mx-auto mb-4">
               You have read the map. Now walk the path.
             </p>
-            <p className="font-body text-lg text-ivory/40 max-w-xl mx-auto">
+            <p className="font-body text-lg text-ivory/40 max-w-xl mx-auto mb-10">
               The inner circle for men ready to implement The Dominus Code at
               the highest level. Direct access. Real accountability. No
               bullshit.
             </p>
+            
+            <Link href="/council/apply">
+              <Button
+                variant={mode === "dominus" ? "blood" : "primary"}
+                size="lg"
+                icon
+              >
+                Apply Now
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>
