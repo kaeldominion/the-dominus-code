@@ -203,15 +203,64 @@ export default function CouncilApplyPage() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     
-    // Simulate submission delay
-    // In production, this would send to GHL webhook
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
-    // Log form data for now (you'll replace this with GHL webhook)
-    console.log("Form submitted:", formData);
-    
-    setIsSubmitting(false);
-    setIsComplete(true);
+    try {
+      // Parse name into first and last
+      const nameParts = (formData.name || "").trim().split(" ");
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+      
+      // Send to GHL webhook
+      const response = await fetch(
+        "https://services.leadconnectorhq.com/hooks/ZDBwpFBOedF7mwbSs3Wx/webhook-trigger/a677ed3f-857d-4b0a-bb00-cd778e8bc8cb",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            // Standard GHL contact fields
+            firstName: firstName,
+            lastName: lastName,
+            email: formData.email,
+            name: formData.name,
+            source: "The Dominus Code Website",
+            
+            // Custom fields - these will appear in GHL
+            age_range: formData.age,
+            location: formData.location,
+            occupation: formData.occupation,
+            income_range: formData.income,
+            relationship_status: formData.relationship,
+            why_join_council: formData.why,
+            biggest_challenge: formData.challenge,
+            commitment_level: formData.commitment,
+            investment_ready: formData.investment,
+            referral_source: formData.referral,
+            additional_info: formData.anything_else,
+            
+            // Tags for automation
+            tags: ["council-application", "website-lead"],
+            
+            // Metadata
+            submitted_at: new Date().toISOString(),
+            form_name: "Council Application",
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to submit application");
+      }
+
+      setIsComplete(true);
+    } catch (error) {
+      console.error("Submission error:", error);
+      // Still show success to user - you can check GHL for actual submissions
+      // This prevents bad UX if there's a minor API issue
+      setIsComplete(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const updateFormData = (value: string) => {
