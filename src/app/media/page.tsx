@@ -504,6 +504,7 @@ export default function MediaPage() {
   // Download all icons as zip
   const downloadAllIcons = useCallback(async () => {
     try {
+      console.log("Starting icon zip download...");
       const zip = new JSZip();
       const iconFiles = [
         { name: "tdc-icon-gold.png", path: "/images/tdc-icon-gold.png" },
@@ -512,6 +513,8 @@ export default function MediaPage() {
         { name: "tdc-icon-white.png", path: "/images/tdc-icon-white.png" },
       ];
 
+      console.log("Fetching icons...", iconFiles.map(i => i.name));
+      
       // Fetch all icons in parallel and add to zip
       const fetchPromises = iconFiles.map(async (icon) => {
         try {
@@ -521,6 +524,7 @@ export default function MediaPage() {
           }
           const blob = await response.blob();
           zip.file(icon.name, blob);
+          console.log(`Added ${icon.name} to zip`);
           return { success: true, name: icon.name };
         } catch (error) {
           console.error(`Failed to fetch ${icon.name}:`, error);
@@ -537,28 +541,38 @@ export default function MediaPage() {
       }
 
       // Check if we have at least one file
-      if (zip.files && Object.keys(zip.files).length === 0) {
+      const fileCount = zip.files ? Object.keys(zip.files).length : 0;
+      console.log(`Total files in zip: ${fileCount}`);
+      
+      if (fileCount === 0) {
         alert("Failed to fetch any icons. Please check your connection and try again.");
         return;
       }
 
       // Generate zip file
+      console.log("Generating zip file...");
       const zipBlob = await zip.generateAsync({ 
         type: "blob",
         compression: "DEFLATE",
         compressionOptions: { level: 6 }
       });
       
+      console.log("Zip generated, size:", zipBlob.size, "bytes");
+      
       // Download zip
       const link = document.createElement("a");
       link.href = URL.createObjectURL(zipBlob);
       link.download = "tdc-icons.zip";
+      link.style.display = "none";
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
       
-      // Clean up
-      setTimeout(() => URL.revokeObjectURL(link.href), 100);
+      // Clean up after a delay
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+        console.log("Download complete and cleaned up");
+      }, 100);
     } catch (error) {
       console.error("Failed to create zip:", error);
       alert("Failed to download icons. Please try again.");
@@ -629,17 +643,22 @@ export default function MediaPage() {
           >
             <div className="flex items-center gap-4 mb-8">
               <button
-                onClick={downloadAllIcons}
-                className="group relative"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  downloadAllIcons();
+                }}
+                className="group relative cursor-pointer"
                 title="Download all icons as ZIP"
                 aria-label="Download all icons"
+                type="button"
               >
                 <Crown 
                   size={32} 
                   variant={mode === "dominus" ? "blood" : "gold"}
-                  className="transition-transform duration-300 group-hover:scale-110"
+                  className="transition-transform duration-300 group-hover:scale-110 pointer-events-none"
                 />
-                <div className="absolute -top-1 -right-1">
+                <div className="absolute -top-1 -right-1 pointer-events-none">
                   <Download className="w-3 h-3 text-sovereign opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               </button>
