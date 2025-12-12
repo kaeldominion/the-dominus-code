@@ -1,0 +1,14 @@
+User-agent: *
+Disallow: /docs/
+Disallow: /gens/
+Disallow: /api/
+
+# Allow main pages
+Allow: /
+Allow: /calibration
+Allow: /council
+Allow: /media
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+
