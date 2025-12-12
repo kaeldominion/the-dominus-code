@@ -695,8 +695,12 @@ export default function OathPage() {
                   <Button
                     variant="secondary"
                     onClick={() => (window.location.href = "/council")}
+                    className="relative"
                   >
                     Join The Council
+                    <span className="ml-2 text-[10px] tracking-[0.2em] text-sovereign/60 uppercase">
+                      (Coming Soon)
+                    </span>
                   </Button>
                 </motion.div>
               </div>

@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Dominus Code | Social Asset Factory V36</title>
+    
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- IMAGE GENERATION ENGINES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            /* BRAND PALETTE */
+            --void-black: #050505;
+            --dominus-gold: #E5C372;
+            --dominus-gold-dim: #8a6d3b;
+            --oxblood: #8A0303;
+            --paper: #E6E6E6;
+            --pure-white: #FFFFFF;
+            
+            /* DYNAMIC OPACITY VAR */
+            --bg-op: 0.5;
+
+            /* ASSET DIMENSIONS */
+            --print-width: 1052px; 
+            --print-height: 825px;
+            --spine-width: 52px;
+            
+            /* HARDCOVER DIMENSIONS */
+            --hc-width: 1152px; 
+            --hc-height: 925px;
+            
+            --digital-width: 640px; 
+            --digital-height: 1000px;
+            
+            /* AUDIO DIMENSIONS */
+            --audio-size: 500px;
+            
+            --yt-width: 853px; 
+            --yt-height: 480px;
+            
+            --tw-width: 500px; 
+            --tw-height: 167px;
+            
+            --sq-width: 500px;
+            --sq-height: 500px;
+        }
+
+        body {
+            background-color: #111;
+            background-image: radial-gradient(circle at center, #222 0%, #050505 100%);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--paper);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- UI ELEMENTS --- */
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: var(--dominus-gold);
+            text-shadow: 0 0 15px rgba(229, 195, 114, 0.4); 
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        
+        .section-title {
+            font-family: 'Cinzel', serif;
+            color: var(--pure-white);
+            border-bottom: 2px solid var(--dominus-gold);
+            padding-bottom: 15px;
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 80px;
+            margin-bottom: 40px;
+            font-size: 24px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .controls {
+            background: rgba(20, 20, 20, 0.9);
+            padding: 30px;
+            border: 1px solid var(--dominus-gold-dim);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 1100px;
+            box-sizing: border-box;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 11px;
+            color: var(--dominus-gold);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input, textarea {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: var(--pure-white);
+            padding: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            border-radius: 2px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="range"] {
+            padding: 0;
+            cursor: pointer;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--dominus-gold);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+        }
+
+        .button-group {
+            grid-column: span 2;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: var(--dominus-gold);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 180px;
+        }
+
+        button:hover {
+            background-color: var(--pure-white);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(229, 195, 114, 0.6);
+        }
+
+        button.secondary {
+            background-color: transparent;
+            border: 1px solid var(--dominus-gold);
+            color: var(--dominus-gold);
+        }
+
+        button.secondary:hover {
+            background-color: var(--dominus-gold);
+            color: #000;
+        }
+
+        /* --- PREVIEW CONTAINERS --- */
+        .canvas-container {
+            margin-bottom: 60px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border: 1px solid #222;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .label {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            color: #666;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        /* --- UNIVERSAL BRAND STYLES --- */
+        .texture-bg {
+            background-color: var(--void-black);
+            position: relative;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        /* PHYSICAL LAYERS - LOW Z-INDEX */
+        .texture-layer {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: var(--bg-op);
+            z-index: 1 !important;
+            pointer-events: none;
+        }
+        
+        .sheen-layer {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at top right, rgba(197, 160, 89, 0.08), transparent 60%);
+            z-index: 2 !important;
+            pointer-events: none;
+        }
+        
+        /* CONTENT LOCK - HIGH Z-INDEX */
+        .back-panel, .front-panel, .spine-panel,
+        .yt-safe-area, 
+        #tw-header .content-wrapper, #tw-header .logo-target {
+            position: relative;
+            z-index: 20 !important;
+        }
+
+        #ig-story > *:not(.texture-layer):not(.sheen-layer),
+        #sq-post > *:not(.texture-layer):not(.sheen-layer),
+        #digital-cover > *:not(.texture-layer):not(.sheen-layer),
+        #audio-cover > *:not(.texture-layer):not(.sheen-layer) {
+            position: relative;
+            z-index: 20 !important;
+        }
+
+        .gold-text { 
+            color: var(--dominus-gold); 
+            text-shadow: 0 0 20px rgba(229, 195, 114, 0.2);
+        }
+        .white-text { color: var(--pure-white); }
+        .red-accent { background-color: var(--oxblood); }
+        
+        .cinzel-black { font-family: 'Cinzel', serif; font-weight: 900; }
+        .cinzel-bold { font-family: 'Cinzel', serif; font-weight: 700; }
+        .cinzel-reg { font-family: 'Cinzel', serif; font-weight: 400; }
+        .montserrat { font-family: 'Montserrat', sans-serif; }
+        .cormorant { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+
+        .logo-target {
+            filter: drop-shadow(0 0 10px rgba(229, 195, 114, 0.4)) drop-shadow(0 4px 6px rgba(0,0,0,0.8));
+            object-fit: contain;
+        }
+
+        /* --- 1. PRINT WRAP (Paperback) --- */
+        #print-wrap {
+            width: var(--print-width);
+            height: var(--print-height);
+            display: flex;
+            position: relative;
+        }
+
+        /* --- 1B. HARDCOVER WRAP (New Geometry) --- */
+        #hardcover-wrap {
+            width: var(--hc-width);
+            height: var(--hc-height);
+            display: flex;
+            position: relative;
+            box-sizing: border-box;
+            padding: 0 50px; 
+            justify-content: center;
+            align-items: stretch; 
+        }
+
+        #hardcover-wrap .back-panel, 
+        #hardcover-wrap .front-panel {
+            margin-top: 50px;
+            margin-bottom: 50px;
+            height: calc(100% - 100px);
+        }
+
+        #hardcover-wrap .spine-panel {
+            height: 100%;
+            padding-top: 90px;
+            background: rgba(255,255,255,0.03);
+            border-left: 1px solid rgba(0,0,0,0.5);
+            border-right: 1px solid rgba(0,0,0,0.5);
+        }
+
+        #hardcover-wrap .spine-author {
+            bottom: 170px;
+        }
+
+        .back-panel, .front-panel {
+            width: 500px;
+            height: 100%;
+            padding: 50px 60px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .back-panel { 
+            border-right: 1px solid rgba(255,255,255,0.08); 
+            padding: 50px 40px;
+        }
+        
+        .spine-panel {
+            width: var(--spine-width);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative; 
+            padding: 40px 0;
+            box-sizing: border-box;
+            background: rgba(255,255,255,0.03);
+            border-left: 1px solid rgba(0,0,0,0.5);
+            border-right: 1px solid rgba(0,0,0,0.5);
+        }
+
+        /* Spine details */
+        .spine-text {
+            position: absolute;
+            top: 45%; left: 50%;
+            transform: translate(-50%, -50%) rotate(90deg);
+            font-size: 16px; 
+            font-weight: 400;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            width: 600px; 
+            text-align: center;
+        }
+
+        .spine-author {
+            position: absolute;
+            bottom: 120px; 
+            left: 50%;
+            transform: translate(-50%, 0) rotate(90deg);
+            font-size: 14px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--dominus-gold);
+            white-space: nowrap;
+        }
+        
+        .spine-crown-img {
+            width: 24px;
+            margin-top: 30px;
+        }
+
+        /* Front Elements */
+        .front-panel { 
+            align-items: center; 
+            text-align: center; 
+            justify-content: flex-start; 
+            padding-top: 80px;
+        }
+        .crown-img { width: 90px; margin-bottom: 25px; }
+        
+        .main-title { 
+            font-size: 76px; 
+            line-height: 0.85; 
+            letter-spacing: -2px; 
+            text-transform: uppercase; 
+            margin: 0; 
+            text-shadow: 0 0 25px rgba(229, 195, 114, 0.35), 0 10px 30px rgba(0,0,0,0.9);
+        }
+        
+        .title-pre { 
+            font-size: 22px; 
+            letter-spacing: 12px; 
+            color: var(--pure-white); 
+            margin-bottom: 10px; 
+            display: block; 
+            font-weight: 700; 
+            margin-right: -12px;
+        }
+        
+        .divider { 
+            width: 4px; 
+            height: 80px; 
+            margin: 40px auto; 
+            background: linear-gradient(to bottom, var(--oxblood), transparent);
+        }
+        
+        .subtitle { 
+            font-size: 26px; 
+            letter-spacing: 2px; 
+            line-height: 1.1; 
+            text-transform: uppercase; 
+            margin-bottom: auto; 
+            color: var(--paper);
+        }
+        
+        .author-name { 
+            font-size: 18px; 
+            letter-spacing: 8px; 
+            text-transform: uppercase; 
+            color: var(--dominus-gold); 
+            margin-top: auto;
+            font-weight: 600;
+        }
+
+        /* Back Elements */
+        .back-head { 
+            font-size: 34px; 
+            line-height: 1.1; 
+            text-transform: uppercase; 
+            margin-bottom: 25px; 
+            color: var(--pure-white);
+        }
+        
+        .quote-box { 
+            border-left: 3px solid var(--oxblood); 
+            padding-left: 20px; 
+            margin-bottom: 25px; 
+        }
+        
+        .quote-text { 
+            font-size: 18px; 
+            line-height: 1.5; 
+            color: #ccc; 
+        }
+        
+        .bullets { list-style: none; padding: 0; margin: 0; margin-bottom: 25px; }
+        .bullets li { 
+            font-size: 15px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            margin-bottom: 12px; 
+            display: flex; 
+            align-items: center; 
+            color: var(--paper);
+        }
+        .bullets li::before { 
+            content: '◆'; 
+            color: var(--dominus-gold); 
+            margin-right: 15px; 
+            font-size: 10px; 
+        }
+        
+        /* Bio Position */
+        .bio-section {
+            border-top: 1px solid rgba(197, 160, 89, 0.3);
+            padding-top: 15px;
+            margin-bottom: auto; 
+        }
+        
+        .bio-header { 
+            font-size: 14px; 
+            color: var(--dominus-gold); 
+            margin-bottom: 5px; 
+            text-transform: uppercase; 
+            font-weight: bold; 
+            letter-spacing: 2px; 
+        }
+        
+        .bio-text { 
+            font-size: 11px; 
+            color: #999; 
+            line-height: 1.4; 
+            text-align: justify;
+        }
+        
+        /* Website on Back - ABSOLUTE BOTTOM LEFT */
+        .back-website {
+            position: absolute;
+            bottom: 50px; 
+            left: 40px; 
+            text-align: left;
+            font-size: 10px; 
+            letter-spacing: 3px;
+            color: var(--pure-white);
+            font-weight: 600;
+            opacity: 0.8;
+            z-index: 20;
+        }
+
+        /* --- 2. DIGITAL COVER --- */
+        #digital-cover { 
+            width: var(--digital-width); 
+            height: var(--digital-height); 
+            padding: 80px 60px; 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+            position: relative; 
+            z-index: 2;
+        }
+        
+        #digital-cover .crown-img { width: 120px; margin-bottom: 30px; }
+        #digital-cover .main-title { font-size: 100px; margin-bottom: 10px; }
+        #digital-cover .title-pre { font-size: 30px; letter-spacing: 12px; margin-bottom: 10px; margin-right: -12px; }
+        #digital-cover .subtitle { font-size: 32px; color: var(--pure-white); margin-top: 20px; }
+        #digital-cover .author-name { margin-top: auto; font-size: 24px; }
+        
+        /* --- 2B. AUDIO COVER (1:1) - RECALIBRATED --- */
+        #audio-cover {
+            width: var(--audio-size);
+            height: var(--audio-size);
+            padding: 50px; /* Reduced from 60px 40px */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        #audio-cover .crown-img { width: 70px; margin-bottom: 20px; }
+        #audio-cover .title-pre { font-size: 18px; letter-spacing: 10px; margin-bottom: 5px; margin-right: -10px; font-weight: 700; color:var(--pure-white); font-family: 'Cinzel', serif; display:block; }
+        #audio-cover .main-title { font-size: 60px; margin-bottom: 10px; }
+        #audio-cover .divider { width: 3px; height: 40px; margin: 20px auto; }
+        /* FLOATING SUBTITLE LOGIC */
+        #audio-cover .subtitle { 
+            font-size: 24px; 
+            color: var(--pure-white); 
+            margin-top: auto; 
+            margin-bottom: auto; 
+        }
+        #audio-cover .author-name { 
+            margin-top: 0; 
+            font-size: 20px; 
+        }
+
+
+        /* --- 3. SOCIAL ASSETS --- */
+        #yt-banner {
+            width: var(--yt-width);
+            height: var(--yt-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .yt-safe-area {
+            width: 515px;
+            height: 141px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+        
+        .yt-content-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-align: left;
+        }
+        
+        .yt-titles {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .yt-content-right {
+            text-align: right;
+            border-left: 2px solid var(--oxblood);
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 80%;
+        }
+
+        #yt-banner .crown-img { width: 40px !important; margin: 0 !important; }
+        #yt-banner .title-pre { font-size: 10px !important; margin-bottom: 2px !important; letter-spacing: 3px !important; margin-right: 0 !important; }
+        #yt-banner .main-title { font-size: 32px !important; line-height: 0.9 !important; }
+        #yt-banner .subtitle { font-size: 12px !important; line-height: 1.2 !important; margin-bottom: 8px !important; }
+        #yt-banner .social-cta { font-size: 10px !important; padding: 5px 15px !important; margin: 0 !important; }
+
+        #tw-header {
+            width: var(--tw-width);
+            height: var(--tw-height);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center; 
+            padding: 0 20px;
+            gap: 30px;
+            z-index: 2;
+        }
+        
+        #tw-header .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; 
+            border-right: 2px solid var(--oxblood);
+            padding-right: 30px;
+        }
+        
+        #tw-header .title-pre { font-size: 10px !important; letter-spacing: 3px !important; text-align: right; margin-right: -3px !important; margin-bottom: 0px !important; line-height: 1.2; }
+        #tw-header .main-title { font-size: 32px !important; text-shadow:none; text-align: right; line-height: 0.9; }
+        #tw-header .website-text { font-size: 9px !important; margin-top: 5px; text-align: right; letter-spacing: 2px; }
+        #tw-header .logo-target { width: 45px !important; }
+
+        #ig-story {
+            width: 360px;
+            height: 640px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+            border: 1px solid #333;
+            z-index: 2;
+        }
+        #ig-story .title-pre { margin-bottom: 10px !important; margin-top: 10px; letter-spacing: 12px; margin-right: -12px; }
+
+        #sq-post {
+            width: var(--sq-width);
+            height: var(--sq-height);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+            border: 1px solid #333;
+            z-index: 2;
+        }
+        #sq-post .title-pre { margin-bottom: 10px !important; letter-spacing: 12px; margin-right: -12px; }
+
+        .social-cta {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--dominus-gold);
+            font-size: 14px;
+            margin-top: 10px;
+            border: 1px solid var(--dominus-gold);
+            padding: 10px 20px;
+            display: inline-block;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>The Dominus Social Factory</h1>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+        <div class="input-group full-width">
+            <label>1. Upload Logo (Transparent PNG/SVG)</label>
+            <input type="file" id="in-logo" accept="image/*">
+        </div>
+        
+        <!-- NEW TEXTURE CONTROLS -->
+        <div class="input-group">
+            <label>2. Upload Texture (Optional)</label>
+            <input type="file" id="in-texture" accept="image/*">
+            <button id="upload-btn" class="secondary" style="width:100%; margin-top:5px; pointer-events:none; border:none; text-align:left; padding-left:0; font-size:10px;">NO TEXTURE LOADED</button>
+        </div>
+        <div class="input-group">
+            <label>Texture Opacity <span id="op-val">50%</span></label>
+            <input type="range" id="in-opacity" min="0" max="1.0" step="0.01" value="0.5">
+        </div>
+        
+        <div class="input-group">
+            <label>Title Line 1 (Pre)</label>
+            <input type="text" id="in-pre" value="THE">
+        </div>
+        <div class="input-group">
+            <label>Title Main</label>
+            <input type="text" id="in-title" value="DOMINUS CODE">
+        </div>
+        
+        <div class="input-group full-width">
+            <label>Subtitle / Hook (Use period for line break)</label>
+            <input type="text" id="in-sub" value="F*CK MONOGAMY. BUILD A DYNASTY.">
+        </div>
+        
+        <div class="input-group full-width">
+            <label>Author Name</label>
+            <input type="text" id="in-author" value="SPENCER TARRING">
+        </div>
+
+        <div class="input-group full-width">
+            <label>Back Headline (Book)</label>
+            <textarea id="in-back-head">THE WORLD DOESN'T NEED MORE HAPPY MEN. IT NEEDS STRONG ONES.</textarea>
+        </div>
+        
+        <div class="input-group full-width">
+            <label>Short Bio (Book)</label>
+            <textarea id="in-bio">From the high-voltage chaos of Shanghai nightlife to the disciplined sovereignty of Dubai, Spencer Tarring has walked the path from excess to order. He built and exited a multi-million-dollar infrastructure business and commanded international stages. In 2020, he killed the boy to build the man, forging The Dominus Code—a framework for men ready to master their nature and build a dynasty.</textarea>
+        </div>
+        
+        <div class="input-group">
+            <label>Website URL</label>
+            <input type="text" id="in-website" value="THEDOMINUSCODE.COM">
+        </div>
+        <div class="input-group">
+            <label>Action / CTA</label>
+            <input type="text" id="in-cta" value="JOIN THE ORDER">
+        </div>
+
+        <div class="button-group">
+            <button onclick="updateAllPreviews()">Update All Assets</button>
+        </div>
+    </div>
+
+    <!-- BOOK ASSETS -->
+    <div class="section-title">BOOK ASSETS</div>
+    
+    <div class="button-group" style="justify-content: flex-start; margin-bottom: 20px;">
+        <button onclick="downloadAsset('print-wrap', 'Paperback_Wrap')">Download Paperback</button>
+        <button onclick="downloadPDF('print-wrap', 'Paperback_Wrap')">Download Paperback PDF</button>
+        <button class="secondary" onclick="downloadAsset('hardcover-wrap', 'Hardcover_Wrap')">Download Hardcover</button>
+        <button class="secondary" onclick="downloadPDF('hardcover-wrap', 'Hardcover_Wrap')">Download Hardcover PDF</button>
+        <button onclick="downloadAsset('digital-cover', 'Digital_Cover')">Download Digital</button>
+        <button onclick="downloadAsset('audio-cover', 'Audio_Book_3000px', 6)">Download Audio (3000px)</button>
+    </div>
+
+    <!-- 1. PAPERBACK WRAP -->
+    <div class="canvas-container">
+        <div class="label">PAPERBACK WRAP</div>
+        <div id="print-wrap" class="texture-bg">
+            <div class="texture-layer"></div>
+            <div class="sheen-layer"></div>
+            <!-- BACK -->
+            <div class="back-panel">
+                <div class="back-head cinzel-bold" id="out-back-head">THE WORLD...</div>
+                
+                <!-- UPDATED EXCERPT -->
+                <div class="quote-box">
+                    <div class="quote-text cormorant">"I’m not here to sell a fantasy. I’ve lived too many of them already. This isn’t a self-help book. I’m not interested in helping you feel better. I’m interested in helping you remember who you are."</div>
+                </div>
+                
+                <ul class="bullets montserrat">
+                    <li>Master Your Energy</li>
+                    <li>Command The Feminine</li>
+                    <li>Secure Your Bloodline</li>
+                </ul>
+                
+                <!-- MOVED BIO HERE -->
+                <div class="bio-section">
+                    <div class="bio-header" id="out-bio-header">SPENCER TARRING</div>
+                    <div class="bio-text montserrat" id="out-bio">Bio text here...</div>
+                </div>
+
+                <!-- ADDED WEBSITE -->
+                <div class="back-website montserrat" id="out-back-website">THEDOMINUSCODE.COM</div>
+            </div>
+            
+            <!-- SPINE -->
+            <div class="spine-panel">
+                <img class="spine-crown-img logo-target" src="" alt="">
+                <div class="spine-text white-text cinzel-reg" id="out-spine-title">THE DOMINUS CODE</div>
+                <div class="spine-author montserrat" id="out-spine-author">SPENCER TARRING</div>
+            </div>
+            
+            <!-- FRONT -->
+            <div class="front-panel">
+                <img class="crown-img logo-target" src="" alt="">
+                <div class="title-pre cinzel-bold" id="out-pre-book">THE</div>
+                <div class="main-title cinzel-black gold-text" id="out-title-book">DOMINUS<br>CODE</div>
+                <div class="divider"></div>
+                <div class="subtitle cinzel-bold" id="out-sub-book">SUBTITLE HERE</div>
+                <div class="author-name montserrat" id="out-author-book">SPENCER TARRING</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1B. HARDCOVER WRAP (HIDDEN PREVIEW, GENERATED ON DEMAND OR BELOW) -->
+    <div class="canvas-container">
+        <div class="label">HARDCOVER WRAP (EXPANDED +100px)</div>
+        <div id="hardcover-wrap" class="texture-bg">
+            <div class="texture-layer"></div>
+            <div class="sheen-layer"></div>
+            <!-- BACK -->
+            <div class="back-panel">
+                <div class="back-head cinzel-bold" id="out-back-head-hc">THE WORLD...</div>
+                <div class="quote-box">
+                    <div class="quote-text cormorant">"I’m not here to sell a fantasy. I’ve lived too many of them already. This isn’t a self-help book. I’m not interested in helping you feel better. I’m interested in helping you remember who you are."</div>
+                </div>
+                <ul class="bullets montserrat">
+                    <li>Master Your Energy</li>
+                    <li>Command The Feminine</li>
+                    <li>Secure Your Bloodline</li>
+                </ul>
+                <div class="bio-section">
+                    <div class="bio-header" id="out-bio-header-hc">SPENCER TARRING</div>
+                    <div class="bio-text montserrat" id="out-bio-hc">Bio text here...</div>
+                </div>
+                <div class="back-website montserrat" id="out-back-website-hc">THEDOMINUSCODE.COM</div>
+            </div>
+            
+            <!-- SPINE -->
+            <div class="spine-panel">
+                <img class="spine-crown-img logo-target" src="" alt="">
+                <div class="spine-text white-text cinzel-reg" id="out-spine-title-hc">THE DOMINUS CODE</div>
+                <div class="spine-author montserrat" id="out-spine-author-hc">SPENCER TARRING</div>
+            </div>
+            
+            <!-- FRONT -->
+            <div class="front-panel">
+                <img class="crown-img logo-target" src="" alt="">
+                <div class="title-pre cinzel-bold" id="out-pre-book-hc">THE</div>
+                <div class="main-title cinzel-black gold-text" id="out-title-book-hc">DOMINUS<br>CODE</div>
+                <div class="divider"></div>
+                <div class="subtitle cinzel-bold" id="out-sub-book-hc">SUBTITLE HERE</div>
+                <div class="author-name montserrat" id="out-author-book-hc">SPENCER TARRING</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AUDIO COVER (1:1 Aspect Ratio) -->
+     <div class="canvas-container">
+        <div class="label">AUDIO BOOK (1:1)</div>
+        <div id="audio-cover" class="texture-bg">
+            <div class="texture-layer"></div>
+            <div class="sheen-layer"></div>
+            <img class="crown-img logo-target" src="" alt="">
+            <div class="title-pre" id="out-pre-audio">THE</div>
+            <div class="main-title cinzel-black gold-text" id="out-title-audio">DOMINUS<br>CODE</div>
+            <div class="divider red-accent"></div>
+            <div class="subtitle cinzel-bold" id="out-sub-audio">SUBTITLE HERE</div>
+            <div class="author-name montserrat" id="out-author-audio">SPENCER TARRING</div>
+        </div>
+    </div>
+
+    <!-- 2. SOCIAL ASSETS -->
+    <div class="section-title">SOCIAL ASSETS</div>
+    
+    <div class="button-group" style="justify-content: flex-start; margin-bottom: 20px;">
+        <button onclick="downloadAsset('yt-banner', 'Dominus_YouTube_Banner')">YouTube Banner</button>
+        <button onclick="downloadAsset('tw-header', 'Dominus_X_Header')">X Header</button>
+        <button onclick="downloadAsset('ig-story', 'Dominus_IG_Story')">IG Story</button>
+        <button onclick="downloadAsset('sq-post', 'Dominus_Square_Post')">Square Post</button>
+    </div>
+
+    <!-- YOUTUBE -->
+    <div class="canvas-container">
+        <div class="label">YOUTUBE BANNER (Safe Zone Optimized)</div>
+        <div id="yt-banner" class="texture-bg">
+            <div class="texture-layer"></div>
+            <div class="sheen-layer"></div>
+            <div class="yt-safe-area">
+                <div class="yt-content-left">
+                    <img class="crown-img logo-target" src="" alt="Crown">
+                    <div class="yt-titles">
+                        <div class="title-pre cinzel-bold white-text" id="out-pre-yt">THE</div>
+                        <div class="main-title cinzel-black gold-text" id="out-title-yt">DOMINUS<br>CODE</div>
+                    </div>
+                </div>
+                <div class="yt-content-right">
+                    <div class="subtitle cinzel-bold white-text" id="out-sub-yt">F*CK MONOGAMY.<br>BUILD A DYNASTY.</div>
+                    <div><span class="social-cta" id="out-cta-yt">JOIN THE ORDER</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TWITTER -->
+    <div class="canvas-container">
+        <div class="label">X / TWITTER HEADER (1500x500 Scaled)</div>
+        <div id="tw-header" class="texture-bg">
+            <div class="texture-layer"></div>
+            <div class="sheen-layer"></div>
+            <div class="content-wrapper">
+                <div class="title-pre cinzel-bold white-text" id="out-pre-tw">THE</div>
+                <div class="main-title cinzel-black gold-text" id="out-title-tw">DOMINUS CODE</div>
+                <div class="website-text montserrat white-text" id="out-website-tw">THEDOMINUSCODE.COM</div>
+            </div>
+            <img class="logo-target" src="" alt="Logo">
+        </div>
+    </div>
+
+    <!-- IG & SQUARE GRID -->
+    <div style="display:flex; gap: 40px; flex-wrap:wrap; justify-content: center;">
+        
+        <div class="canvas-container">
+            <div class="label">IG / TIKTOK STORY</div>
+            <div id="ig-story" class="texture-bg">
+                <div class="texture-layer"></div>
+                <div class="sheen-layer"></div>
+                <img class="logo-target" src="" style="width: 80px; margin-bottom: 40px;">
+                <div class="title-pre cinzel-bold white-text" style="font-size: 16px;" id="out-pre-ig">THE</div>
+                <div class="main-title cinzel-black gold-text" style="font-size: 58px; line-height: 0.9; margin-bottom: 30px;" id="out-title-ig">DOMINUS<br>CODE</div>
+                <div class="subtitle cinzel-bold white-text" style="font-size: 20px; line-height: 1.4; margin-bottom: 60px;" id="out-sub-ig">SUBTITLE</div>
+                <div class="social-cta" id="out-cta-ig">LINK IN BIO</div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <div class="label">SQUARE POST</div>
+            <div id="sq-post" class="texture-bg">
+                <div class="texture-layer"></div>
+                <div class="sheen-layer"></div>
+                <div class="title-pre cinzel-bold white-text" style="font-size: 14px;" id="out-pre-sq">THE</div>
+                <div class="main-title cinzel-black gold-text" style="font-size: 54px; line-height: 0.9;" id="out-title-sq">DOMINUS<br>CODE</div>
+                <div class="divider" style="height: 50px; margin: 30px auto;"></div>
+                <img class="logo-target" src="" style="width: 60px;">
+                <div class="montserrat white-text" style="font-size: 12px; margin-top: 20px; letter-spacing: 3px;" id="out-author-sq">SPENCER TARRING</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- HIDDEN DIGITAL COVER (Absolute positioning off-screen) -->
+    <div style="position:fixed; top:0; left: -9999px;">
+        <div id="digital-cover" class="texture-bg">
+            <div class="texture-layer"></div>
+            <div class="sheen-layer"></div>
+            <img class="crown-img logo-target" src="" style="width: 120px; margin-bottom: 30px;">
+            <div class="title-pre cinzel-bold white-text" id="out-pre-dig">THE</div>
+            <div class="main-title cinzel-black gold-text" id="out-title-dig">DOMINUS<br>CODE</div>
+            <div class="divider red-accent" style="width: 4px; height: 80px; margin: 40px auto;"></div>
+            <div class="subtitle cinzel-bold" id="out-sub-dig">SUBTITLE</div>
+            <div class="author-name montserrat" id="out-author-dig">SPENCER TARRING</div>
+        </div>
+    </div>
+
+    <script>
+        // 1. DEFAULT LOGO (Embedded Gold Crown SVG) - UPDATED COLOR #E5C372
+        const defaultLogo = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23E5C372' d='M132.8 221.7c8.6-9.6 23.3-10.3 32.9-1.7l64.8 58.3 47.9-166.7c3.4-11.8 19.8-11.8 23.2 0l47.9 166.7 64.8-58.3c9.6-8.6 24.3-7.9 32.9 1.7 8.6 9.6 7.9 24.3-1.7 32.9l-96 106.7c-5.7 6.3-13.9 10-22.4 10H175.8c-8.5 0-16.7-3.6-22.4-10l-96-106.7c-9.6-8.6-10.3-23.3-1.7-32.9zm67.5 174.6h111.4c17.7 0 32 14.3 32 32s-14.3 32-32 32H200.3c-17.7 0-32-14.3-32-32s14.3-32 32-32z'/%3E%3C/svg%3E";
+
+        // Init Logo
+        const logoInputs = document.querySelectorAll('.logo-target');
+        logoInputs.forEach(img => img.src = defaultLogo);
+
+        // 2. FILE UPLOAD HANDLER (LOGO)
+        document.getElementById('in-logo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                logoInputs.forEach(img => img.src = event.target.result);
+            }
+            reader.readAsDataURL(file);
+        });
+
+        // 3. TEXTURE UPLOAD HANDLER (PHYSICAL DIV INJECTION)
+        document.getElementById('in-texture').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                // Update ALL texture layers directly via DOM style
+                const layers = document.querySelectorAll('.texture-layer');
+                layers.forEach(layer => {
+                    layer.style.backgroundImage = `url(${event.target.result})`;
+                });
+                
+                // Visual Feedback
+                const statusBtn = document.getElementById('upload-btn');
+                statusBtn.innerText = "TEXTURE LOADED & ACTIVE";
+                statusBtn.style.color = "#E5C372";
+                statusBtn.style.borderColor = "#E5C372";
+            }
+            reader.readAsDataURL(file);
+        });
+
+        // 4. OPACITY SLIDER HANDLER (PHYSICAL DIV OPACITY)
+        document.getElementById('in-opacity').addEventListener('input', function(e) {
+            const val = e.target.value;
+            // Update CSS Variable for Opacity (still used by physical divs via var)
+            document.documentElement.style.setProperty('--bg-op', val);
+            // Update Label
+            document.getElementById('op-val').innerText = Math.round(val * 100) + '%';
+        });
+
+        // 5. MAIN UPDATE FUNCTION
+        function updateAllPreviews() {
+            // Get Values and TRIM to avoid accidental user spaces
+            const pre = document.getElementById('in-pre').value.trim().toUpperCase();
+            const title = document.getElementById('in-title').value.trim().toUpperCase();
+            const sub = document.getElementById('in-sub').value.trim().toUpperCase();
+            const author = document.getElementById('in-author').value.trim().toUpperCase();
+            const website = document.getElementById('in-website').value.trim().toUpperCase();
+            const cta = document.getElementById('in-cta').value.trim().toUpperCase();
+            
+            const backHeadRaw = document.getElementById('in-back-head').value;
+            const bioRaw = document.getElementById('in-bio').value;
+
+            // HTML Formats
+            const titleHTML = title.replace(/\s/g, '<br>'); 
+            const titleLine = title; 
+            
+            // Subtitle Split Logic: Replace period followed by space with period + break
+            const subHTML = sub.replace(/\. /g, '.<br>').replace(/\.$/, '.<br>'); 
+
+            // --- BOOK PRINT WRAP ---
+            safeSetText('out-pre-book', pre);
+            safeSetHTML('out-title-book', titleHTML);
+            safeSetHTML('out-sub-book', subHTML);
+            safeSetText('out-author-book', author);
+            safeSetText('out-back-website', website);
+            
+            // SPINE: Combine PRE + MAIN TITLE for "THE DOMINUS CODE"
+            safeSetText('out-spine-title', pre + ' ' + titleLine);
+            safeSetText('out-spine-author', author);
+
+            safeSetText('out-bio-header', author);
+            safeSetText('out-bio', bioRaw);
+
+            // Back Headline Formatting
+            const parts = backHeadRaw.split('.');
+            let backHeadHTML = '';
+            if (parts.length > 1 && parts[1].trim() !== '') {
+                const p1 = parts[0] + '.';
+                const p2 = parts.slice(1).join('.').trim();
+                backHeadHTML = `${p1}<br><span class="gold-text">${p2}</span>`;
+            } else {
+                backHeadHTML = backHeadRaw.replace(/\n/g, '<br>');
+            }
+            safeSetHTML('out-back-head', backHeadHTML);
+
+            // --- HARDCOVER WRAP (Duplicate Data) ---
+            safeSetText('out-pre-book-hc', pre);
+            safeSetHTML('out-title-book-hc', titleHTML);
+            safeSetHTML('out-sub-book-hc', subHTML);
+            safeSetText('out-author-book-hc', author);
+            safeSetText('out-back-website-hc', website);
+            
+            safeSetText('out-spine-title-hc', pre + ' ' + titleLine);
+            safeSetText('out-spine-author-hc', author);
+
+            safeSetText('out-bio-header-hc', author);
+            safeSetText('out-bio-hc', bioRaw);
+            safeSetHTML('out-back-head-hc', backHeadHTML);
+
+
+            // --- DIGITAL COVER ---
+            safeSetText('out-pre-dig', pre);
+            safeSetHTML('out-title-dig', titleHTML);
+            safeSetHTML('out-sub-dig', subHTML);
+            safeSetText('out-author-dig', author);
+
+            // --- AUDIO COVER ---
+            safeSetText('out-pre-audio', pre);
+            safeSetHTML('out-title-audio', titleHTML);
+            safeSetHTML('out-sub-audio', subHTML);
+            safeSetText('out-author-audio', author);
+
+            // --- SOCIALS ---
+            safeSetText('out-pre-yt', pre);
+            safeSetHTML('out-title-yt', titleHTML);
+            safeSetHTML('out-sub-yt', subHTML);
+            safeSetText('out-cta-yt', cta);
+
+            safeSetText('out-pre-tw', pre);
+            safeSetText('out-title-tw', titleLine);
+            safeSetText('out-website-tw', website);
+
+            safeSetText('out-pre-ig', pre);
+            safeSetHTML('out-title-ig', titleHTML);
+            safeSetHTML('out-sub-ig', subHTML);
+            safeSetText('out-cta-ig', cta);
+
+            safeSetText('out-pre-sq', pre);
+            safeSetHTML('out-title-sq', titleHTML);
+            safeSetText('out-author-sq', author);
+        }
+
+        // Helper to avoid null errors
+        function safeSetText(id, text) {
+            const el = document.getElementById(id);
+            if(el) el.innerText = text;
+        }
+        function safeSetHTML(id, html) {
+            const el = document.getElementById(id);
+            if(el) el.innerHTML = html;
+        }
+
+        // 6. DOWNLOAD ENGINE
+        function downloadAsset(elementId, fileName, customScale) {
+            const element = document.getElementById(elementId);
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "GENERATING...";
+            
+            // Default scale is 3, unless overridden
+            const finalScale = customScale || 3;
+
+            // Wait a split second for any DOM repaints
+            setTimeout(() => {
+                html2canvas(element, {
+                    scale: finalScale, 
+                    useCORS: true, 
+                    allowTaint: true,
+                    backgroundColor: null, 
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `${fileName}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    btn.innerText = originalText;
+                }).catch(err => {
+                    alert("Error generating image. If using a custom logo, try a smaller file.");
+                    console.error(err);
+                    btn.innerText = originalText;
+                });
+            }, 100);
+        }
+
+        // 7. DOWNLOAD PDF ENGINE
+        async function downloadPDF(elementId, fileName) {
+            const { jsPDF } = window.jspdf;
+            const element = document.getElementById(elementId);
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "GENERATING PDF...";
+
+            try {
+                const canvas = await html2canvas(element, {
+                    scale: 3, 
+                    useCORS: true, 
+                    allowTaint: true,
+                    backgroundColor: null
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                
+                // Determine orientation based on aspect ratio
+                const orientation = imgWidth > imgHeight ? 'l' : 'p';
+                
+                const pdf = new jsPDF({
+                    orientation: orientation,
+                    unit: 'px',
+                    format: [imgWidth, imgHeight]
+                });
+
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                pdf.save(`${fileName}.pdf`);
+            } catch (err) {
+                console.error(err);
+                alert("Error generating PDF");
+            } finally {
+                btn.innerText = originalText;
+            }
+        }
+
+        // Initialize on Load
+        window.addEventListener('load', updateAllPreviews);
+
+    </script>
+</body>
+</html>

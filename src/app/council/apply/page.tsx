@@ -379,12 +379,19 @@ export default function CouncilApplyPage() {
 
       {/* Header */}
       <header className="p-6 flex items-center justify-between">
-        <Link href="/council" className="flex items-center gap-3">
-          <Crown size={28} variant={mode === "dominus" ? "blood" : "gold"} />
-          <span className="font-system text-[10px] tracking-[0.3em] text-concrete/50 uppercase hidden sm:block">
-            The Council Application
-          </span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/council" className="flex items-center gap-3">
+            <Crown size={28} variant={mode === "dominus" ? "blood" : "gold"} />
+            <span className="font-system text-[10px] tracking-[0.3em] text-concrete/50 uppercase hidden sm:block">
+              The Council Application
+            </span>
+          </Link>
+          <div className="inline-flex items-center gap-2 px-2 py-1 border border-sovereign/50">
+            <span className="font-system text-[8px] tracking-[0.2em] text-sovereign uppercase">
+              Coming Soon
+            </span>
+          </div>
+        </div>
         <div className="font-system text-xs text-concrete/40">
           {currentQuestion + 1} / {questions.length}
         </div>

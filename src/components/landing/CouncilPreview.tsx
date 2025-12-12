@@ -60,7 +60,11 @@ export function CouncilPreview() {
           <p className="font-system text-xs tracking-[0.4em] text-concrete/50 uppercase mb-4">
             For Those Ready to Execute
           </p>
-          
+          <div className="inline-flex items-center gap-2 px-3 py-1 border border-sovereign/50 mb-4">
+            <span className="font-system text-[10px] tracking-[0.3em] text-sovereign uppercase">
+              COMING SOON
+            </span>
+          </div>
           <h2 className="font-law text-3xl md:text-5xl tracking-[0.12em] text-empire mb-6">
             THE COUNCIL
           </h2>
@@ -126,12 +130,12 @@ export function CouncilPreview() {
               size="lg"
               icon
             >
-              Learn About The Council
+              Learn More
             </Button>
           </Link>
           
-          <p className="font-system text-[10px] tracking-[0.2em] text-concrete/40 uppercase mt-6">
-            Application Required • Limited Seats
+          <p className="font-system text-[10px] tracking-[0.2em] text-sovereign/60 uppercase mt-6">
+            Coming Soon • Application Required
           </p>
         </motion.div>
       </div>

@@ -33,7 +33,7 @@ const quickActions = [
   {
     icon: Users,
     title: "The Council",
-    description: "Join the next session",
+    description: "Coming Soon",
     href: "/council",
   },
   {
@@ -47,9 +47,9 @@ const quickActions = [
 const upcomingEvents = [
   {
     title: "Monthly Council Call",
-    date: "Dec 15, 2024",
-    time: "7:00 PM EST",
-    type: "Live",
+    date: "Coming Soon",
+    time: "TBA",
+    type: "Coming Soon",
   },
   {
     title: "Q4 Review Session",

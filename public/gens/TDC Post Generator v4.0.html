@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE DOMINUS CODE // LEGACY ARCHITECT v4.0</title>
+    
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- ENGINES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <style>
+        :root {
+            --dom-gold: #C5A059;
+            --dom-blood: #8a0303;
+            --dom-black: #050505;
+            --dom-paper: #E6E6E6;
+            --dom-charcoal: #1a1a1a;
+            --accent-color: var(--dom-gold);
+        }
+
+        /* GLOBAL RESET FOR SAFETY */
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: #000;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        /* WORKSPACE SCALER */
+        #scaler {
+            transform-origin: center center;
+            transition: transform 0.1s;
+            box-shadow: 0 0 150px rgba(0,0,0,0.9);
+        }
+
+        /* CANVAS BASE */
+        .card-canvas {
+            width: 1080px;
+            background-color: var(--dom-black);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid #111;
+        }
+
+        /* TEXTURES */
+        .texture-noise {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            opacity: 0.4; pointer-events: none; z-index: 1; mix-blend-mode: overlay;
+        }
+        
+        .texture-border {
+            position: absolute; top: 30px; left: 30px; right: 30px; bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            pointer-events: none; z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        /* FORMATS */
+        .format-9-16 { height: 1920px; } 
+        .format-4-5  { height: 1350px; } 
+        .format-1-1  { height: 1080px; } 
+
+        /* HEADER & ICON */
+        .header {
+            padding: 60px;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+
+        .header-icon-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-icon {
+            height: 45px;
+            width: auto;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+        }
+        .header-icon:hover { opacity: 1; transform: scale(1.05); }
+        
+        .footer {
+            padding: 60px;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .brand-mark {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: var(--dom-paper);
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .meta-tag {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .handle {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: var(--accent-color);
+            letter-spacing: 0.1em;
+            font-size: 20px;
+        }
+
+        /* PAGINATION PIPS */
+        .pips-container {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 20;
+            transition: opacity 0.3s ease;
+        }
+        .pips-container.hidden-pips { display: none !important; opacity: 0; pointer-events: none; }
+        
+        .pip {
+            width: 6px; height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .pip.active {
+            background: var(--accent-color);
+            transform: scale(1.5);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* CONTENT AREA BASE */
+        .content-area {
+            flex-grow: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            position: relative;
+            text-align: center;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        /* === FIELD STYLES (DEFAULT) === */
+        .field-1, .field-2, .field-3, .field-4 {
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        .field-1 { /* Top Meta */
+            font-family: 'Cinzel', serif;
+            color: var(--accent-color);
+            letter-spacing: 0.3em;
+            margin-bottom: 20px;
+            display: block;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            width: fit-content;
+        }
+
+        .field-2 { /* Headline */
+            font-family: 'Cinzel', serif;
+            color: var(--dom-paper);
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 30px;
+        }
+
+        .field-3 { /* Body */
+            font-family: 'Cormorant Garamond', serif;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.4;
+        }
+
+        .field-4 { /* Footer */
+            font-family: 'Montserrat', sans-serif;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-top: 40px;
+        }
+
+        /* --- MODE 1: LAW (Argument Flow) --- */
+        .mode-1.slide-0 .content-area { align-items: center; text-align: center; }
+        .mode-1.slide-0 .field-1 { font-size: 28px; letter-spacing: 0.5em; border-bottom: none; opacity: 0.8; margin-bottom: 60px;}
+        .mode-1.slide-0 .field-2 { font-size: 120px; font-weight: 900; line-height: 0.85; margin-bottom: 50px; }
+        .mode-1.slide-0 .field-3 { font-family: 'Montserrat'; font-size: 32px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-color); font-weight: 600; }
+        .mode-1.slide-0 .field-4 { display: none; }
+
+        .mode-1.slide-1 .content-area { align-items: flex-start; text-align: left; padding-left: 100px; }
+        .mode-1.slide-1 .field-1 { font-size: 24px; border-bottom: none; font-family:'Montserrat'; opacity:0.6; }
+        .mode-1.slide-1 .field-2 { font-size: 60px; margin-bottom: 20px; }
+        .mode-1.slide-1 .field-3 { font-size: 48px; border-left: 3px solid var(--accent-color); padding-left: 40px; }
+
+        .mode-1.slide-2 .content-area { align-items: flex-end; text-align: right; padding-right: 100px; }
+        .mode-1.slide-2 .field-1 { font-size: 24px; border-bottom: none; font-family:'Montserrat'; opacity:0.6; }
+        .mode-1.slide-2 .field-2 { font-size: 60px; margin-bottom: 20px; }
+        .mode-1.slide-2 .field-3 { font-size: 48px; border-right: 3px solid var(--accent-color); padding-right: 40px; border-left: none; }
+
+        .mode-1.slide-3 .content-area { align-items: center; text-align: center; }
+        .mode-1.slide-3 .field-1 { display: none; }
+        .mode-1.slide-3 .field-2 { font-size: 90px; margin-bottom: 30px; }
+        .mode-1.slide-3 .field-3 { font-size: 55px; font-style: italic; color: var(--accent-color); }
+
+        /* --- MODE 2: PASSAGE (Literary Flow) --- */
+        .mode-2.slide-0 .content-area { align-items: center; text-align: center; }
+        .mode-2.slide-0 .field-1 { font-size: 24px; letter-spacing: 0.3em; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px; margin-bottom: 40px; }
+        .mode-2.slide-0 .field-2 { font-size: 100px; font-style: italic; font-family: 'Cormorant Garamond'; font-weight: 600; line-height: 1; }
+        .mode-2.slide-0 .field-3 { font-family: 'Montserrat'; font-size: 20px; letter-spacing: 0.2em; opacity: 0.7; margin-top: 40px; }
+        .mode-2.slide-0 .field-4 { display: none; }
+
+        .mode-2.slide-1 .content-area, .mode-2.slide-2 .content-area, .mode-2.slide-3 .content-area { align-items: flex-start; text-align: left; padding: 0 80px; }
+        .mode-2.slide-1 .field-1, .mode-2.slide-2 .field-1, .mode-2.slide-3 .field-1 { font-size: 20px; border: none; font-family: 'Montserrat'; opacity: 0.5; margin-bottom: 20px; }
+        .mode-2.slide-1 .field-2, .mode-2.slide-2 .field-2, .mode-2.slide-3 .field-2 { display: none; }
+        .mode-2.slide-1 .field-3, .mode-2.slide-2 .field-3, .mode-2.slide-3 .field-3 { font-size: 50px; line-height: 1.5; font-style: normal; text-indent: 40px; }
+        .mode-2.slide-1 .field-4, .mode-2.slide-2 .field-4, .mode-2.slide-3 .field-4 { display: none; }
+
+        /* --- MODE 3: MAXIM (Impact Flow) --- */
+        .mode-3.slide-0 .content-area { align-items: center; text-align: center; }
+        .mode-3.slide-0 .field-1 { font-size: 20px; font-family: 'Montserrat'; letter-spacing: 0.3em; border: none; opacity: 0.6; }
+        .mode-3.slide-0 .field-2 { font-size: 110px; font-weight: 900; line-height: 0.9; margin: 40px 0; }
+        .mode-3.slide-0 .field-3 { font-size: 24px; font-family: 'Cinzel'; color: var(--accent-color); }
+        .mode-3.slide-0 .field-4 { display: none; }
+
+        .mode-3.slide-1 .content-area, .mode-3.slide-2 .content-area { align-items: center; text-align: center; }
+        .mode-3.slide-1 .field-1, .mode-3.slide-2 .field-1 { font-size: 18px; border-bottom: 1px solid var(--accent-color); padding-bottom: 10px; margin-bottom: 30px; }
+        .mode-3.slide-1 .field-2, .mode-3.slide-2 .field-2 { font-size: 90px; font-weight: 900; line-height: 0.95; }
+        .mode-3.slide-1 .field-3, .mode-3.slide-2 .field-3 { font-family: 'Montserrat'; font-size: 30px; opacity: 0.8; margin-top: 20px; }
+        
+        .mode-3.slide-3 .content-area { align-items: center; text-align: center; }
+        .mode-3.slide-3 .field-2 { font-size: 100px; color: var(--accent-color); font-weight: 700; margin-bottom: 20px; }
+        .mode-3.slide-3 .field-3 { font-size: 40px; font-style: italic; }
+
+        /* --- MODE 4: DEFINITION (Dictionary Flow) --- */
+        .mode-4.slide-0 .content-area { align-items: flex-start; text-align: left; padding-left: 80px; }
+        .mode-4.slide-0 .field-1 { font-size: 20px; border: none; font-family: 'Montserrat'; opacity: 0.5; text-transform: none; margin-bottom: 10px; }
+        .mode-4.slide-0 .field-2 { font-size: 120px; margin-bottom: 10px; line-height: 1; }
+        .mode-4.slide-0 .field-3 { font-family: 'Cormorant Garamond'; font-size: 40px; font-style: italic; opacity: 0.7; color: #fff; margin-bottom: 40px; }
+        .mode-4.slide-0 .field-4 { color: var(--accent-color); font-size: 24px; }
+
+        .mode-4.slide-1 .content-area { align-items: flex-start; text-align: left; padding-left: 100px; }
+        .mode-4.slide-1 .field-1 { font-size: 24px; border: none; opacity: 0.6; font-family:'Montserrat'; }
+        .mode-4.slide-1 .field-2 { font-size: 80px; color: #666; text-decoration: line-through; text-decoration-color: var(--accent-color); }
+        .mode-4.slide-1 .field-3 { font-size: 48px; border-left: 3px solid #333; padding-left: 40px; color: #aaa; }
+
+        .mode-4.slide-2 .content-area { align-items: flex-start; text-align: left; padding-left: 100px; }
+        .mode-4.slide-2 .field-1 { font-size: 24px; border: none; color: var(--accent-color); font-family:'Montserrat'; }
+        .mode-4.slide-2 .field-2 { font-size: 90px; color: #fff; }
+        .mode-4.slide-2 .field-3 { font-size: 48px; border-left: 3px solid var(--accent-color); padding-left: 40px; }
+
+        .mode-4.slide-3 .content-area { align-items: center; text-align: center; }
+        .mode-4.slide-3 .field-2 { font-size: 60px; font-style: italic; font-family: 'Cormorant Garamond'; line-height: 1.4; color: var(--accent-color); }
+
+        /* --- SLIDE 4 (CTA) - UNIVERSAL --- */
+        .slide-4 .content-area { justify-content: center; align-items: center; }
+        .slide-4 .field-1 { letter-spacing: 0.5em; border: none; margin-bottom: 10px; opacity: 0.6; font-size: 24px; }
+        .slide-4 .field-2 { font-size: 100px !important; margin-bottom: 40px; line-height: 0.9; }
+        .slide-4 .field-3 { 
+            border: 1px solid var(--accent-color); 
+            padding: 25px 50px; 
+            display: inline-block; 
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-family: 'Montserrat' !important;
+            font-size: 28px !important;
+            font-weight: 600;
+            background: rgba(255,255,255,0.05);
+            transition: 0.3s;
+        }
+        .slide-4 .field-3:hover { background: var(--accent-color); color: #000; }
+        .slide-4 .texture-border { border-color: var(--accent-color); opacity: 0.3; }
+        .slide-4 .field-4 { display: none; }
+
+
+        /* UTILS */
+        .highlight { color: var(--accent-color); }
+        .editable:focus { outline: 1px dashed var(--accent-color); background: rgba(255,255,255,0.05); }
+
+        /* UI */
+        .ui-panel {
+            position: fixed; bottom: 30px; 
+            background: #0a0a0a; border: 1px solid #333;
+            padding: 10px; border-radius: 8px;
+            display: flex; gap: 8px; z-index: 100;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            flex-wrap: wrap; justify-content: center;
+            max-width: 90vw;
+            transition: transform 0.3s ease;
+        }
+        .ui-minimized { transform: translateY(150%); }
+
+        .ui-group { display: flex; gap: 5px; border-right: 1px solid #333; padding-right: 10px; align-items: center; }
+        .ui-group:last-child { border: none; }
+
+        button {
+            background: #111; color: #888;
+            border: 1px solid #333; padding: 10px 14px;
+            font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: 0.2s; border-radius: 4px;
+        }
+        button:hover { border-color: var(--dom-gold); color: #fff; }
+        button.active { background: #222; color: var(--dom-gold); border-color: var(--dom-gold); }
+        button.primary { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: 800; }
+        button.danger { border-color: var(--dom-blood); color: var(--dom-blood); }
+        
+        .restore-btn {
+            position: fixed; bottom: 30px; right: 30px;
+            z-index: 99; display: none;
+        }
+
+        /* MODALS */
+        .modal-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.9); z-index: 200;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal {
+            background: #111; border: 1px solid var(--accent-color);
+            padding: 40px; width: 500px; max-width: 90%;
+        }
+        textarea {
+            width: 100%; height: 200px; background: #000; color: var(--dom-gold);
+            border: 1px solid #333; padding: 10px; font-family: monospace;
+            margin-bottom: 20px;
+        }
+        h3 { color: #fff; margin-top: 0; font-family: 'Cinzel'; }
+
+    </style>
+</head>
+<body>
+
+    <div id="scaler">
+        <div id="canvas" class="card-canvas format-4-5 mode-1 slide-0">
+            <div class="texture-noise"></div>
+            <div class="texture-border"></div>
+            
+            <div class="header">
+                <div class="brand-mark editable" contenteditable="true">THE DOMINUS CODE</div>
+                
+                <!-- ICON SLOT -->
+                <div class="header-icon-container" title="Click to Upload Icon">
+                    <img id="headerIcon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C5A059' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14'/%3E%3C/svg%3E" class="header-icon" alt="ICON">
+                    <input type="file" id="iconUpload" accept="image/*" style="display:none" onchange="uploadIcon(event)">
+                </div>
+
+                <div class="meta-tag editable" contenteditable="true">VOL. I</div>
+            </div>
+
+            <div class="pips-container" id="pips">
+                <div class="pip active"></div>
+                <div class="pip"></div>
+                <div class="pip"></div>
+                <div class="pip"></div>
+                <div class="pip"></div>
+            </div>
+
+            <!-- DYNAMIC CONTENT -->
+            <div class="content-area">
+                <div id="f1" class="field-1 editable" contenteditable="true">LAW IV</div>
+                <div id="f2" class="field-2 editable" contenteditable="true">POLARITY IS<br>NATURE'S DESIGN</div>
+                <div id="f3" class="field-3 editable" contenteditable="true">She doesn't want equality.<br>She wants <span class="highlight">electricity</span>.</div>
+                <div id="f4" class="field-4 editable" contenteditable="true">THE PRINCIPLE</div>
+            </div>
+
+            <div class="footer">
+                <div class="meta-tag editable" id="footer-meta" contenteditable="true">LEGACY ARCHITECT</div>
+                <div class="handle editable" contenteditable="true">@THEDOMINUSCODE</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI -->
+    <div class="ui-panel" id="ui">
+        <div class="ui-group">
+            <button onclick="changeMode(1)" id="btn-m1" class="active">LAW</button>
+            <button onclick="changeMode(2)" id="btn-m2">PASSAGE</button>
+            <button onclick="changeMode(3)" id="btn-m3">MAXIM</button>
+            <button onclick="changeMode(4)" id="btn-m4">DEF</button>
+        </div>
+        
+        <div class="ui-group">
+            <button onclick="nav(-1)">PREV</button>
+            <span id="slide-ind" style="font-size:10px; color:#666; font-family:'Space Mono', monospace; width:20px; text-align:center;">1/5</span>
+            <button onclick="nav(1)">NEXT</button>
+        </div>
+
+        <div class="ui-group">
+            <button onclick="toggleFormat()" id="btn-fmt">4:5</button>
+            <button onclick="toggleColor()" id="btn-col" style="color:var(--dom-gold)">GOLD</button>
+            <button onclick="togglePips()">PIPS</button>
+        </div>
+
+        <div class="ui-group">
+            <button onclick="document.getElementById('iconUpload').click()">UPLOAD ICON</button>
+            <button onclick="openImport()">IMPORT JSON</button>
+            <button onclick="showCaption()">CAPTION</button>
+        </div>
+
+        <div class="ui-group">
+            <button onclick="downloadCurrent()">PNG</button>
+            <button onclick="downloadAll()" class="primary">BATCH ZIP</button>
+        </div>
+        
+        <button onclick="toggleUI()" class="danger" style="border:none;">▼</button>
+    </div>
+
+    <button class="restore-btn primary" id="restore-ui" onclick="toggleUI()">CONTROLS</button>
+
+    <!-- MODALS -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal">
+            <h3>IMPORT SYSTEM DATA</h3>
+            <textarea id="jsonInput" placeholder="Paste JSON here..."></textarea>
+            <button onclick="processJSON()" class="primary">LOAD</button>
+            <button onclick="closeModal('importModal')">CANCEL</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="captionModal">
+        <div class="modal">
+            <h3>POST CAPTION</h3>
+            <textarea id="captionOutput"></textarea>
+            <button onclick="copyCaption()" class="primary">COPY</button>
+            <button onclick="closeModal('captionModal')">CLOSE</button>
+        </div>
+    </div>
+
+    <script>
+        // STATE
+        let currentSlide = 0;
+        let currentMode = 1;
+        let currentFormat = 1;
+        let isGold = true;
+        let savedCaption = "No caption loaded.";
+        
+        // 5 Slides x 4 Fields
+        let slidesData = Array(5).fill().map(() => ({
+            f1: "HEADER",
+            f2: "TITLE",
+            f3: "Body content goes here.",
+            f4: "FOOTER"
+        }));
+
+        const formats = [
+            { class: 'format-9-16', label: '9:16' },
+            { class: 'format-4-5', label: '4:5' },
+            { class: 'format-1-1', label: '1:1' }
+        ];
+
+        // INIT
+        function init() {
+            resize();
+            saveToState();
+            
+            // Icon
+            document.querySelector('.header-icon-container').addEventListener('click', () => {
+                document.getElementById('iconUpload').click();
+            });
+
+            render();
+        }
+        
+        function resize() {
+            const h = document.querySelector('.card-canvas').clientHeight;
+            const scale = Math.min(window.innerWidth / 1200, (window.innerHeight - 120) / h);
+            document.getElementById('scaler').style.transform = `scale(${scale})`;
+        }
+        window.onresize = resize;
+        window.onload = init;
+
+        // ICON UPLOAD
+        function uploadIcon(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    document.getElementById('headerIcon').src = evt.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // HELPER FUNCTIONS FOR FILENAMES
+        function getSafeTitle() {
+            // Use Slide 0 Headline (f2) as the source of truth
+            let raw = slidesData[0].f2 || "";
+            
+            // Strip HTML tags using a temp div
+            let div = document.createElement("div");
+            div.innerHTML = raw.replace(/<br\s*\/?>/gi, " "); // Replace break tags with space
+            let text = div.textContent || div.innerText || "";
+            
+            // Sanitize
+            text = text.trim().toUpperCase();
+            text = text.replace(/[^A-Z0-9 ]/g, ""); // Keep only alphanumeric and spaces
+            text = text.replace(/\s+/g, "_"); // Replace spaces with underscores
+            
+            // Truncate to reasonable length
+            return text.substring(0, 40) || "UNTITLED";
+        }
+
+        function getFormattedDate() {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // NAVIGATION & STATE
+        function nav(dir) {
+            saveToState();
+            currentSlide += dir;
+            if(currentSlide < 0) currentSlide = 4;
+            if(currentSlide > 4) currentSlide = 0;
+            render();
+        }
+
+        function saveToState() {
+            slidesData[currentSlide] = {
+                f1: document.getElementById('f1').innerHTML,
+                f2: document.getElementById('f2').innerHTML,
+                f3: document.getElementById('f3').innerHTML,
+                f4: document.getElementById('f4').innerHTML
+            };
+        }
+
+        function render() {
+            const data = slidesData[currentSlide];
+            document.getElementById('f1').innerHTML = data.f1;
+            document.getElementById('f2').innerHTML = data.f2;
+            document.getElementById('f3').innerHTML = data.f3;
+            document.getElementById('f4').innerHTML = data.f4;
+            
+            const canvas = document.getElementById('canvas');
+            canvas.classList.remove('slide-0', 'slide-1', 'slide-2', 'slide-3', 'slide-4');
+            canvas.classList.add(`slide-${currentSlide}`);
+
+            document.getElementById('slide-ind').innerText = `${currentSlide + 1}/5`;
+            document.querySelectorAll('.pip').forEach((p, i) => {
+                p.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        // MODES
+        function changeMode(id) {
+            document.getElementById('canvas').className = `card-canvas ${formats[currentFormat].class} mode-${id} slide-${currentSlide}`;
+            currentMode = id;
+            document.querySelectorAll('[id^="btn-m"]').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-m${id}`).classList.add('active');
+        }
+
+        // FORMAT
+        function toggleFormat() {
+            currentFormat = (currentFormat + 1) % 3;
+            document.getElementById('canvas').className = `card-canvas ${formats[currentFormat].class} mode-${currentMode} slide-${currentSlide}`;
+            document.getElementById('btn-fmt').innerText = formats[currentFormat].label;
+            setTimeout(resize, 50);
+        }
+
+        // COLOR
+        function toggleColor() {
+            isGold = !isGold;
+            const r = document.querySelector(':root');
+            const btn = document.getElementById('btn-col');
+            const icon = document.getElementById('headerIcon');
+            const defaultIcon = icon.src.includes('data:image/svg+xml');
+
+            if(isGold) {
+                r.style.setProperty('--accent-color', 'var(--dom-gold)');
+                btn.innerText = "GOLD"; btn.style.color = "var(--dom-gold)";
+                if(defaultIcon) icon.src = icon.src.replace('%238a0303', '%23C5A059');
+            } else {
+                r.style.setProperty('--accent-color', 'var(--dom-blood)');
+                btn.innerText = "BLOOD"; btn.style.color = "var(--dom-blood)";
+                if(defaultIcon) icon.src = icon.src.replace('%23C5A059', '%238a0303');
+            }
+        }
+
+        // UTILS
+        function togglePips() {
+            document.getElementById('pips').classList.toggle('hidden-pips');
+        }
+        function toggleUI() {
+            document.getElementById('ui').classList.toggle('ui-minimized');
+            const btn = document.getElementById('restore-ui');
+            btn.style.display = btn.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // JSON ENGINE - ROBUST v3.7
+        function openImport() { document.getElementById('importModal').style.display = 'flex'; }
+        function showCaption() { 
+            document.getElementById('captionOutput').value = savedCaption;
+            document.getElementById('captionModal').style.display = 'flex'; 
+        }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function processJSON() {
+            try {
+                let raw = document.getElementById('jsonInput').value.trim();
+                
+                // Sanitize Markdown blocks if present
+                if (raw.includes('```')) {
+                    raw = raw.replace(/```json/g, '').replace(/```/g, '').trim();
+                }
+
+                const data = JSON.parse(raw);
+                
+                if(data.layout_id) changeMode(data.layout_id);
+                if(data.caption) savedCaption = data.caption;
+
+                if(data.slides && data.slides.length > 0) {
+                    // Populate data
+                    data.slides.forEach((s, i) => { if(i < 5) slidesData[i] = s; });
+                    
+                    // FORCE UPDATE DOM FOR SLIDE 0
+                    currentSlide = 0;
+                    document.getElementById('f1').innerHTML = slidesData[0].f1 || "";
+                    document.getElementById('f2').innerHTML = slidesData[0].f2 || "";
+                    document.getElementById('f3').innerHTML = slidesData[0].f3 || "";
+                    document.getElementById('f4').innerHTML = slidesData[0].f4 || "";
+                    
+                    render();
+                    closeModal('importModal');
+                }
+            } catch(e) {
+                alert("Invalid JSON. Check format.");
+                console.error(e);
+            }
+        }
+
+        function copyCaption() {
+            const el = document.getElementById('captionOutput');
+            el.select();
+            document.execCommand('copy');
+            alert("Copied.");
+        }
+
+        // EXPORT
+        function downloadCurrent() {
+            saveToState();
+            const btn = document.querySelector('button[onclick="downloadCurrent()"]');
+            btn.innerText = "...";
+            const scaler = document.getElementById('scaler');
+            const oldTransform = scaler.style.transform;
+            scaler.style.transform = "scale(1)";
+            
+            const date = getFormattedDate();
+            const title = getSafeTitle();
+            const filename = `${date}_${title}_SLIDE_${currentSlide+1}.png`;
+
+            setTimeout(() => {
+                html2canvas(document.getElementById('canvas'), { scale: 2, backgroundColor:null }).then(cvs => {
+                    const a = document.createElement('a');
+                    a.download = filename;
+                    a.href = cvs.toDataURL('image/png');
+                    a.click();
+                    scaler.style.transform = oldTransform;
+                    btn.innerText = "PNG";
+                });
+            }, 100);
+        }
+
+        async function downloadAll() {
+            saveToState();
+            const btn = document.querySelector('.primary');
+            const oldText = btn.innerText;
+            btn.innerText = "ZIPPING...";
+            
+            const zip = new JSZip();
+            const scaler = document.getElementById('scaler');
+            const oldTransform = scaler.style.transform;
+            const originalSlide = currentSlide;
+            
+            const date = getFormattedDate();
+            const title = getSafeTitle();
+
+            try {
+                for(let i=0; i<5; i++) {
+                    currentSlide = i;
+                    render();
+                    await new Promise(r => setTimeout(r, 150));
+                    
+                    scaler.style.transform = "scale(1)";
+                    const cvs = await html2canvas(document.getElementById('canvas'), { scale: 2, backgroundColor:null });
+                    const data = cvs.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, "");
+                    
+                    // Internal file naming
+                    zip.file(`${date}_${title}_SLIDE_0${i+1}.png`, data, {base64: true});
+                }
+                
+                const content = await zip.generateAsync({type:"blob"});
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(content);
+                a.download = `DOMINUS_CAROUSEL_${date}_${title}.zip`;
+                a.click();
+
+            } catch(e) {
+                console.error(e);
+                alert("Batch export failed.");
+            } finally {
+                currentSlide = originalSlide;
+                render();
+                scaler.style.transform = oldTransform;
+                btn.innerText = oldText;
+            }
+        }
+
+    </script>
+</body>
+</html>

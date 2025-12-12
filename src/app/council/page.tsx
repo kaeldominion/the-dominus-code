@@ -80,10 +80,15 @@ export default function CouncilPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 border border-gold/30 mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 border border-gold/30 mb-4">
               <Lock className="w-4 h-4 text-gold" />
               <span className="font-display text-xs tracking-[0.3em] text-gold">
                 APPLICATION REQUIRED
+              </span>
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 border border-sovereign/50 mb-8">
+              <span className="font-display text-xs tracking-[0.3em] text-sovereign">
+                COMING SOON
               </span>
             </div>
             <h1 className="font-display text-4xl md:text-6xl tracking-[0.1em] text-ivory mb-6">
@@ -96,6 +101,9 @@ export default function CouncilPage() {
               The inner circle for men ready to implement The Dominus Code at
               the highest level. Direct access. Real accountability. No
               bullshit.
+            </p>
+            <p className="font-body text-lg text-sovereign/80 max-w-xl mx-auto mb-10 italic">
+              The Council is launching soon. Submit your application to join the waitlist.
             </p>
             
             <Link href="/council/apply">
@@ -275,8 +283,8 @@ export default function CouncilPage() {
                   Apply for The Council
                 </Button>
               </Link>
-              <p className="font-body text-xs text-ivory/30 mt-4">
-                Application required. Not everyone will be accepted.
+              <p className="font-body text-xs text-sovereign/60 mt-4">
+                The Council is launching soon. Submit your application to join the waitlist.
               </p>
             </div>
 

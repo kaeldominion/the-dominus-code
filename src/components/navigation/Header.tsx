@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Crown } from "@/components/ui/Crown";
 import { ModeToggleCompact } from "@/components/ui/ModeToggle";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Instagram, Music2, Youtube } from "lucide-react";
 import { useApp } from "@/components/Providers";
 
 const navLinks = [
@@ -65,14 +65,38 @@ export function Header() {
           </nav>
 
           {/* Right Side */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
+            {/* Social Links */}
+            <div className="hidden md:flex items-center gap-4">
+              <a
+                href="https://instagram.com/spencertarring"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-5 h-5" strokeWidth={1} />
+              </a>
+              <a
+                href="https://tiktok.com/@spencertarring"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                aria-label="TikTok"
+              >
+                <Music2 className="w-5 h-5" strokeWidth={1} />
+              </a>
+              <a
+                href="https://youtube.com/@spencertarring"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                aria-label="YouTube"
+              >
+                <Youtube className="w-5 h-5" strokeWidth={1} />
+              </a>
+            </div>
             <ModeToggleCompact />
-            <Link
-              href="/auth/login"
-              className="hidden sm:block font-system text-[11px] font-light tracking-[0.25em] uppercase text-sovereign hover:text-empire transition-colors duration-500"
-            >
-              Enter
-            </Link>
             <button
               onClick={() => setMobileOpen(true)}
               className="lg:hidden p-2 text-concrete/60 hover:text-empire transition-colors duration-500"
@@ -125,19 +149,43 @@ export function Header() {
                 ))}
               </nav>
 
+              {/* Social Links - Mobile */}
               <motion.div 
-                className="flex justify-center"
+                className="flex justify-center gap-6"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.8 }}
               >
-                <Link
-                  href="/auth/login"
+                <a
+                  href="https://instagram.com/spencertarring"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => setMobileOpen(false)}
-                  className="btn-primary"
+                  className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                  aria-label="Instagram"
                 >
-                  <span>Enter The Code</span>
-                </Link>
+                  <Instagram className="w-6 h-6" strokeWidth={1} />
+                </a>
+                <a
+                  href="https://tiktok.com/@spencertarring"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileOpen(false)}
+                  className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                  aria-label="TikTok"
+                >
+                  <Music2 className="w-6 h-6" strokeWidth={1} />
+                </a>
+                <a
+                  href="https://youtube.com/@spencertarring"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileOpen(false)}
+                  className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                  aria-label="YouTube"
+                >
+                  <Youtube className="w-6 h-6" strokeWidth={1} />
+                </a>
               </motion.div>
             </div>
           </motion.div>

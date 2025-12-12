@@ -5,7 +5,7 @@ import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Crown } from "@/components/ui/Crown";
 import { Button } from "@/components/ui/Button";
 import { useApp } from "@/components/Providers";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 
 // Slow, heavy, cinematic transitions - no spring, no bounce
 const slowReveal: Variants = {
@@ -31,8 +31,8 @@ const slowScale: Variants = {
   }
 };
 
-// Release date: January 1st, 2026
-const RELEASE_DATE = new Date("2026-01-01T00:00:00");
+// Release date: January 10th, 2026
+const RELEASE_DATE = new Date("2026-01-10T00:00:00");
 
 function useCountdown(targetDate: Date) {
   const [timeLeft, setTimeLeft] = useState({
@@ -101,6 +101,7 @@ function BarnesNobleIcon({ className }: { className?: string }) {
 
 export function HeroSection() {
   const [phase, setPhase] = useState<"pulse" | "reveal" | "full">("pulse");
+  const [showPreOrderModal, setShowPreOrderModal] = useState(false);
   const { mode } = useApp();
   const countdown = useCountdown(RELEASE_DATE);
 
@@ -252,22 +253,22 @@ export function HeroSection() {
                     variant={mode === "dominus" ? "blood" : "primary"}
                     size="lg"
                     icon
-                    onClick={() => {
-                      document
-                        .getElementById("manifesto")
-                        ?.scrollIntoView({ behavior: "smooth" });
-                    }}
+                    onClick={() => setShowPreOrderModal(true)}
                   >
-                    Enter The Code
+                    Pre-Order Now
                   </Button>
                   <Button
                     variant="secondary"
                     size="lg"
                     onClick={() => {
-                      window.location.href = "/calibration";
+                      window.location.href = "/council";
                     }}
+                    className="relative"
                   >
-                    Assess Sovereignty
+                    Join The Council
+                    <span className="ml-2 text-[10px] tracking-[0.2em] text-sovereign/60 uppercase">
+                      (Coming Soon)
+                    </span>
                   </Button>
                 </motion.div>
 
@@ -279,7 +280,7 @@ export function HeroSection() {
                 >
                   {/* Release Date */}
                   <p className="font-system text-[10px] tracking-[0.4em] text-concrete/50 uppercase mb-4">
-                    Releases January 1, 2026
+                    Releases January 10, 2026
                   </p>
                   
                   {/* Countdown */}
@@ -321,24 +322,36 @@ export function HeroSection() {
                     </div>
                   </div>
 
-                  {/* Retailer Icons */}
-                  <div className="flex items-center justify-center gap-6 md:gap-8">
-                    <p className="font-system text-[9px] tracking-[0.2em] text-concrete/30 uppercase hidden sm:block">
-                      Available on
-                    </p>
-                    {retailers.map((retailer) => (
-                      <div 
-                        key={retailer.name}
-                        className="group relative"
-                        title={retailer.name}
+                  {/* Pre-Order Links */}
+                  <div className="flex items-center justify-center gap-4 md:gap-6 mt-6">
+                    <a
+                      href="https://a.co/d/hlsG23E"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group"
+                    >
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="font-system text-[10px] tracking-[0.2em] uppercase"
                       >
-                        <retailer.icon className="w-5 h-5 md:w-6 md:h-6 text-concrete/30 group-hover:text-sovereign transition-colors duration-300" />
-                        {/* Tooltip */}
-                        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 font-system text-[8px] tracking-wider text-concrete/40 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                          {retailer.name}
-                        </span>
-                      </div>
-                    ))}
+                        Pre-Order on Amazon
+                      </Button>
+                    </a>
+                    <a
+                      href="https://books.apple.com/gb/book/the-dominus-code/id6756301151"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group"
+                    >
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="font-system text-[10px] tracking-[0.2em] uppercase"
+                      >
+                        Pre-Order on Apple
+                      </Button>
+                    </a>
                   </div>
                 </motion.div>
               </motion.div>
@@ -346,6 +359,76 @@ export function HeroSection() {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Pre-Order Modal */}
+      <AnimatePresence>
+        {showPreOrderModal && (
+          <motion.div
+            className="fixed inset-0 z-[200] flex items-center justify-center p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowPreOrderModal(false)}
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-void/95 backdrop-blur-sm" />
+            
+            {/* Modal */}
+            <motion.div
+              className="relative bg-void border border-concrete/10 p-8 md:p-12 max-w-md w-full"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowPreOrderModal(false)}
+                className="absolute top-4 right-4 text-concrete/40 hover:text-empire transition-colors"
+              >
+                <X className="w-5 h-5" strokeWidth={1} />
+              </button>
+              
+              <h3 className="font-law text-2xl tracking-[0.1em] text-empire mb-4 uppercase">
+                Pre-Order The Dominus Code
+              </h3>
+              <p className="font-system text-sm text-concrete/60 mb-8">
+                Choose your preferred platform:
+              </p>
+              
+              <div className="flex flex-col gap-4">
+                <a
+                  href="https://a.co/d/hlsG23E"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <Button
+                    variant={mode === "dominus" ? "blood" : "primary"}
+                    size="lg"
+                    className="w-full justify-center"
+                  >
+                    Pre-Order on Amazon
+                  </Button>
+                </a>
+                <a
+                  href="https://books.apple.com/gb/book/the-dominus-code/id6756301151"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="w-full justify-center"
+                  >
+                    Pre-Order on Apple Books
+                  </Button>
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Scroll Indicator - fixed at bottom */}
       {phase === "full" && (
