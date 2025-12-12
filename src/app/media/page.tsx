@@ -114,7 +114,7 @@ const assets = [
     name: "Media Pack PDF",
     type: "document",
     icon: FileText,
-    file: "#",
+    file: "/docs/Dominus_Media_Kit.pdf",
     description: "Full press kit document",
   },
   {
@@ -422,9 +422,84 @@ export default function MediaPage() {
     }
     const link = document.createElement("a");
     link.href = asset.file;
-    link.download = asset.name;
+    // For PDFs, use the original filename
+    if (asset.file.endsWith('.pdf')) {
+      link.download = asset.file.split('/').pop() || asset.name;
+    } else {
+      link.download = asset.name;
+    }
     link.click();
   };
+
+  // Download all assets as zip (excluding manifesto video)
+  const downloadAllAssets = useCallback(async () => {
+    try {
+      const zip = new JSZip();
+      
+      // Assets to include (excluding manifesto video)
+      const assetsToDownload = [
+        { name: "Headshot_BW.jpg", path: "/images/st-avatar-2021-v4.jpg" },
+        { name: "Headshot_Color.jpg", path: "/images/st-avatar-2021-v4.jpg" },
+        { name: "Book_Cover.png", path: "/images/book-cover.png" },
+        { name: "tdc-icon-gold.png", path: "/images/tdc-icon-gold.png" },
+        { name: "tdc-icon-black.png", path: "/images/tdc-icon-black.png" },
+        { name: "tdc-icon-blood.png", path: "/images/tdc-icon-blood.png" },
+        { name: "tdc-icon-white.png", path: "/images/tdc-icon-white.png" },
+        { name: "Dominus_Media_Kit.pdf", path: "/docs/Dominus_Media_Kit.pdf" },
+      ];
+
+      // Fetch all assets in parallel and add to zip
+      const fetchPromises = assetsToDownload.map(async (asset) => {
+        try {
+          const response = await fetch(asset.path);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch ${asset.name}: ${response.status}`);
+          }
+          const blob = await response.blob();
+          zip.file(asset.name, blob);
+          return { success: true, name: asset.name };
+        } catch (error) {
+          console.error(`Failed to fetch ${asset.name}:`, error);
+          return { success: false, name: asset.name, error };
+        }
+      });
+
+      // Wait for all fetches to complete
+      const results = await Promise.all(fetchPromises);
+      const failed = results.filter(r => !r.success);
+      
+      if (failed.length > 0) {
+        console.warn(`Failed to fetch ${failed.length} asset(s):`, failed.map(f => f.name));
+      }
+
+      // Check if we have at least one file
+      if (zip.files && Object.keys(zip.files).length === 0) {
+        alert("Failed to fetch any assets. Please check your connection and try again.");
+        return;
+      }
+
+      // Generate zip file
+      const zipBlob = await zip.generateAsync({ 
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 }
+      });
+      
+      // Download zip
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = "thedominuscode-media-assets.zip";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up
+      setTimeout(() => URL.revokeObjectURL(link.href), 100);
+    } catch (error) {
+      console.error("Failed to create zip:", error);
+      alert("Failed to download assets. Please try again.");
+    }
+  }, []);
 
   // Download all icons as zip
   const downloadAllIcons = useCallback(async () => {
@@ -655,7 +730,7 @@ export default function MediaPage() {
 
               {/* Deploy All Button */}
               <button
-                onClick={() => alert("Full media kit download coming soon!")}
+                onClick={downloadAllAssets}
                 className={`group flex items-center gap-3 px-6 py-3 border transition-all duration-300 ${
                   mode === "dominus"
                     ? "border-blood hover:bg-blood/10"

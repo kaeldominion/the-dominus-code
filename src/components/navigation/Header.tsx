@@ -106,7 +106,7 @@ export function Header() {
             {/* Social Links */}
             <div className="hidden md:flex items-center gap-4">
               <a
-                href="https://instagram.com/spencertarring"
+                href="https://instagram.com/thedominuscode"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
@@ -115,7 +115,7 @@ export function Header() {
                 <Instagram className="w-5 h-5" strokeWidth={1} />
               </a>
               <a
-                href="https://tiktok.com/@spencertarring"
+                href="https://tiktok.com/@thedominuscode"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
@@ -124,7 +124,7 @@ export function Header() {
                 <Music2 className="w-5 h-5" strokeWidth={1} />
               </a>
               <a
-                href="https://youtube.com/@spencertarring"
+                href="https://youtube.com/@thedominuscode"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
@@ -194,7 +194,7 @@ export function Header() {
                 transition={{ delay: 0.6, duration: 0.8 }}
               >
                 <a
-                  href="https://instagram.com/spencertarring"
+                  href="https://instagram.com/thedominuscode"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileOpen(false)}
@@ -204,7 +204,7 @@ export function Header() {
                   <Instagram className="w-6 h-6" strokeWidth={1} />
                 </a>
                 <a
-                  href="https://tiktok.com/@spencertarring"
+                  href="https://tiktok.com/@thedominuscode"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileOpen(false)}
@@ -214,7 +214,7 @@ export function Header() {
                   <Music2 className="w-6 h-6" strokeWidth={1} />
                 </a>
                 <a
-                  href="https://youtube.com/@spencertarring"
+                  href="https://youtube.com/@thedominuscode"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileOpen(false)}

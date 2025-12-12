@@ -17,8 +17,8 @@ const footerLinks = {
   ],
   social: [
     { href: "https://twitter.com/spencertarring", label: "X / Twitter" },
-    { href: "https://instagram.com/spencertarring", label: "Instagram" },
-    { href: "https://tiktok.com/@spencertarring", label: "TikTok" },
+    { href: "https://instagram.com/thedominuscode", label: "Instagram" },
+    { href: "https://tiktok.com/@thedominuscode", label: "TikTok" },
   ],
 };
 
