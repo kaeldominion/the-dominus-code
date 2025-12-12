@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Dominus Code | Social Asset Factory V36</title>
+    <title>The Dominus Code | Social Asset Factory V41</title>
     
     <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +24,7 @@
             --paper: #E6E6E6;
             --pure-white: #FFFFFF;
             
-            /* DYNAMIC OPACITY VAR */
+            /* DYNAMIC VARS */
             --bg-op: 0.5;
 
             /* ASSET DIMENSIONS */
@@ -32,14 +32,12 @@
             --print-height: 825px;
             --spine-width: 52px;
             
-            /* HARDCOVER DIMENSIONS */
             --hc-width: 1152px; 
             --hc-height: 925px;
             
             --digital-width: 640px; 
             --digital-height: 1000px;
             
-            /* AUDIO DIMENSIONS */
             --audio-size: 500px;
             
             --yt-width: 853px; 
@@ -50,6 +48,9 @@
             
             --sq-width: 500px;
             --sq-height: 500px;
+            
+            --og-width: 600px;
+            --og-height: 315px;
         }
 
         body {
@@ -224,6 +225,20 @@
         }
         
         /* PHYSICAL LAYERS - LOW Z-INDEX */
+        
+        /* Level 0: The uploaded photo (OG Story) */
+        .story-bg-layer {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-size: cover;
+            background-position: center;
+            /* GRAIN/BW FILTER RESTORED */
+            filter: grayscale(100%) contrast(1.2) brightness(0.4);
+            z-index: 0 !important;
+            pointer-events: none;
+        }
+
+        /* Level 1: The Noise Texture */
         .texture-layer {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -234,6 +249,7 @@
             pointer-events: none;
         }
         
+        /* Level 2: The Gold Sheen */
         .sheen-layer {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -243,17 +259,24 @@
         }
         
         /* CONTENT LOCK - HIGH Z-INDEX */
+        /* Explicitly forcing all content containers above layers 0-2 */
         .back-panel, .front-panel, .spine-panel,
         .yt-safe-area, 
-        #tw-header .content-wrapper, #tw-header .logo-target {
+        #tw-header .content-wrapper, #tw-header .logo-target,
+        #og-law .og-left, #og-law .og-right, 
+        #og-story .og-content, 
+        #og-concept .og-content {
             position: relative;
             z-index: 20 !important;
         }
 
-        #ig-story > *:not(.texture-layer):not(.sheen-layer),
+        /* Specific fix for containers with direct children (IG, Square, Digital) */
+        #ig-story > *:not(.texture-layer):not(.sheen-layer):not(.story-bg-layer),
         #sq-post > *:not(.texture-layer):not(.sheen-layer),
         #digital-cover > *:not(.texture-layer):not(.sheen-layer),
-        #audio-cover > *:not(.texture-layer):not(.sheen-layer) {
+        #audio-cover > *:not(.texture-layer):not(.sheen-layer),
+        #og-law > *:not(.texture-layer):not(.sheen-layer),
+        #og-concept > *:not(.texture-layer):not(.sheen-layer) {
             position: relative;
             z-index: 20 !important;
         }
@@ -284,7 +307,7 @@
             position: relative;
         }
 
-        /* --- 1B. HARDCOVER WRAP (New Geometry) --- */
+        /* --- 1B. HARDCOVER WRAP --- */
         #hardcover-wrap {
             width: var(--hc-width);
             height: var(--hc-height);
@@ -527,7 +550,7 @@
         #audio-cover {
             width: var(--audio-size);
             height: var(--audio-size);
-            padding: 50px; /* Reduced from 60px 40px */
+            padding: 50px; 
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -668,6 +691,187 @@
             display: inline-block;
         }
 
+        /* --- 4. OPEN GRAPH ASSETS (Redesigned V2) --- */
+        #og-law, #og-story, #og-concept {
+            width: var(--og-width);
+            height: var(--og-height);
+            border: 1px solid #333;
+            position: relative;
+            box-sizing: border-box;
+            z-index: 2;
+        }
+
+        /* OG LAW: Split Layout */
+        #og-law {
+            display: flex;
+            flex-direction: row;
+        }
+        #og-law .og-left {
+            width: 40%;
+            height: 100%;
+            background: rgba(10,10,10,0.8);
+            border-right: 2px solid var(--dominus-gold-dim);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        #og-law .book-mock {
+            /* Simulates the book cover Front only */
+            width: 140px;
+            height: 200px;
+            border: 1px solid #666;
+            background: #050505;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.8);
+            padding: 15px;
+            text-align: center;
+        }
+        #og-law .book-mock .crown-img { width: 30px; margin-bottom: 10px; }
+        
+        /* ALIGNMENT FIX FOR "THE" */
+        #og-law .book-mock .title-pre { 
+            font-size: 8px; 
+            letter-spacing: 3px; 
+            margin-bottom: 2px; 
+            display:block; 
+            color:white; 
+            font-weight:700;
+            margin-right: -3px; /* Counteracts ghost padding */
+        }
+        
+        #og-law .book-mock .main-title { font-size: 22px; margin-bottom: 10px; line-height:0.9; color: var(--dominus-gold); font-weight:900; }
+        #og-law .book-mock .author-name { font-size: 8px; margin-top: auto; color: #888; font-family: 'Montserrat', sans-serif;}
+
+        #og-law .og-right {
+            width: 60%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 40px;
+            padding-right: 20px;
+            text-align: left;
+        }
+        #og-law .og-right .og-headline {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 42px;
+            line-height: 0.95;
+            color: var(--dominus-gold);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        #og-law .og-right .og-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: var(--oxblood);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        #og-law .og-right .og-release {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: var(--pure-white);
+            text-transform: uppercase;
+        }
+
+        /* OG STORY: Cinematic Layout V2 */
+        #og-story {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        /* DIRECT INJECTION FOR BG LAYER */
+        #og-story .story-bg-layer {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(100%) contrast(1.2) brightness(0.4);
+            z-index: 0 !important; /* FIXED: Put at bottom */
+            /* Will be set by JS */
+        }
+        #og-story .og-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 20;
+        }
+        #og-story .og-content .crown-img { width: 50px; margin-bottom: 10px; }
+        /* Swap order: Hook first */
+        #og-story .og-content .og-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 4px;
+            color: var(--dominus-gold);
+            text-transform: uppercase;
+        }
+        #og-story .og-content .og-headline {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 42px; /* Reduced from 52 */
+            line-height: 0.9;
+            color: var(--pure-white);
+            text-shadow: 0 5px 30px rgba(0,0,0,1);
+        }
+
+        /* OG CONCEPT: Refined Minimalist */
+        #og-concept {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        #og-concept .og-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        #og-concept .crown-img { width: 80px; }
+        #og-concept .og-headline {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 36px; /* Smaller */
+            letter-spacing: 6px;
+            color: var(--dominus-gold);
+        }
+        #og-concept .og-red-accent {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+        }
+        #og-concept .red-dash {
+            width: 40px;
+            height: 2px;
+            background-color: var(--oxblood);
+        }
+        #og-concept .og-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: var(--pure-white);
+            text-transform: uppercase;
+        }
+
     </style>
 </head>
 <body>
@@ -691,6 +895,13 @@
             <label>Texture Opacity <span id="op-val">50%</span></label>
             <input type="range" id="in-opacity" min="0" max="1.0" step="0.01" value="0.5">
         </div>
+
+        <!-- NEW STORY BG CONTROL -->
+        <div class="input-group full-width">
+            <label>3. Upload Story BG (OG Story Only)</label>
+            <input type="file" id="in-story-bg" accept="image/*">
+            <button id="story-upload-btn" class="secondary" style="width:100%; margin-top:5px; pointer-events:none; border:none; text-align:left; padding-left:0; font-size:10px;">NO IMAGE LOADED</button>
+        </div>
         
         <div class="input-group">
             <label>Title Line 1 (Pre)</label>
@@ -706,6 +917,20 @@
             <input type="text" id="in-sub" value="F*CK MONOGAMY. BUILD A DYNASTY.">
         </div>
         
+        <!-- SPECIFIC OG TEXT INPUTS -->
+        <div class="input-group">
+            <label>OG Law Text</label>
+            <input type="text" id="in-og-law-text" value="THE LAW IS THE LAW">
+        </div>
+        <div class="input-group">
+            <label>OG Story Text (Main Header)</label>
+            <input type="text" id="in-og-story-text" value="BUILD THE DYNASTY">
+        </div>
+        <div class="input-group">
+            <label>Release Status</label>
+            <input type="text" id="in-release-status" value="OUT NOW">
+        </div>
+
         <div class="input-group full-width">
             <label>Author Name</label>
             <input type="text" id="in-author" value="SPENCER TARRING">
@@ -797,7 +1022,7 @@
         </div>
     </div>
 
-    <!-- 1B. HARDCOVER WRAP (HIDDEN PREVIEW, GENERATED ON DEMAND OR BELOW) -->
+    <!-- 1B. HARDCOVER WRAP -->
     <div class="canvas-container">
         <div class="label">HARDCOVER WRAP (EXPANDED +100px)</div>
         <div id="hardcover-wrap" class="texture-bg">
@@ -840,7 +1065,7 @@
         </div>
     </div>
     
-    <!-- AUDIO COVER (1:1 Aspect Ratio) -->
+    <!-- AUDIO COVER (1:1) -->
      <div class="canvas-container">
         <div class="label">AUDIO BOOK (1:1)</div>
         <div id="audio-cover" class="texture-bg">
@@ -867,7 +1092,7 @@
 
     <!-- YOUTUBE -->
     <div class="canvas-container">
-        <div class="label">YOUTUBE BANNER (Safe Zone Optimized)</div>
+        <div class="label">YOUTUBE BANNER</div>
         <div id="yt-banner" class="texture-bg">
             <div class="texture-layer"></div>
             <div class="sheen-layer"></div>
@@ -889,7 +1114,7 @@
 
     <!-- TWITTER -->
     <div class="canvas-container">
-        <div class="label">X / TWITTER HEADER (1500x500 Scaled)</div>
+        <div class="label">X / TWITTER HEADER</div>
         <div id="tw-header" class="texture-bg">
             <div class="texture-layer"></div>
             <div class="sheen-layer"></div>
@@ -902,9 +1127,8 @@
         </div>
     </div>
 
-    <!-- IG & SQUARE GRID -->
+    <!-- IG & SQUARE -->
     <div style="display:flex; gap: 40px; flex-wrap:wrap; justify-content: center;">
-        
         <div class="canvas-container">
             <div class="label">IG / TIKTOK STORY</div>
             <div id="ig-story" class="texture-bg">
@@ -930,10 +1154,79 @@
                 <div class="montserrat white-text" style="font-size: 12px; margin-top: 20px; letter-spacing: 3px;" id="out-author-sq">SPENCER TARRING</div>
             </div>
         </div>
-
+    </div>
+    
+    <!-- 4. OPEN GRAPH ASSETS -->
+    <div class="section-title">OPEN GRAPH ASSETS (1200x630)</div>
+    
+    <div class="button-group" style="justify-content: flex-start; margin-bottom: 20px;">
+        <button onclick="downloadAsset('og-law', 'OG_Law_Card', 2)">Download OG Law</button>
+        <button onclick="downloadAsset('og-story', 'OG_Story_Card', 2)">Download OG Story</button>
+        <button onclick="downloadAsset('og-concept', 'OG_Concept_Card', 2)">Download OG Concept</button>
+    </div>
+    
+    <div style="display:flex; gap: 40px; flex-wrap:wrap; justify-content: center;">
+        
+        <!-- OG LAW -->
+        <div class="canvas-container">
+            <div class="label">OG LAW (Book Centered)</div>
+            <div id="og-law" class="texture-bg">
+                <div class="texture-layer"></div>
+                <div class="sheen-layer"></div>
+                <!-- Left: Mockup Front Panel Simplified -->
+                <div class="og-left">
+                    <div class="book-mock">
+                        <img class="crown-img logo-target" src="" alt="">
+                        <div class="title-pre">THE</div>
+                        <div class="main-title cinzel-black gold-text">DOMINUS<br>CODE</div>
+                        <div class="author-name cinzel-bold white-text" style="font-size: 8px; margin-top: auto;">SPENCER TARRING</div>
+                    </div>
+                </div>
+                <!-- Right: Text Content -->
+                <div class="og-right">
+                    <div class="og-headline" id="out-og-law">THE LAW IS THE LAW</div>
+                    <div class="og-subtitle" id="out-og-law-sub">F*CK MONOGAMY. BUILD A DYNASTY.</div>
+                    <div class="og-release" id="out-og-release">OUT NOW</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- OG STORY -->
+        <div class="canvas-container">
+            <div class="label">OG STORY (Photo BG)</div>
+            <div id="og-story" class="texture-bg">
+                <div class="story-bg-layer"></div>
+                <div class="texture-layer"></div> <!-- Grain restored here -->
+                <div class="sheen-layer"></div>
+                <div class="og-content">
+                    <img class="crown-img logo-target" src="" alt="">
+                    <div class="og-subtitle" id="out-og-story-sub">F*CK MONOGAMY</div>
+                    <div class="og-headline" id="out-og-story">BUILD THE DYNASTY</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- OG CONCEPT -->
+        <div class="canvas-container">
+            <div class="label">OG CONCEPT (Minimalist)</div>
+            <div id="og-concept" class="texture-bg">
+                <div class="texture-layer"></div>
+                <div class="sheen-layer"></div>
+                <div class="og-content">
+                    <img class="crown-img logo-target" src="" alt="">
+                    <div class="og-headline" id="out-og-concept">THE DOMINUS CODE</div>
+                    <div class="og-red-accent">
+                        <div class="red-dash"></div>
+                        <div class="og-subtitle" id="out-og-concept-sub">F*CK MONOGAMY. BUILD A DYNASTY.</div>
+                        <div class="red-dash"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </div>
 
-    <!-- HIDDEN DIGITAL COVER (Absolute positioning off-screen) -->
+    <!-- HIDDEN DIGITAL COVER -->
     <div style="position:fixed; top:0; left: -9999px;">
         <div id="digital-cover" class="texture-bg">
             <div class="texture-layer"></div>
@@ -948,14 +1241,14 @@
     </div>
 
     <script>
-        // 1. DEFAULT LOGO (Embedded Gold Crown SVG) - UPDATED COLOR #E5C372
+        // 1. DEFAULT LOGO 
         const defaultLogo = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23E5C372' d='M132.8 221.7c8.6-9.6 23.3-10.3 32.9-1.7l64.8 58.3 47.9-166.7c3.4-11.8 19.8-11.8 23.2 0l47.9 166.7 64.8-58.3c9.6-8.6 24.3-7.9 32.9 1.7 8.6 9.6 7.9 24.3-1.7 32.9l-96 106.7c-5.7 6.3-13.9 10-22.4 10H175.8c-8.5 0-16.7-3.6-22.4-10l-96-106.7c-9.6-8.6-10.3-23.3-1.7-32.9zm67.5 174.6h111.4c17.7 0 32 14.3 32 32s-14.3 32-32 32H200.3c-17.7 0-32-14.3-32-32s14.3-32 32-32z'/%3E%3C/svg%3E";
 
         // Init Logo
         const logoInputs = document.querySelectorAll('.logo-target');
         logoInputs.forEach(img => img.src = defaultLogo);
 
-        // 2. FILE UPLOAD HANDLER (LOGO)
+        // 2. FILE UPLOAD HANDLERS
         document.getElementById('in-logo').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
@@ -966,19 +1259,15 @@
             reader.readAsDataURL(file);
         });
 
-        // 3. TEXTURE UPLOAD HANDLER (PHYSICAL DIV INJECTION)
         document.getElementById('in-texture').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
             const reader = new FileReader();
             reader.onload = function(event) {
-                // Update ALL texture layers directly via DOM style
                 const layers = document.querySelectorAll('.texture-layer');
                 layers.forEach(layer => {
                     layer.style.backgroundImage = `url(${event.target.result})`;
                 });
-                
-                // Visual Feedback
                 const statusBtn = document.getElementById('upload-btn');
                 statusBtn.innerText = "TEXTURE LOADED & ACTIVE";
                 statusBtn.style.color = "#E5C372";
@@ -986,19 +1275,34 @@
             }
             reader.readAsDataURL(file);
         });
+        
+        // STORY BG HANDLER - Direct Injection
+        document.getElementById('in-story-bg').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const layer = document.querySelector('#og-story .story-bg-layer');
+                if(layer) layer.style.backgroundImage = `url(${event.target.result})`;
+                
+                // UI Feedback
+                const statusBtn = document.getElementById('story-upload-btn');
+                statusBtn.innerText = "IMAGE LOADED";
+                statusBtn.style.color = "#E5C372";
+                statusBtn.style.borderColor = "#E5C372";
+            }
+            reader.readAsDataURL(file);
+        });
 
-        // 4. OPACITY SLIDER HANDLER (PHYSICAL DIV OPACITY)
+        // 4. OPACITY SLIDER
         document.getElementById('in-opacity').addEventListener('input', function(e) {
             const val = e.target.value;
-            // Update CSS Variable for Opacity (still used by physical divs via var)
             document.documentElement.style.setProperty('--bg-op', val);
-            // Update Label
             document.getElementById('op-val').innerText = Math.round(val * 100) + '%';
         });
 
         // 5. MAIN UPDATE FUNCTION
         function updateAllPreviews() {
-            // Get Values and TRIM to avoid accidental user spaces
             const pre = document.getElementById('in-pre').value.trim().toUpperCase();
             const title = document.getElementById('in-title').value.trim().toUpperCase();
             const sub = document.getElementById('in-sub').value.trim().toUpperCase();
@@ -1006,31 +1310,31 @@
             const website = document.getElementById('in-website').value.trim().toUpperCase();
             const cta = document.getElementById('in-cta').value.trim().toUpperCase();
             
+            const ogLaw = document.getElementById('in-og-law-text').value.toUpperCase();
+            const ogStory = document.getElementById('in-og-story-text').value.toUpperCase();
+            const releaseStatus = document.getElementById('in-release-status').value.toUpperCase();
+            
             const backHeadRaw = document.getElementById('in-back-head').value;
             const bioRaw = document.getElementById('in-bio').value;
 
-            // HTML Formats
             const titleHTML = title.replace(/\s/g, '<br>'); 
             const titleLine = title; 
-            
-            // Subtitle Split Logic: Replace period followed by space with period + break
             const subHTML = sub.replace(/\. /g, '.<br>').replace(/\.$/, '.<br>'); 
 
-            // --- BOOK PRINT WRAP ---
+            // Common Updates
             safeSetText('out-pre-book', pre);
             safeSetHTML('out-title-book', titleHTML);
             safeSetHTML('out-sub-book', subHTML);
             safeSetText('out-author-book', author);
             safeSetText('out-back-website', website);
             
-            // SPINE: Combine PRE + MAIN TITLE for "THE DOMINUS CODE"
             safeSetText('out-spine-title', pre + ' ' + titleLine);
             safeSetText('out-spine-author', author);
 
             safeSetText('out-bio-header', author);
             safeSetText('out-bio', bioRaw);
 
-            // Back Headline Formatting
+            // Back Headline
             const parts = backHeadRaw.split('.');
             let backHeadHTML = '';
             if (parts.length > 1 && parts[1].trim() !== '') {
@@ -1042,34 +1346,30 @@
             }
             safeSetHTML('out-back-head', backHeadHTML);
 
-            // --- HARDCOVER WRAP (Duplicate Data) ---
+            // Hardcover
             safeSetText('out-pre-book-hc', pre);
             safeSetHTML('out-title-book-hc', titleHTML);
             safeSetHTML('out-sub-book-hc', subHTML);
             safeSetText('out-author-book-hc', author);
             safeSetText('out-back-website-hc', website);
-            
             safeSetText('out-spine-title-hc', pre + ' ' + titleLine);
             safeSetText('out-spine-author-hc', author);
-
             safeSetText('out-bio-header-hc', author);
             safeSetText('out-bio-hc', bioRaw);
             safeSetHTML('out-back-head-hc', backHeadHTML);
 
-
-            // --- DIGITAL COVER ---
+            // Digital & Audio
             safeSetText('out-pre-dig', pre);
             safeSetHTML('out-title-dig', titleHTML);
             safeSetHTML('out-sub-dig', subHTML);
             safeSetText('out-author-dig', author);
 
-            // --- AUDIO COVER ---
             safeSetText('out-pre-audio', pre);
             safeSetHTML('out-title-audio', titleHTML);
             safeSetHTML('out-sub-audio', subHTML);
             safeSetText('out-author-audio', author);
 
-            // --- SOCIALS ---
+            // Socials
             safeSetText('out-pre-yt', pre);
             safeSetHTML('out-title-yt', titleHTML);
             safeSetHTML('out-sub-yt', subHTML);
@@ -1087,29 +1387,33 @@
             safeSetText('out-pre-sq', pre);
             safeSetHTML('out-title-sq', titleHTML);
             safeSetText('out-author-sq', author);
+            
+            // OG Updates
+            safeSetText('out-og-law', ogLaw);
+            safeSetText('out-og-law-sub', sub); 
+            safeSetText('out-og-release', releaseStatus);
+            safeSetText('out-og-story', ogStory);
+            // Split subtitle for hook in OG Story
+            const subSplit = sub.split('.');
+            if(subSplit.length > 0) {
+                 safeSetText('out-og-story-sub', subSplit[0]);
+            } else {
+                 safeSetText('out-og-story-sub', sub);
+            }
+            safeSetText('out-og-concept', titleLine);
+            safeSetText('out-og-concept-sub', sub);
         }
 
-        // Helper to avoid null errors
-        function safeSetText(id, text) {
-            const el = document.getElementById(id);
-            if(el) el.innerText = text;
-        }
-        function safeSetHTML(id, html) {
-            const el = document.getElementById(id);
-            if(el) el.innerHTML = html;
-        }
+        function safeSetText(id, text) { const el = document.getElementById(id); if(el) el.innerText = text; }
+        function safeSetHTML(id, html) { const el = document.getElementById(id); if(el) el.innerHTML = html; }
 
-        // 6. DOWNLOAD ENGINE
         function downloadAsset(elementId, fileName, customScale) {
             const element = document.getElementById(elementId);
             const btn = event.target;
             const originalText = btn.innerText;
             btn.innerText = "GENERATING...";
-            
-            // Default scale is 3, unless overridden
             const finalScale = customScale || 3;
 
-            // Wait a split second for any DOM repaints
             setTimeout(() => {
                 html2canvas(element, {
                     scale: finalScale, 
@@ -1123,43 +1427,28 @@
                     link.click();
                     btn.innerText = originalText;
                 }).catch(err => {
-                    alert("Error generating image. If using a custom logo, try a smaller file.");
+                    alert("Error generating image.");
                     console.error(err);
                     btn.innerText = originalText;
                 });
             }, 100);
         }
 
-        // 7. DOWNLOAD PDF ENGINE
         async function downloadPDF(elementId, fileName) {
             const { jsPDF } = window.jspdf;
             const element = document.getElementById(elementId);
             const btn = event.target;
             const originalText = btn.innerText;
             btn.innerText = "GENERATING PDF...";
-
             try {
-                const canvas = await html2canvas(element, {
-                    scale: 3, 
-                    useCORS: true, 
-                    allowTaint: true,
-                    backgroundColor: null
-                });
-
+                const canvas = await html2canvas(element, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: null });
                 const imgData = canvas.toDataURL('image/png');
-                const imgWidth = canvas.width;
-                const imgHeight = canvas.height;
-                
-                // Determine orientation based on aspect ratio
-                const orientation = imgWidth > imgHeight ? 'l' : 'p';
-                
                 const pdf = new jsPDF({
-                    orientation: orientation,
+                    orientation: canvas.width > canvas.height ? 'l' : 'p',
                     unit: 'px',
-                    format: [imgWidth, imgHeight]
+                    format: [canvas.width, canvas.height]
                 });
-
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
                 pdf.save(`${fileName}.pdf`);
             } catch (err) {
                 console.error(err);
@@ -1169,9 +1458,7 @@
             }
         }
 
-        // Initialize on Load
         window.addEventListener('load', updateAllPreviews);
-
     </script>
 </body>
 </html>
