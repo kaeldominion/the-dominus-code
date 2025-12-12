@@ -12,7 +12,7 @@ const navLinks = [
   { href: "/", label: "The Gate" },
   { href: "/calibration", label: "Calibration" },
   { href: "/council", label: "The Council" },
-  { href: "/intel", label: "Intel" },
+  { href: "/media", label: "Media" },
 ];
 
 export function Header() {
