@@ -107,27 +107,24 @@ export default function GensPage() {
     }
 
     try {
-      const webhookUrl = "https://n8n.srv923142.hstgr.cloud/webhook-test/war-room";
-
-      const payload = {
-        tweet_url: trimmedUrl,
-        stance: stance,
-      };
-
-      const response = await fetch(webhookUrl, {
+      // Call our internal API route (proxy to N8N)
+      const response = await fetch("/api/strike", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer SPENCER_IS_KING_2026",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          tweet_url: trimmedUrl,
+          stance: stance,
+        }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(data.error || `HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json().catch(() => ({})); // Handle non-JSON responses
       setStrikeResult({ 
         success: true, 
         message: "Strike Sent" 
