@@ -85,6 +85,8 @@ NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="your-secret"
 STRIPE_SECRET_KEY="sk_..."
 STRIPE_PUBLISHABLE_KEY="pk_..."
+NEXT_PUBLIC_N8N_WEBHOOK_URL="https://your-n8n-instance.com/webhook/..."
+NEXT_PUBLIC_GA_MEASUREMENT_ID="G-XXXXXXXXXX"
 ```
 
 ## 📁 Required Assets

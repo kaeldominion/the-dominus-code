@@ -7,7 +7,7 @@ import { Crown } from "@/components/ui/Crown";
 import { Button } from "@/components/ui/Button";
 import { useApp } from "@/components/Providers";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, ExternalLink, Image, FileText, Zap, FileDown } from "lucide-react";
+import { Lock, ExternalLink, Image, FileText, Zap, FileDown, Target, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 
 const CORRECT_USERNAME = "dominus";
@@ -59,6 +59,12 @@ export default function GensPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  
+  // Tweet Strike feature state
+  const [tweetUrl, setTweetUrl] = useState("");
+  const [stance, setStance] = useState<"REINFORCE" | "CORRECT">("REINFORCE");
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [strikeResult, setStrikeResult] = useState<{ success: boolean; message: string } | null>(null);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +83,64 @@ export default function GensPage() {
     } else {
       setError("Invalid credentials. Access denied.");
       setPassword("");
+    }
+  };
+
+  const handleExecuteStrike = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStrikeResult(null);
+    setIsExecuting(true);
+
+    // Validate tweet URL
+    const trimmedUrl = tweetUrl.trim();
+    if (!trimmedUrl) {
+      setStrikeResult({ success: false, message: "Please enter a Tweet URL" });
+      setIsExecuting(false);
+      return;
+    }
+
+    // Basic URL validation
+    if (!trimmedUrl.includes("x.com/") && !trimmedUrl.includes("twitter.com/")) {
+      setStrikeResult({ success: false, message: "Please enter a valid X/Twitter URL" });
+      setIsExecuting(false);
+      return;
+    }
+
+    try {
+      const webhookUrl = "https://n8n.srv923142.hstgr.cloud/webhook-test/war-room";
+
+      const payload = {
+        tweet_url: trimmedUrl,
+        stance: stance,
+      };
+
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer SPENCER_IS_KING_2026",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json().catch(() => ({})); // Handle non-JSON responses
+      setStrikeResult({ 
+        success: true, 
+        message: "Strike Sent" 
+      });
+      setTweetUrl(""); // Clear the input on success
+    } catch (error) {
+      console.error("Error executing strike:", error);
+      setStrikeResult({ 
+        success: false, 
+        message: error instanceof Error ? error.message : "Failed to execute strike. Please try again." 
+      });
+    } finally {
+      setIsExecuting(false);
     }
   };
 
@@ -255,6 +319,136 @@ export default function GensPage() {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* Tweet Strike Feature */}
+      <section className="pb-20 border-t border-concrete/10">
+        <div className="max-w-2xl mx-auto px-6 pt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
+          >
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <Target 
+                className={`w-8 h-8 ${
+                  mode === "dominus" ? "text-blood" : "text-sovereign"
+                }`}
+              />
+              <h2 className="font-law text-3xl md:text-4xl tracking-[0.1em] text-empire uppercase">
+                TWEET STRIKE
+              </h2>
+            </div>
+            <p className="font-scripture text-lg text-empire/60 italic">
+              Execute strategic responses to tweets. Reinforce or correct.
+            </p>
+          </motion.div>
+
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            onSubmit={handleExecuteStrike}
+            className="space-y-6"
+          >
+            {/* Tweet URL Input */}
+            <div>
+              <label className="block font-system text-xs tracking-[0.2em] text-concrete/60 uppercase mb-2">
+                Tweet URL
+              </label>
+              <input
+                type="url"
+                value={tweetUrl}
+                onChange={(e) => setTweetUrl(e.target.value)}
+                placeholder="https://x.com/username/status/123456789"
+                className="w-full px-4 py-3 bg-void border border-concrete/20 text-empire font-system focus:outline-none focus:border-sovereign transition-colors"
+                required
+                disabled={isExecuting}
+              />
+            </div>
+
+            {/* Stance Selector */}
+            <div>
+              <label className="block font-system text-xs tracking-[0.2em] text-concrete/60 uppercase mb-3">
+                Stance
+              </label>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => setStance("REINFORCE")}
+                  disabled={isExecuting}
+                  className={`p-4 border-2 transition-all duration-300 ${
+                    stance === "REINFORCE"
+                      ? mode === "dominus"
+                        ? "border-blood bg-blood/10 text-blood"
+                        : "border-sovereign bg-sovereign/10 text-sovereign"
+                      : "border-concrete/20 text-empire/60 hover:border-concrete/40"
+                  }`}
+                >
+                  <CheckCircle className="w-6 h-6 mx-auto mb-2" />
+                  <p className="font-law text-sm tracking-[0.1em] uppercase">REINFORCE</p>
+                  <p className="font-system text-xs text-empire/50 mt-1">Agree/Amplify</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStance("CORRECT")}
+                  disabled={isExecuting}
+                  className={`p-4 border-2 transition-all duration-300 ${
+                    stance === "CORRECT"
+                      ? mode === "dominus"
+                        ? "border-blood bg-blood/10 text-blood"
+                        : "border-sovereign bg-sovereign/10 text-sovereign"
+                      : "border-concrete/20 text-empire/60 hover:border-concrete/40"
+                  }`}
+                >
+                  <XCircle className="w-6 h-6 mx-auto mb-2" />
+                  <p className="font-law text-sm tracking-[0.1em] uppercase">CORRECT</p>
+                  <p className="font-system text-xs text-empire/50 mt-1">Disagree/Crush</p>
+                </button>
+              </div>
+            </div>
+
+            {/* Result Message */}
+            {strikeResult && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`p-4 border ${
+                  strikeResult.success
+                    ? mode === "dominus"
+                      ? "border-blood/50 bg-blood/5 text-blood"
+                      : "border-sovereign/50 bg-sovereign/5 text-sovereign"
+                    : "border-blood/50 bg-blood/5 text-blood"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  {strikeResult.success ? (
+                    <CheckCircle className="w-5 h-5" />
+                  ) : (
+                    <XCircle className="w-5 h-5" />
+                  )}
+                  <p className="font-system text-sm">{strikeResult.message}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Execute Button */}
+            <Button
+              type="submit"
+              variant={mode === "dominus" ? "blood" : "primary"}
+              size="lg"
+              className="w-full"
+              icon
+              loading={isExecuting}
+              disabled={isExecuting}
+            >
+              {isExecuting ? "Executing..." : "EXECUTE STRIKE"}
+            </Button>
+          </motion.form>
         </div>
       </section>
 
