@@ -14,9 +14,9 @@ const DEFAULT_OG_IMAGE = "/images/book-cover.png";
 
 // OG image mapping based on type parameter
 const OG_IMAGE_MAP: Record<string, string> = {
-  law: "/og-law.jpg",
-  story: "/og-story.jpg",
-  concept: "/og-concept.jpg",
+  law: "/images/OG_Law_Card.png",
+  story: "/images/OG_Story_Card.png",
+  concept: "/images/OG_Concept_Card.png",
 };
 
 // Force dynamic rendering to access searchParams
