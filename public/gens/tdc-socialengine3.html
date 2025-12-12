@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Dominus Code | Social Asset Factory V42</title>
+    <title>The Dominus Code | Social Asset Factory V43</title>
     
     <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,6 +26,7 @@
             
             /* DYNAMIC VARS */
             --bg-op: 0.5;
+            /* Story BG handled by JS injection now */
 
             /* ASSET DIMENSIONS */
             --print-width: 1052px; 
@@ -232,8 +233,7 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background-size: cover;
             background-position: center;
-            /* GRAIN/BW FILTER RESTORED */
-            filter: grayscale(100%) contrast(1.2) brightness(0.4);
+            /* REMOVED CSS FILTER - FILTER IS NOW BAKED IN VIA JS */
             z-index: 0 !important;
             pointer-events: none;
         }
@@ -798,9 +798,8 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background-size: cover;
             background-position: center;
-            filter: grayscale(100%) contrast(1.2) brightness(0.4);
-            z-index: 0 !important; /* FIXED: Put at bottom */
-            /* Will be set by JS */
+            /* Filter is now applied via JS Canvas */
+            z-index: 0 !important; 
         }
         #og-story .og-content {
             display: flex;
@@ -1205,6 +1204,7 @@
             <div class="label">OG STORY (Photo BG)</div>
             <div id="og-story" class="texture-bg">
                 <div class="story-bg-layer"></div>
+                <div class="texture-layer"></div>
                 <div class="sheen-layer"></div>
                 <div class="og-content">
                     <img class="crown-img logo-target" src="" alt="">
@@ -1287,20 +1287,44 @@
             reader.readAsDataURL(file);
         });
         
-        // STORY BG HANDLER - Direct Injection
+        // STORY BG HANDLER - Direct Injection WITH PRE-PROCESSING
         document.getElementById('in-story-bg').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
             const reader = new FileReader();
             reader.onload = function(event) {
-                const layer = document.querySelector('#og-story .story-bg-layer');
-                if(layer) layer.style.backgroundImage = `url(${event.target.result})`;
-                
-                // UI Feedback
-                const statusBtn = document.getElementById('story-upload-btn');
-                statusBtn.innerText = "IMAGE LOADED";
-                statusBtn.style.color = "#E5C372";
-                statusBtn.style.borderColor = "#E5C372";
+                // Create an image object to load the file
+                const img = new Image();
+                img.onload = function() {
+                    // Create a canvas to process the filters
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Set canvas size to match image
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    
+                    // Apply filters via Context2D (Bakes them into the pixels)
+                    // Matches CSS: grayscale(100%) contrast(1.2) brightness(0.4)
+                    ctx.filter = 'grayscale(100%) contrast(1.2) brightness(0.4)';
+                    
+                    // Draw image with filter
+                    ctx.drawImage(img, 0, 0, img.width, img.height);
+                    
+                    // Get processed Data URL
+                    const processedUrl = canvas.toDataURL('image/jpeg', 0.9);
+                    
+                    // Apply to Layer
+                    const layer = document.querySelector('#og-story .story-bg-layer');
+                    if(layer) layer.style.backgroundImage = `url(${processedUrl})`;
+                    
+                    // UI Feedback
+                    const statusBtn = document.getElementById('story-upload-btn');
+                    statusBtn.innerText = "IMAGE PROCESSED & LOADED";
+                    statusBtn.style.color = "#E5C372";
+                    statusBtn.style.borderColor = "#E5C372";
+                };
+                img.src = event.target.result;
             }
             reader.readAsDataURL(file);
         });
