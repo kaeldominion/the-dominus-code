@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useApp } from "@/components/Providers";
+import { ForewordAudioPlayer } from "@/components/ui/ForewordAudioPlayer";
 
 // Foreword content split into pages
 const forewordPages = [
@@ -102,6 +103,14 @@ export function BookSection() {
             <h2 className="font-law text-3xl md:text-4xl tracking-[0.12em] text-empire">
               OPEN THE CODE
             </h2>
+          </motion.div>
+
+          {/* Audio Player */}
+          <motion.div
+            className="max-w-md mx-auto mb-12"
+            style={{ opacity: useTransform(scrollYProgress, [0, 0.1], [0, 1]) }}
+          >
+            <ForewordAudioPlayer />
           </motion.div>
 
           {/* Book Container */}

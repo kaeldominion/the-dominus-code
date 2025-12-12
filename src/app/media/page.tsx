@@ -437,28 +437,53 @@ export default function MediaPage() {
         { name: "tdc-icon-white.png", path: "/images/tdc-icon-white.png" },
       ];
 
-      // Fetch each icon and add to zip
-      for (const icon of iconFiles) {
+      // Fetch all icons in parallel and add to zip
+      const fetchPromises = iconFiles.map(async (icon) => {
         try {
           const response = await fetch(icon.path);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch ${icon.name}: ${response.status}`);
+          }
           const blob = await response.blob();
           zip.file(icon.name, blob);
+          return { success: true, name: icon.name };
         } catch (error) {
           console.error(`Failed to fetch ${icon.name}:`, error);
+          return { success: false, name: icon.name, error };
         }
+      });
+
+      // Wait for all fetches to complete
+      const results = await Promise.all(fetchPromises);
+      const failed = results.filter(r => !r.success);
+      
+      if (failed.length > 0) {
+        console.warn(`Failed to fetch ${failed.length} icon(s):`, failed.map(f => f.name));
+      }
+
+      // Check if we have at least one file
+      if (zip.files && Object.keys(zip.files).length === 0) {
+        alert("Failed to fetch any icons. Please check your connection and try again.");
+        return;
       }
 
       // Generate zip file
-      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const zipBlob = await zip.generateAsync({ 
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 }
+      });
       
       // Download zip
       const link = document.createElement("a");
       link.href = URL.createObjectURL(zipBlob);
       link.download = "tdc-icons.zip";
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
       
       // Clean up
-      URL.revokeObjectURL(link.href);
+      setTimeout(() => URL.revokeObjectURL(link.href), 100);
     } catch (error) {
       console.error("Failed to create zip:", error);
       alert("Failed to download icons. Please try again.");

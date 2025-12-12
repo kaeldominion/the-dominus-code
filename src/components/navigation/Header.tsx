@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Crown } from "@/components/ui/Crown";
 import { ModeToggleCompact } from "@/components/ui/ModeToggle";
-import { Menu, X, Instagram, Music2, Youtube } from "lucide-react";
+import { Menu, X, Instagram, Music2, Youtube, Pause } from "lucide-react";
 import { useApp } from "@/components/Providers";
 
 const navLinks = [
@@ -18,7 +18,33 @@ const navLinks = [
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { mode } = useApp();
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const { mode, forewordAudioRef } = useApp();
+
+  // Check if audio is playing
+  useEffect(() => {
+    if (!forewordAudioRef?.current) return;
+
+    const audio = forewordAudioRef.current;
+    const updatePlayingState = () => setIsAudioPlaying(!audio.paused);
+    
+    audio.addEventListener("play", updatePlayingState);
+    audio.addEventListener("pause", updatePlayingState);
+    audio.addEventListener("ended", () => setIsAudioPlaying(false));
+
+    return () => {
+      audio.removeEventListener("play", updatePlayingState);
+      audio.removeEventListener("pause", updatePlayingState);
+      audio.removeEventListener("ended", () => setIsAudioPlaying(false));
+    };
+  }, [forewordAudioRef]);
+
+  const handlePauseAudio = () => {
+    if (forewordAudioRef?.current) {
+      forewordAudioRef.current.pause();
+      setIsAudioPlaying(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,6 +92,17 @@ export function Header() {
 
           {/* Right Side */}
           <div className="flex items-center gap-4 md:gap-6">
+            {/* Audio Pause Control */}
+            {isAudioPlaying && (
+              <button
+                onClick={handlePauseAudio}
+                className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                title="Pause audio"
+                aria-label="Pause audio"
+              >
+                <Pause className="w-5 h-5" strokeWidth={1} />
+              </button>
+            )}
             {/* Social Links */}
             <div className="hidden md:flex items-center gap-4">
               <a

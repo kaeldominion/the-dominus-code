@@ -213,15 +213,13 @@ export function HeroSection() {
                   variants={slowReveal}
                   transition={{ ...slowTransition, delay: 0.2 }}
                 >
-                  <p className={`font-law font-normal text-4xl md:text-6xl lg:text-7xl tracking-[0.08em] uppercase mb-2 leading-none ${
-                    mode === "dominus" ? "text-[#050505]" : "text-sovereign"
-                  }`}>
+                  <p className="font-law font-normal text-4xl md:text-6xl lg:text-7xl tracking-[0.08em] uppercase mb-2 leading-none text-empire">
                     The
                   </p>
-                  <h1 className="font-law text-5xl md:text-7xl lg:text-8xl tracking-[0.08em] text-empire leading-none">
+                  <h1 className="font-law text-5xl md:text-7xl lg:text-8xl tracking-[0.08em] text-sovereign leading-none">
                     DOMINUS
                   </h1>
-                  <h1 className="font-law text-5xl md:text-7xl lg:text-8xl tracking-[0.08em] text-empire leading-none">
+                  <h1 className="font-law text-5xl md:text-7xl lg:text-8xl tracking-[0.08em] text-sovereign leading-none">
                     CODE
                   </h1>
                 </motion.div>
@@ -323,35 +321,42 @@ export function HeroSection() {
                   </div>
 
                   {/* Pre-Order Links */}
-                  <div className="flex items-center justify-center gap-4 md:gap-6 mt-6">
-                    <a
-                      href="https://a.co/d/hlsG23E"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group"
-                    >
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="font-system text-[10px] tracking-[0.2em] uppercase"
+                  <div className="flex flex-col items-center gap-4 mt-6">
+                    <p className="font-system text-[9px] tracking-[0.2em] text-concrete/50 uppercase mb-2">
+                      Available: Audiobook • Ebook • Paperback • Hardcover
+                    </p>
+                    <div className="flex items-center justify-center gap-4 md:gap-6">
+                      <a
+                        href="https://a.co/d/hlsG23E"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group"
                       >
-                        Pre-Order on Amazon
-                      </Button>
-                    </a>
-                    <a
-                      href="https://books.apple.com/gb/book/the-dominus-code/id6756301151"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group"
-                    >
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="font-system text-[10px] tracking-[0.2em] uppercase"
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="font-system text-[10px] tracking-[0.2em] uppercase flex items-center gap-2"
+                        >
+                          <AmazonIcon className="w-4 h-4" />
+                          Pre-Order on Amazon
+                        </Button>
+                      </a>
+                      <a
+                        href="https://books.apple.com/gb/book/the-dominus-code/id6756301151"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group"
                       >
-                        Pre-Order on Apple
-                      </Button>
-                    </a>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="font-system text-[10px] tracking-[0.2em] uppercase flex items-center gap-2"
+                        >
+                          <AppleBooksIcon className="w-4 h-4" />
+                          Pre-Order on Apple
+                        </Button>
+                      </a>
+                    </div>
                   </div>
                 </motion.div>
               </motion.div>
@@ -391,8 +396,11 @@ export function HeroSection() {
               <h3 className="font-law text-2xl tracking-[0.1em] text-empire mb-4 uppercase">
                 Pre-Order The Dominus Code
               </h3>
-              <p className="font-system text-sm text-concrete/60 mb-8">
+              <p className="font-system text-sm text-concrete/60 mb-2">
                 Choose your preferred platform:
+              </p>
+              <p className="font-system text-xs text-concrete/50 mb-8 uppercase tracking-wider">
+                Available: Audiobook • Ebook • Paperback • Hardcover
               </p>
               
               <div className="flex flex-col gap-4">
@@ -405,8 +413,9 @@ export function HeroSection() {
                   <Button
                     variant={mode === "dominus" ? "blood" : "primary"}
                     size="lg"
-                    className="w-full justify-center"
+                    className="w-full justify-center gap-2"
                   >
+                    <AmazonIcon className="w-5 h-5" />
                     Pre-Order on Amazon
                   </Button>
                 </a>
@@ -419,8 +428,9 @@ export function HeroSection() {
                   <Button
                     variant="secondary"
                     size="lg"
-                    className="w-full justify-center"
+                    className="w-full justify-center gap-2"
                   >
+                    <AppleBooksIcon className="w-5 h-5" />
                     Pre-Order on Apple Books
                   </Button>
                 </a>

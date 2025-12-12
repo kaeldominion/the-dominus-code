@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, createContext, useContext, useState, useEffect } from "react";
+import { ReactNode, createContext, useContext, useState, useEffect, useRef, RefObject } from "react";
 
 type Mode = "realist" | "dominus";
 
@@ -10,6 +10,8 @@ interface AppContextType {
   toggleMode: () => void;
   audioEnabled: boolean;
   setAudioEnabled: (enabled: boolean) => void;
+  forewordAudioRef: RefObject<HTMLAudioElement | null> | null;
+  setForewordAudioRef: (ref: RefObject<HTMLAudioElement | null> | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -26,6 +28,7 @@ export function Providers({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<Mode>("realist");
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [forewordAudioRef, setForewordAudioRef] = useState<RefObject<HTMLAudioElement | null> | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -57,6 +60,8 @@ export function Providers({ children }: { children: ReactNode }) {
         toggleMode,
         audioEnabled,
         setAudioEnabled,
+        forewordAudioRef,
+        setForewordAudioRef,
       }}
     >
       {children}

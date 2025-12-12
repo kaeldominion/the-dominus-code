@@ -9,7 +9,6 @@ const footerLinks = {
     { href: "/", label: "The Gate" },
     { href: "/calibration", label: "Calibration" },
     { href: "/council", label: "The Council" },
-    { href: "/oath", label: "The Oath" },
   ],
   legal: [
     { href: "/privacy", label: "Privacy" },

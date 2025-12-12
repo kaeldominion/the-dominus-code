@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title: "The Dominus Code | F*ck Monogamy. Build A Dynasty.",
@@ -36,6 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
+        <GoogleAnalytics />
         <Providers>
           {/* Noise Overlay */}
           <div className="noise-overlay" aria-hidden="true" />
