@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Dominus Code | Social Asset Factory V41</title>
+    <title>The Dominus Code | Social Asset Factory V42</title>
     
     <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -841,15 +841,24 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 0; /* Changed from 20px */
         }
-        #og-concept .crown-img { width: 80px; }
+        #og-concept .crown-img { width: 80px; margin-bottom: 15px; }
+        #og-concept .title-pre {
+            font-size: 14px;
+            letter-spacing: 6px;
+            margin-right: -6px;
+            margin-bottom: 5px;
+            color: var(--pure-white);
+            font-weight: 700;
+        }
         #og-concept .og-headline {
             font-family: 'Cinzel', serif;
             font-weight: 700;
             font-size: 36px; /* Smaller */
             letter-spacing: 6px;
             color: var(--dominus-gold);
+            margin-bottom: 20px;
         }
         #og-concept .og-red-accent {
             display: flex;
@@ -1196,7 +1205,6 @@
             <div class="label">OG STORY (Photo BG)</div>
             <div id="og-story" class="texture-bg">
                 <div class="story-bg-layer"></div>
-                <div class="texture-layer"></div> <!-- Grain restored here -->
                 <div class="sheen-layer"></div>
                 <div class="og-content">
                     <img class="crown-img logo-target" src="" alt="">
@@ -1214,7 +1222,10 @@
                 <div class="sheen-layer"></div>
                 <div class="og-content">
                     <img class="crown-img logo-target" src="" alt="">
-                    <div class="og-headline" id="out-og-concept">THE DOMINUS CODE</div>
+                    <!-- Add title-pre here -->
+                    <div class="title-pre" id="out-og-concept-pre">THE</div>
+                    <div class="og-headline" id="out-og-concept">THE DOMINUS CODE</div> <!-- This id is updated via JS -->
+                    
                     <div class="og-red-accent">
                         <div class="red-dash"></div>
                         <div class="og-subtitle" id="out-og-concept-sub">F*CK MONOGAMY. BUILD A DYNASTY.</div>
@@ -1400,6 +1411,7 @@
             } else {
                  safeSetText('out-og-story-sub', sub);
             }
+            safeSetText('out-og-concept-pre', pre);
             safeSetText('out-og-concept', titleLine);
             safeSetText('out-og-concept-sub', sub);
         }

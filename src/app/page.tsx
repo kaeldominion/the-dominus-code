@@ -61,11 +61,13 @@ export async function generateMetadata({
   };
 }
 
-export default function Home({
+export default async function Home({
   searchParams,
 }: {
-  searchParams: { type?: string };
+  searchParams: Promise<{ type?: string }> | { type?: string };
 }) {
+  // Handle both sync and async searchParams for Next.js compatibility
+  const params = searchParams instanceof Promise ? await searchParams : searchParams;
   return (
     <main className="min-h-screen">
       <Header />

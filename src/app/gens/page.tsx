@@ -7,7 +7,7 @@ import { Crown } from "@/components/ui/Crown";
 import { Button } from "@/components/ui/Button";
 import { useApp } from "@/components/Providers";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, ExternalLink, Image, FileText, Zap } from "lucide-react";
+import { Lock, ExternalLink, Image, FileText, Zap, FileDown } from "lucide-react";
 import Link from "next/link";
 
 const CORRECT_USERNAME = "dominus";
@@ -37,6 +37,14 @@ const tools = [
     icon: Zap,
     description: "Comprehensive social media asset generator. Create banners, stories, posts, and covers for all major platforms. Batch generate multiple assets with consistent branding.",
     usage: "Select asset type (Instagram, Twitter, YouTube, etc.), customize content and styling, generate and download. Supports bulk generation for multiple platforms at once.",
+  },
+  {
+    id: "media-kit-pdf",
+    name: "Media Kit PDF Generator",
+    file: "/gens/tdc-mediakitpdfgen.html",
+    icon: FileDown,
+    description: "Generate professional media kit PDFs for The Dominus Code. Create press kits, media packages, and branded documents with consistent formatting and branding.",
+    usage: "Enter your content, select layout options, customize branding elements, and generate a downloadable PDF. Perfect for media outreach and press materials.",
   },
 ];
 
