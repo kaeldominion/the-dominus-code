@@ -43,7 +43,7 @@ export function SocialAssets() {
     return text.replace(/\n/g, '<br>');
   };
 
-  const downloadAsset = async (elementRef: React.RefObject<HTMLDivElement>, fileName: string) => {
+  const downloadAsset = async (elementRef: React.RefObject<HTMLDivElement | null>, fileName: string) => {
     if (!elementRef.current) return;
 
     const btn = document.querySelector(`button[data-download="${fileName}"]`);
