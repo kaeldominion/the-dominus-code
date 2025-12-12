@@ -13,7 +13,6 @@ import {
   Calendar,
   Lock,
   Check,
-  Star,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -44,26 +43,6 @@ const features = [
   },
 ];
 
-const testimonials = [
-  {
-    quote:
-      "The Council changed everything. Having direct access to Spencer and men operating at this level—there's nothing else like it.",
-    name: "MARCUS V.",
-    role: "Founder, 3 companies",
-  },
-  {
-    quote:
-      "I came in with questions about my relationships. I left with a complete operating system for my life.",
-    name: "JAMES K.",
-    role: "Entrepreneur",
-  },
-  {
-    quote:
-      "Worth 100x the investment. The connections alone have generated more value than I can measure.",
-    name: "DAVID R.",
-    role: "Tech Executive",
-  },
-];
 
 export default function CouncilPage() {
   const { mode } = useApp();
@@ -193,56 +172,6 @@ export default function CouncilPage() {
               ))}
             </ul>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 border-t border-gold/10">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="font-display text-3xl tracking-[0.1em] text-ivory mb-4">
-              FROM THE COUNCIL
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.name}
-                className="card-brutal p-8"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.8 }}
-              >
-                <div className="flex gap-1 mb-6">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-4 h-4 text-gold fill-gold"
-                    />
-                  ))}
-                </div>
-                <blockquote className="font-body text-ivory/80 italic mb-6">
-                  &ldquo;{testimonial.quote}&rdquo;
-                </blockquote>
-                <footer>
-                  <p className="font-display text-sm tracking-widest text-gold">
-                    {testimonial.name}
-                  </p>
-                  <p className="font-body text-xs text-ivory/40 mt-1">
-                    {testimonial.role}
-                  </p>
-                </footer>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
