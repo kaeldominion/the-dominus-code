@@ -252,76 +252,9 @@ export default function GensPage() {
         </div>
       </section>
 
-      {/* Tools Grid */}
-      <section className="pb-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-8">
-            {tools.map((tool, index) => {
-              const IconComponent = tool.icon;
-              return (
-                <motion.div
-                  key={tool.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  className="border border-concrete/20 p-8 hover:border-concrete/40 transition-colors group"
-                >
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className={`p-3 border ${
-                      mode === "dominus" 
-                        ? "border-blood/30 bg-blood/5" 
-                        : "border-sovereign/30 bg-sovereign/5"
-                    }`}>
-                      <IconComponent 
-                        className={`w-6 h-6 ${
-                          mode === "dominus" ? "text-blood" : "text-sovereign"
-                        }`}
-                      />
-                    </div>
-                    <h2 className="font-law text-xl tracking-[0.1em] text-empire uppercase">
-                      {tool.name}
-                    </h2>
-                  </div>
-
-                  <p className="font-scripture text-empire/70 leading-relaxed mb-4">
-                    {tool.description}
-                  </p>
-
-                  <div className="mb-6">
-                    <p className="font-system text-xs tracking-[0.1em] text-concrete/50 uppercase mb-2">
-                      How to Use
-                    </p>
-                    <p className="font-scripture text-sm text-empire/60 leading-relaxed">
-                      {tool.usage}
-                    </p>
-                  </div>
-
-                  <a
-                    href={tool.file}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block"
-                  >
-                    <Button
-                      variant={mode === "dominus" ? "blood" : "primary"}
-                      size="lg"
-                      className="w-full group/btn"
-                    >
-                      Open Tool
-                      <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                    </Button>
-                  </a>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* Tweet Strike Feature */}
-      <section className="pb-20 border-t border-concrete/10">
-        <div className="max-w-2xl mx-auto px-6 pt-20">
+      <section className="pb-20">
+        <div className="max-w-2xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -446,6 +379,73 @@ export default function GensPage() {
               {isExecuting ? "Executing..." : "EXECUTE STRIKE"}
             </Button>
           </motion.form>
+        </div>
+      </section>
+
+      {/* Tools Grid */}
+      <section className="pb-20">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid md:grid-cols-3 gap-8">
+            {tools.map((tool, index) => {
+              const IconComponent = tool.icon;
+              return (
+                <motion.div
+                  key={tool.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  className="border border-concrete/20 p-8 hover:border-concrete/40 transition-colors group"
+                >
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className={`p-3 border ${
+                      mode === "dominus" 
+                        ? "border-blood/30 bg-blood/5" 
+                        : "border-sovereign/30 bg-sovereign/5"
+                    }`}>
+                      <IconComponent 
+                        className={`w-6 h-6 ${
+                          mode === "dominus" ? "text-blood" : "text-sovereign"
+                        }`}
+                      />
+                    </div>
+                    <h2 className="font-law text-xl tracking-[0.1em] text-empire uppercase">
+                      {tool.name}
+                    </h2>
+                  </div>
+
+                  <p className="font-scripture text-empire/70 leading-relaxed mb-4">
+                    {tool.description}
+                  </p>
+
+                  <div className="mb-6">
+                    <p className="font-system text-xs tracking-[0.1em] text-concrete/50 uppercase mb-2">
+                      How to Use
+                    </p>
+                    <p className="font-scripture text-sm text-empire/60 leading-relaxed">
+                      {tool.usage}
+                    </p>
+                  </div>
+
+                  <a
+                    href={tool.file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    <Button
+                      variant={mode === "dominus" ? "blood" : "primary"}
+                      size="lg"
+                      className="w-full group/btn"
+                    >
+                      Open Tool
+                      <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                    </Button>
+                  </a>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
