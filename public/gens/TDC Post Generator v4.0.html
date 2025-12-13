@@ -438,6 +438,8 @@
         </div>
 
         <div class="ui-group">
+            <button onclick="generateSpecific()" style="border-color: var(--dom-gold); color: var(--dom-gold); font-weight: 800;">⚡ AI TOPIC</button>
+            <button onclick="generateRandom()" style="border-color: var(--dom-gold); color: var(--dom-gold); font-weight: 800;">🎲 RANDOM</button>
             <button onclick="document.getElementById('iconUpload').click()">UPLOAD ICON</button>
             <button onclick="openImport()">IMPORT JSON</button>
             <button onclick="showCaption()">CAPTION</button>
@@ -751,6 +753,110 @@
                 scaler.style.transform = oldTransform;
                 btn.innerText = oldText;
             }
+        }
+
+        // ============================================
+        // AI ENGINE
+        // ============================================
+        
+        async function generateSpecific() {
+            const topic = prompt("Enter a topic or concept:");
+            if (topic && topic.trim()) {
+                await callAI(topic.trim());
+            }
+        }
+
+        async function generateRandom() {
+            // DO NOT pick topic locally - send command to server
+            await callAI("GENERATE_RANDOM: Select a random high-impact concept from the manuscript and choose the best layout mode for it.");
+        }
+
+        async function callAI(payload) {
+            // Find the button that triggered this (either AI TOPIC or RANDOM)
+            let activeButton = null;
+            
+            // Determine which button was clicked based on payload
+            if (payload.includes("GENERATE_RANDOM")) {
+                activeButton = Array.from(document.querySelectorAll('button')).find(btn => btn.textContent.includes("🎲 RANDOM"));
+            } else {
+                activeButton = Array.from(document.querySelectorAll('button')).find(btn => btn.textContent.includes("⚡ AI TOPIC"));
+            }
+            
+            // Update button state
+            if (activeButton) {
+                const originalText = activeButton.innerText;
+                activeButton.innerText = "ARCHITECTING...";
+                activeButton.disabled = true;
+                
+                try {
+                    // Send POST request to API route
+                    const response = await fetch('/api/post-generator', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ topic: payload }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    let data = await response.json();
+                    
+                    // Clean response - remove markdown code blocks if present
+                    if (typeof data === 'string') {
+                        data = data.replace(/```json/g, '').replace(/```/g, '').trim();
+                        data = JSON.parse(data);
+                    } else if (data.response && typeof data.response === 'string') {
+                        data.response = data.response.replace(/```json/g, '').replace(/```/g, '').trim();
+                        data = JSON.parse(data.response);
+                    }
+                    
+                    // Pass to loadDataDirectly
+                    loadDataDirectly(data);
+                } catch (error) {
+                    console.error("Error calling AI:", error);
+                    alert("Failed to generate content. Please try again.");
+                } finally {
+                    // Restore button
+                    if (activeButton) {
+                        activeButton.innerText = originalText;
+                        activeButton.disabled = false;
+                    }
+                }
+            }
+        }
+
+        function loadDataDirectly(data) {
+            // Update currentMode based on data.layout_id
+            if (data.layout_id) {
+                changeMode(data.layout_id);
+            }
+            
+            // Update savedCaption
+            if (data.caption) {
+                savedCaption = data.caption;
+            }
+            
+            // Update slidesData array with new content
+            if (data.slides && Array.isArray(data.slides) && data.slides.length > 0) {
+                data.slides.forEach((s, i) => {
+                    if (i < 5) {
+                        slidesData[i] = s;
+                    }
+                });
+            }
+            
+            // Force update DOM for slide 0
+            currentSlide = 0;
+            document.getElementById('f1').innerHTML = slidesData[0].f1 || "";
+            document.getElementById('f2').innerHTML = slidesData[0].f2 || "";
+            document.getElementById('f3').innerHTML = slidesData[0].f3 || "";
+            document.getElementById('f4').innerHTML = slidesData[0].f4 || "";
+            
+            // Call render to update the screen immediately
+            render();
         }
 
     </script>

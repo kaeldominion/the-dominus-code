@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Header } from "@/components/navigation/Header";
 import { Footer } from "@/components/landing/Footer";
@@ -49,7 +49,7 @@ const tools = [
   },
 ];
 
-export default function GensPage() {
+function GensPageContent() {
   const { mode } = useApp();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -604,6 +604,23 @@ export default function GensPage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function GensPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Crown size={48} variant="gold" className="mx-auto mb-6" />
+          <p className="font-system text-sm text-concrete/50 uppercase tracking-wider">
+            Loading...
+          </p>
+        </div>
+      </main>
+    }>
+      <GensPageContent />
+    </Suspense>
   );
 }
 
