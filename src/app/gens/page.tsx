@@ -55,6 +55,13 @@ function GensPageContent() {
   const router = useRouter();
   const stanceSelectorRef = useRef<HTMLDivElement>(null);
   
+  // Ensure we're on the client side
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("gens_authenticated") === "true";
@@ -74,36 +81,42 @@ function GensPageContent() {
 
   // Capture tweet URL from query string (for iOS Shortcut integration)
   useEffect(() => {
-    if (!isAuthenticated) return; // Only run after authentication
+    if (!mounted || !isAuthenticated || typeof window === "undefined") return; // Only run after mount, authentication and on client
     
-    const urlParam = searchParams.get("url");
-    if (urlParam) {
-      // Decode the URL in case it's encoded
-      const decodedUrl = decodeURIComponent(urlParam);
-      setTweetUrl(decodedUrl);
+    try {
+      if (!searchParams) return;
       
-      // Clear the query parameter from URL
-      const newSearchParams = new URLSearchParams(searchParams.toString());
-      newSearchParams.delete("url");
-      const newQueryString = newSearchParams.toString();
-      const newUrl = newQueryString 
-        ? `${window.location.pathname}?${newQueryString}`
-        : window.location.pathname;
-      
-      // Replace URL without reload
-      router.replace(newUrl);
-      
-      // Scroll to stance selector after a short delay to ensure DOM is ready
-      setTimeout(() => {
-        if (stanceSelectorRef.current) {
-          stanceSelectorRef.current.scrollIntoView({ 
-            behavior: "smooth", 
-            block: "center" 
-          });
-        }
-      }, 300);
+      const urlParam = searchParams.get("url");
+      if (urlParam) {
+        // Decode the URL in case it's encoded
+        const decodedUrl = decodeURIComponent(urlParam);
+        setTweetUrl(decodedUrl);
+        
+        // Clear the query parameter from URL
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.delete("url");
+        const newQueryString = newSearchParams.toString();
+        const newUrl = newQueryString 
+          ? `${window.location.pathname}?${newQueryString}`
+          : window.location.pathname;
+        
+        // Replace URL without reload
+        router.replace(newUrl);
+        
+        // Scroll to stance selector after a short delay to ensure DOM is ready
+        setTimeout(() => {
+          if (stanceSelectorRef.current) {
+            stanceSelectorRef.current.scrollIntoView({ 
+              behavior: "smooth", 
+              block: "center" 
+            });
+          }
+        }, 300);
+      }
+    } catch (error) {
+      console.error("Error processing URL parameter:", error);
     }
-  }, [searchParams, router, isAuthenticated]);
+  }, [mounted, searchParams, router, isAuthenticated]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -610,10 +623,9 @@ function GensPageContent() {
 export default function GensPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center">
+      <main className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
-          <Crown size={48} variant="gold" className="mx-auto mb-6" />
-          <p className="font-system text-sm text-concrete/50 uppercase tracking-wider">
+          <p className="font-system text-sm text-white/50 uppercase tracking-wider">
             Loading...
           </p>
         </div>
