@@ -524,6 +524,59 @@
             { class: 'format-1-1', label: '1:1' }
         ];
 
+        // Convert image URL to data URI for html2canvas compatibility
+        function imageToDataURI(url, callback) {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    callback(canvas.toDataURL('image/png'));
+                } catch(e) {
+                    // If CORS fails, try direct URL
+                    callback(url);
+                }
+            };
+            img.onerror = function() {
+                // Fallback: use original URL
+                callback(url);
+            };
+            img.src = url;
+        }
+
+        // Ensure all images in canvas are loaded before export
+        function waitForImages(callback) {
+            const canvas = document.getElementById('canvas');
+            const images = canvas.querySelectorAll('img');
+            let loaded = 0;
+            const total = images.length;
+            
+            if (total === 0) {
+                callback();
+                return;
+            }
+            
+            images.forEach(img => {
+                if (img.complete && img.naturalHeight !== 0) {
+                    loaded++;
+                    if (loaded === total) callback();
+                } else {
+                    img.onload = function() {
+                        loaded++;
+                        if (loaded === total) callback();
+                    };
+                    img.onerror = function() {
+                        loaded++;
+                        if (loaded === total) callback();
+                    };
+                }
+            });
+        }
+
         // INIT
         function init() {
             resize();
@@ -534,7 +587,22 @@
                 document.getElementById('iconUpload').click();
             });
 
-            render();
+            // Preload and convert icon to data URI for export compatibility
+            const icon = document.getElementById('headerIcon');
+            if (!hasCustomIcon && icon.src.includes('/images/')) {
+                imageToDataURI(icon.src, function(dataURI) {
+                    icon.src = dataURI;
+                    // Ensure image is loaded after setting data URI
+                    icon.onload = function() {
+                        render();
+                    };
+                    if (icon.complete) {
+                        render();
+                    }
+                });
+            } else {
+                render();
+            }
         }
         
         function resize() {
@@ -646,11 +714,21 @@
             if(isGold) {
                 r.style.setProperty('--accent-color', 'var(--dom-gold)');
                 btn.innerText = "GOLD"; btn.style.color = "var(--dom-gold)";
-                if(!hasCustomIcon) icon.src = "/images/tdc-icon-gold.png";
+                if(!hasCustomIcon) {
+                    const iconPath = "/images/tdc-icon-gold.png";
+                    imageToDataURI(iconPath, function(dataURI) {
+                        icon.src = dataURI;
+                    });
+                }
             } else {
                 r.style.setProperty('--accent-color', 'var(--dom-blood)');
                 btn.innerText = "BLOOD"; btn.style.color = "var(--dom-blood)";
-                if(!hasCustomIcon) icon.src = "/images/tdc-icon-blood.png";
+                if(!hasCustomIcon) {
+                    const iconPath = "/images/tdc-icon-blood.png";
+                    imageToDataURI(iconPath, function(dataURI) {
+                        icon.src = dataURI;
+                    });
+                }
             }
         }
 
@@ -727,13 +805,21 @@
             const filename = `${date}_${title}_SLIDE_${currentSlide+1}.png`;
 
             setTimeout(() => {
-                html2canvas(document.getElementById('canvas'), { scale: 2, backgroundColor:null }).then(cvs => {
-                    const a = document.createElement('a');
-                    a.download = filename;
-                    a.href = cvs.toDataURL('image/png');
-                    a.click();
-                    scaler.style.transform = oldTransform;
-                    btn.innerText = "PNG";
+                waitForImages(() => {
+                    html2canvas(document.getElementById('canvas'), { 
+                        scale: 2, 
+                        backgroundColor: null,
+                        useCORS: true,
+                        allowTaint: false,
+                        logging: false
+                    }).then(cvs => {
+                        const a = document.createElement('a');
+                        a.download = filename;
+                        a.href = cvs.toDataURL('image/png');
+                        a.click();
+                        scaler.style.transform = oldTransform;
+                        btn.innerText = "PNG";
+                    });
                 });
             }, 100);
         }
@@ -759,7 +845,15 @@
                     await new Promise(r => setTimeout(r, 150));
                     
                     scaler.style.transform = "scale(1)";
-                    const cvs = await html2canvas(document.getElementById('canvas'), { scale: 2, backgroundColor:null });
+                    await new Promise(resolve => waitForImages(resolve));
+                    
+                    const cvs = await html2canvas(document.getElementById('canvas'), { 
+                        scale: 2, 
+                        backgroundColor: null,
+                        useCORS: true,
+                        allowTaint: false,
+                        logging: false
+                    });
                     const data = cvs.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, "");
                     
                     // Internal file naming
