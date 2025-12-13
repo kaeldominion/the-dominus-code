@@ -70,6 +70,7 @@ export default function GensPage() {
   const [stance, setStance] = useState<"REINFORCE" | "CORRECT">("REINFORCE");
   const [isExecuting, setIsExecuting] = useState(false);
   const [strikeResult, setStrikeResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [resultTweetId, setResultTweetId] = useState<string | null>(null);
 
   // Capture tweet URL from query string (for iOS Shortcut integration)
   useEffect(() => {
@@ -127,6 +128,7 @@ export default function GensPage() {
   const handleExecuteStrike = async (e: React.FormEvent) => {
     e.preventDefault();
     setStrikeResult(null);
+    setResultTweetId(null); // Clear previous tweet ID
     setIsExecuting(true);
 
     // Validate tweet URL
@@ -161,6 +163,22 @@ export default function GensPage() {
 
       if (!response.ok) {
         throw new Error(data.error || `HTTP error! status: ${response.status}`);
+      }
+
+      // Extract tweet_id from response (format: [{ "status": "success", "tweet_id": "..." }])
+      let tweetId: string | null = null;
+      if (Array.isArray(data) && data.length > 0) {
+        const firstItem = data[0];
+        if (firstItem.tweet_id) {
+          tweetId = firstItem.tweet_id;
+        }
+      } else if (data.tweet_id) {
+        // Handle case where response is not an array
+        tweetId = data.tweet_id;
+      }
+
+      if (tweetId) {
+        setResultTweetId(tweetId);
       }
 
       setStrikeResult({ 
@@ -400,6 +418,71 @@ export default function GensPage() {
                     <XCircle className="w-5 h-5" />
                   )}
                   <p className="font-system text-sm">{strikeResult.message}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Success Card - Mission Accomplished */}
+            {resultTweetId && (
+              <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className={`relative p-6 md:p-8 border-2 ${
+                  mode === "dominus"
+                    ? "border-blood bg-gradient-to-br from-blood/20 to-blood/5"
+                    : "border-sovereign bg-gradient-to-br from-sovereign/20 to-sovereign/5"
+                }`}
+              >
+                {/* Decorative elements */}
+                <div className="absolute top-4 right-4 opacity-20">
+                  <Target 
+                    className={`w-12 h-12 ${
+                      mode === "dominus" ? "text-blood" : "text-sovereign"
+                    }`}
+                  />
+                </div>
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`p-2 ${
+                      mode === "dominus"
+                        ? "bg-blood/20 border border-blood/50"
+                        : "bg-sovereign/20 border border-sovereign/50"
+                    }`}>
+                      <CheckCircle 
+                        className={`w-6 h-6 ${
+                          mode === "dominus" ? "text-blood" : "text-sovereign"
+                        }`}
+                      />
+                    </div>
+                    <h3 className={`font-law text-2xl md:text-3xl tracking-[0.15em] uppercase ${
+                      mode === "dominus" ? "text-blood" : "text-sovereign"
+                    }`}>
+                      MISSION ACCOMPLISHED
+                    </h3>
+                  </div>
+                  
+                  <p className="font-scripture text-empire/70 mb-6 italic">
+                    The strike has been deployed. Your response is live.
+                  </p>
+                  
+                  <a
+                    href={`https://x.com/i/status/${resultTweetId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block"
+                  >
+                    <Button
+                      variant={mode === "dominus" ? "blood" : "primary"}
+                      size="lg"
+                      icon
+                      className="group"
+                    >
+                      VIEW IMPACT
+                      <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </a>
                 </div>
               </motion.div>
             )}
