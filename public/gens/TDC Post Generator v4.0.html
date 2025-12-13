@@ -465,8 +465,8 @@
         </div>
 
         <div class="ui-group">
-            <button onclick="generateRandom()" style="border-color: var(--dom-gold); color: var(--dom-gold); font-weight: 800;">🎲 RANDOM</button>
-            <button onclick="generateManual()" style="border-color: var(--dom-gold); color: var(--dom-gold); font-weight: 800;">⚡ MANUAL</button>
+            <button id="btn-random" onclick="generateRandom()" style="border-color: var(--dom-gold); color: var(--dom-gold); font-weight: 800;">🎲 RANDOM</button>
+            <button id="btn-manual" onclick="generateManual(); return false;" style="border-color: var(--dom-gold); color: var(--dom-gold); font-weight: 800; cursor: pointer;">⚡ MANUAL</button>
             <button onclick="document.getElementById('iconUpload').click()">UPLOAD ICON</button>
             <button onclick="openImport()">IMPORT JSON</button>
             <button onclick="showCaption()">CAPTION</button>
@@ -498,6 +498,15 @@
             <textarea id="captionOutput"></textarea>
             <button onclick="copyCaption()" class="primary">COPY</button>
             <button onclick="closeModal('captionModal')">CLOSE</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="manualModal">
+        <div class="modal">
+            <h3>ENTER TOPIC</h3>
+            <textarea id="manualInput" placeholder="Enter your topic or concept here..."></textarea>
+            <button onclick="submitManual()" class="primary">GENERATE</button>
+            <button onclick="closeModal('manualModal')">CANCEL</button>
         </div>
     </div>
 
@@ -586,6 +595,12 @@
             document.querySelector('.header-icon-container').addEventListener('click', () => {
                 document.getElementById('iconUpload').click();
             });
+
+            // Manual button event listener
+            const manualBtn = document.getElementById('btn-manual');
+            if (manualBtn) {
+                manualBtn.addEventListener('click', generateManual);
+            }
 
             // Preload and convert icon to data URI for export compatibility
             const icon = document.getElementById('headerIcon');
@@ -882,23 +897,35 @@
         // ============================================
         
         async function generateRandom() {
-            await callWebhook("RANDOM_TOPIC_REQUEST");
+            const randomButton = document.getElementById('btn-random');
+            await callWebhook("RANDOM_TOPIC_REQUEST", randomButton);
         }
 
-        async function generateManual() {
-            const topic = window.prompt("Enter Topic:");
-            if (topic && topic.trim()) {
-                await callWebhook(topic.trim());
+        function generateManual() {
+            document.getElementById('manualModal').style.display = 'flex';
+            document.getElementById('manualInput').value = '';
+            document.getElementById('manualInput').focus();
+        }
+
+        function submitManual() {
+            const topic = document.getElementById('manualInput').value.trim();
+            if (topic) {
+                closeModal('manualModal');
+                const manualButton = document.getElementById('btn-manual');
+                callWebhook(topic, manualButton);
+            } else {
+                alert("Please enter a topic.");
             }
         }
 
-        async function callWebhook(payload) {
-            // Find the button that triggered this
-            let activeButton = null;
-            if (payload === "RANDOM_TOPIC_REQUEST") {
-                activeButton = Array.from(document.querySelectorAll('button')).find(btn => btn.textContent.includes("🎲 RANDOM"));
-            } else {
-                activeButton = Array.from(document.querySelectorAll('button')).find(btn => btn.textContent.includes("⚡ MANUAL"));
+        async function callWebhook(payload, activeButton) {
+            // If button not provided, try to find it
+            if (!activeButton) {
+                if (payload === "RANDOM_TOPIC_REQUEST") {
+                    activeButton = document.getElementById('btn-random');
+                } else {
+                    activeButton = document.getElementById('btn-manual');
+                }
             }
             
             // Update button state
@@ -949,9 +976,13 @@
         }
 
         function loadDataDirectly(data) {
-            // Update currentMode based on data.layout_id
-            if (data.layout_id) {
-                changeMode(data.layout_id);
+            // Auto-switch design mode based on layout_id
+            if (data.layout_id !== undefined && data.layout_id !== null) {
+                const layoutId = parseInt(data.layout_id, 10);
+                if (layoutId >= 1 && layoutId <= 4) {
+                    console.log("Auto-switching to Layout: " + layoutId);
+                    changeMode(layoutId);
+                }
             }
             
             // Update savedCaption
