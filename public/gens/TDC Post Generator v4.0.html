@@ -111,6 +111,31 @@
         }
         .header-icon:hover { opacity: 1; transform: scale(1.05); }
         
+        .back-button {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 100;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.6);
+            padding: 8px 16px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-button:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            transform: scale(1.05);
+        }
+        
         .footer {
             padding: 60px;
             z-index: 10;
@@ -286,7 +311,7 @@
 
         .mode-4.slide-1 .content-area { align-items: flex-start; text-align: left; padding-left: 100px; }
         .mode-4.slide-1 .field-1 { font-size: 24px; border: none; opacity: 0.6; font-family:'Montserrat'; }
-        .mode-4.slide-1 .field-2 { font-size: 80px; color: #666; text-decoration: line-through; text-decoration-color: var(--accent-color); }
+        .mode-4.slide-1 .field-2 { font-size: 80px; color: #666; border-bottom: 3px solid var(--accent-color); padding-bottom: 10px; }
         .mode-4.slide-1 .field-3 { font-size: 48px; border-left: 3px solid #333; padding-left: 40px; color: #aaa; }
 
         .mode-4.slide-2 .content-area { align-items: flex-start; text-align: left; padding-left: 100px; }
@@ -376,6 +401,8 @@
 </head>
 <body>
 
+    <a href="/gens" class="back-button">← BACK</a>
+
     <div id="scaler">
         <div id="canvas" class="card-canvas format-4-5 mode-1 slide-0">
             <div class="texture-noise"></div>
@@ -386,7 +413,7 @@
                 
                 <!-- ICON SLOT -->
                 <div class="header-icon-container" title="Click to Upload Icon">
-                    <img id="headerIcon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C5A059' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14'/%3E%3C/svg%3E" class="header-icon" alt="ICON">
+                    <img id="headerIcon" src="/images/tdc-icon-gold.png" class="header-icon" alt="ICON">
                     <input type="file" id="iconUpload" accept="image/*" style="display:none" onchange="uploadIcon(event)">
                 </div>
 
@@ -481,6 +508,7 @@
         let currentFormat = 1;
         let isGold = true;
         let savedCaption = "No caption loaded.";
+        let hasCustomIcon = false;
         
         // 5 Slides x 4 Fields
         let slidesData = Array(5).fill().map(() => ({
@@ -524,6 +552,7 @@
                 const reader = new FileReader();
                 reader.onload = function(evt) {
                     document.getElementById('headerIcon').src = evt.target.result;
+                    hasCustomIcon = true;
                 };
                 reader.readAsDataURL(file);
             }
@@ -613,16 +642,15 @@
             const r = document.querySelector(':root');
             const btn = document.getElementById('btn-col');
             const icon = document.getElementById('headerIcon');
-            const defaultIcon = icon.src.includes('data:image/svg+xml');
 
             if(isGold) {
                 r.style.setProperty('--accent-color', 'var(--dom-gold)');
                 btn.innerText = "GOLD"; btn.style.color = "var(--dom-gold)";
-                if(defaultIcon) icon.src = icon.src.replace('%238a0303', '%23C5A059');
+                if(!hasCustomIcon) icon.src = "/images/tdc-icon-gold.png";
             } else {
                 r.style.setProperty('--accent-color', 'var(--dom-blood)');
                 btn.innerText = "BLOOD"; btn.style.color = "var(--dom-blood)";
-                if(defaultIcon) icon.src = icon.src.replace('%23C5A059', '%238a0303');
+                if(!hasCustomIcon) icon.src = "/images/tdc-icon-blood.png";
             }
         }
 
