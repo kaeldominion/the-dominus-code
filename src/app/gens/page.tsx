@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Header } from "@/components/navigation/Header";
 import { Footer } from "@/components/landing/Footer";
 import { Crown } from "@/components/ui/Crown";
@@ -50,6 +51,10 @@ const tools = [
 
 export default function GensPage() {
   const { mode } = useApp();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const stanceSelectorRef = useRef<HTMLDivElement>(null);
+  
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("gens_authenticated") === "true";
@@ -65,6 +70,39 @@ export default function GensPage() {
   const [stance, setStance] = useState<"REINFORCE" | "CORRECT">("REINFORCE");
   const [isExecuting, setIsExecuting] = useState(false);
   const [strikeResult, setStrikeResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  // Capture tweet URL from query string (for iOS Shortcut integration)
+  useEffect(() => {
+    if (!isAuthenticated) return; // Only run after authentication
+    
+    const urlParam = searchParams.get("url");
+    if (urlParam) {
+      // Decode the URL in case it's encoded
+      const decodedUrl = decodeURIComponent(urlParam);
+      setTweetUrl(decodedUrl);
+      
+      // Clear the query parameter from URL
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.delete("url");
+      const newQueryString = newSearchParams.toString();
+      const newUrl = newQueryString 
+        ? `${window.location.pathname}?${newQueryString}`
+        : window.location.pathname;
+      
+      // Replace URL without reload
+      router.replace(newUrl);
+      
+      // Scroll to stance selector after a short delay to ensure DOM is ready
+      setTimeout(() => {
+        if (stanceSelectorRef.current) {
+          stanceSelectorRef.current.scrollIntoView({ 
+            behavior: "smooth", 
+            block: "center" 
+          });
+        }
+      }, 300);
+    }
+  }, [searchParams, router, isAuthenticated]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -302,7 +340,7 @@ export default function GensPage() {
             </div>
 
             {/* Stance Selector */}
-            <div>
+            <div ref={stanceSelectorRef}>
               <label className="block font-system text-xs tracking-[0.2em] text-concrete/60 uppercase mb-3">
                 Stance
               </label>
