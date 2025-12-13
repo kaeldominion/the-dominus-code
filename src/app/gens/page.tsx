@@ -496,22 +496,25 @@ export default function GensPage() {
                     The strike has been deployed. Your response is live.
                   </p>
                   
-                  <a
-                    href={`https://x.com/i/status/${resultTweetId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block"
+                  <Button
+                    variant={mode === "dominus" ? "blood" : "primary"}
+                    size="lg"
+                    icon
+                    className="group"
+                    type="button"
+                    onClick={(e) => {
+                      // Prevent any form submission or page navigation
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // Open the tweet in a new tab
+                      if (resultTweetId) {
+                        window.open(`https://x.com/i/status/${resultTweetId}`, '_blank', 'noopener,noreferrer');
+                      }
+                    }}
                   >
-                    <Button
-                      variant={mode === "dominus" ? "blood" : "primary"}
-                      size="lg"
-                      icon
-                      className="group"
-                    >
-                      VIEW IMPACT
-                      <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </a>
+                    VIEW IMPACT
+                    <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
                 </div>
               </motion.div>
             )}
