@@ -165,20 +165,49 @@ export default function GensPage() {
         throw new Error(data.error || `HTTP error! status: ${response.status}`);
       }
 
+      // Debug: Log the response to see its structure
+      console.log("API Response:", data);
+      console.log("Response type:", Array.isArray(data) ? "array" : typeof data);
+
       // Extract tweet_id from response (format: [{ "status": "success", "tweet_id": "..." }])
       let tweetId: string | null = null;
+      
+      // Handle array response format
       if (Array.isArray(data) && data.length > 0) {
         const firstItem = data[0];
+        console.log("First item in array:", firstItem);
         if (firstItem.tweet_id) {
           tweetId = firstItem.tweet_id;
         }
-      } else if (data.tweet_id) {
-        // Handle case where response is not an array
-        tweetId = data.tweet_id;
+      } 
+      // Handle object response format
+      else if (data && typeof data === 'object') {
+        // Check for tweet_id at root level
+        if (data.tweet_id) {
+          tweetId = data.tweet_id;
+        }
+        // Check for nested response (e.g., { response: [{ tweet_id: ... }] })
+        else if (data.response && Array.isArray(data.response) && data.response.length > 0) {
+          const firstItem = data.response[0];
+          if (firstItem.tweet_id) {
+            tweetId = firstItem.tweet_id;
+          }
+        }
+        // Check for data property (e.g., { data: [{ tweet_id: ... }] })
+        else if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+          const firstItem = data.data[0];
+          if (firstItem.tweet_id) {
+            tweetId = firstItem.tweet_id;
+          }
+        }
       }
+
+      console.log("Extracted tweet_id:", tweetId);
 
       if (tweetId) {
         setResultTweetId(tweetId);
+      } else {
+        console.warn("No tweet_id found in response. Response structure:", JSON.stringify(data, null, 2));
       }
 
       setStrikeResult({ 
