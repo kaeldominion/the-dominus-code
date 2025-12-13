@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Header } from "@/components/navigation/Header";
 import { Footer } from "@/components/landing/Footer";
 import { Crown } from "@/components/ui/Crown";
@@ -49,18 +49,10 @@ const tools = [
   },
 ];
 
-function GensPageContent() {
+export default function GensPage() {
   const { mode } = useApp();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const stanceSelectorRef = useRef<HTMLDivElement>(null);
-  
-  // Ensure we're on the client side
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
   
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     if (typeof window !== "undefined") {
@@ -78,24 +70,24 @@ function GensPageContent() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [strikeResult, setStrikeResult] = useState<{ success: boolean; message: string } | null>(null);
   const [resultTweetId, setResultTweetId] = useState<string | null>(null);
+  const [urlProcessed, setUrlProcessed] = useState(false);
 
-  // Capture tweet URL from query string (for iOS Shortcut integration)
+  // Capture tweet URL from query string (for iOS Shortcut integration) - using window.location to avoid SSR issues
   useEffect(() => {
-    if (!mounted || !isAuthenticated || typeof window === "undefined") return; // Only run after mount, authentication and on client
+    if (!isAuthenticated || typeof window === "undefined" || urlProcessed) return;
     
     try {
-      if (!searchParams) return;
-      
-      const urlParam = searchParams.get("url");
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlParam = urlParams.get("url");
       if (urlParam) {
         // Decode the URL in case it's encoded
         const decodedUrl = decodeURIComponent(urlParam);
         setTweetUrl(decodedUrl);
+        setUrlProcessed(true);
         
         // Clear the query parameter from URL
-        const newSearchParams = new URLSearchParams(searchParams.toString());
-        newSearchParams.delete("url");
-        const newQueryString = newSearchParams.toString();
+        urlParams.delete("url");
+        const newQueryString = urlParams.toString();
         const newUrl = newQueryString 
           ? `${window.location.pathname}?${newQueryString}`
           : window.location.pathname;
@@ -116,7 +108,7 @@ function GensPageContent() {
     } catch (error) {
       console.error("Error processing URL parameter:", error);
     }
-  }, [mounted, searchParams, router, isAuthenticated]);
+  }, [isAuthenticated, router, urlProcessed]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -617,22 +609,6 @@ function GensPageContent() {
 
       <Footer />
     </main>
-  );
-}
-
-export default function GensPage() {
-  return (
-    <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <p className="font-system text-sm text-white/50 uppercase tracking-wider">
-            Loading...
-          </p>
-        </div>
-      </main>
-    }>
-      <GensPageContent />
-    </Suspense>
   );
 }
 
