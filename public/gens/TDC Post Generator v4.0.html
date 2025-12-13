@@ -438,8 +438,8 @@
         </div>
 
         <div class="ui-group">
-            <button onclick="generateSpecific()" style="border-color: var(--dom-gold); color: var(--dom-gold); font-weight: 800;">⚡ AI TOPIC</button>
             <button onclick="generateRandom()" style="border-color: var(--dom-gold); color: var(--dom-gold); font-weight: 800;">🎲 RANDOM</button>
+            <button onclick="generateManual()" style="border-color: var(--dom-gold); color: var(--dom-gold); font-weight: 800;">⚡ MANUAL</button>
             <button onclick="document.getElementById('iconUpload').click()">UPLOAD ICON</button>
             <button onclick="openImport()">IMPORT JSON</button>
             <button onclick="showCaption()">CAPTION</button>
@@ -756,30 +756,27 @@
         }
 
         // ============================================
-        // AI ENGINE
+        // WEBHOOK ENGINE
         // ============================================
         
-        async function generateSpecific() {
-            const topic = prompt("Enter a topic or concept:");
+        async function generateRandom() {
+            await callWebhook("RANDOM_TOPIC_REQUEST");
+        }
+
+        async function generateManual() {
+            const topic = window.prompt("Enter Topic:");
             if (topic && topic.trim()) {
-                await callAI(topic.trim());
+                await callWebhook(topic.trim());
             }
         }
 
-        async function generateRandom() {
-            // DO NOT pick topic locally - send command to server
-            await callAI("GENERATE_RANDOM: Select a random high-impact concept from the manuscript and choose the best layout mode for it.");
-        }
-
-        async function callAI(payload) {
-            // Find the button that triggered this (either AI TOPIC or RANDOM)
+        async function callWebhook(payload) {
+            // Find the button that triggered this
             let activeButton = null;
-            
-            // Determine which button was clicked based on payload
-            if (payload.includes("GENERATE_RANDOM")) {
+            if (payload === "RANDOM_TOPIC_REQUEST") {
                 activeButton = Array.from(document.querySelectorAll('button')).find(btn => btn.textContent.includes("🎲 RANDOM"));
             } else {
-                activeButton = Array.from(document.querySelectorAll('button')).find(btn => btn.textContent.includes("⚡ AI TOPIC"));
+                activeButton = Array.from(document.querySelectorAll('button')).find(btn => btn.textContent.includes("⚡ MANUAL"));
             }
             
             // Update button state
@@ -789,8 +786,9 @@
                 activeButton.disabled = true;
                 
                 try {
-                    // Send POST request to API route
-                    const response = await fetch('/api/post-generator', {
+                    const webhookURL = "https://n8n.srv923142.hstgr.cloud/webhook/tdc-generate";
+                    
+                    const response = await fetch(webhookURL, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -816,7 +814,7 @@
                     // Pass to loadDataDirectly
                     loadDataDirectly(data);
                 } catch (error) {
-                    console.error("Error calling AI:", error);
+                    console.error("Error calling webhook:", error);
                     alert("Failed to generate content. Please try again.");
                 } finally {
                     // Restore button

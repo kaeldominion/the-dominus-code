@@ -11,4 +11,5 @@ Allow: /media
 Allow: /contact
 Allow: /privacy
 Allow: /terms
+Allow: /images/
 
