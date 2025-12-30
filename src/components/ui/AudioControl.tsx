@@ -12,21 +12,29 @@ export function AudioControl() {
 
   // Initialize audio only once and share it via context
   useEffect(() => {
-    if (typeof window !== "undefined" && !forewordAudioRef) {
-      const audio = new Audio("/audio/The_Dominus_Code_Foreword_Read_This_First.mp3");
-      audio.loop = true;
-      audio.volume = 0.3;
-      localAudioRef.current = audio;
+    if (typeof window !== "undefined") {
+      // Use existing audio from context if available
+      if (forewordAudioRef?.current) {
+        localAudioRef.current = forewordAudioRef.current;
+        return;
+      }
       
-      // Create a ref object and share it via context
-      const refObject = { current: audio };
-      setForewordAudioRef(refObject);
+      // Create new audio only if it doesn't exist
+      if (!localAudioRef.current) {
+        const audio = new Audio("/audio/The_Dominus_Code_Foreword_Read_This_First.mp3");
+        audio.loop = true;
+        audio.volume = 0.3;
+        localAudioRef.current = audio;
+        
+        // Create a ref object and share it via context
+        const refObject = { current: audio };
+        setForewordAudioRef(refObject);
+      }
     }
     
-    // Cleanup: don't destroy audio on unmount, just pause it
+    // Don't cleanup audio on unmount - let it persist
     return () => {
-      // Don't destroy the audio, just pause if needed
-      // The audio will persist across page navigations
+      // Audio persists across navigations
     };
   }, [forewordAudioRef, setForewordAudioRef]);
 
@@ -37,7 +45,7 @@ export function AudioControl() {
     const audio = audioRef?.current || localAudioRef.current;
     if (audio) {
       if (audioEnabled) {
-        // Don't restart if already playing
+        // Don't restart if already playing - preserve current time
         if (audio.paused) {
           audio.play().catch(() => {
             // Autoplay blocked - user needs to interact first

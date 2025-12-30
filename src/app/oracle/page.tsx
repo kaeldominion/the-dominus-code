@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { Header } from "@/components/navigation/Header";
 import { ChatInterface } from "@/components/oracle/ChatInterface";
-import { AudioControl } from "@/components/ui/AudioControl";
 
 export const metadata: Metadata = {
   title: "The Oracle | The Dominus Code",
@@ -19,7 +18,6 @@ export default function OraclePage() {
       <div className="pt-8 pb-12 px-4 min-h-[calc(100vh-80px)] flex items-center justify-center">
         <ChatInterface />
       </div>
-      <AudioControl />
     </main>
   );
 }

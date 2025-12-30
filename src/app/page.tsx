@@ -7,7 +7,6 @@ import { AuthorSection } from "@/components/landing/AuthorSection";
 import { OraclePreview } from "@/components/landing/OraclePreview";
 import { CouncilPreview } from "@/components/landing/CouncilPreview";
 import { Footer } from "@/components/landing/Footer";
-import { AudioControl } from "@/components/ui/AudioControl";
 
 // Default OG image
 const DEFAULT_OG_IMAGE = "/images/book-cover.png";
@@ -78,7 +77,6 @@ export default async function Home({
       <AuthorSection />
       <CouncilPreview />
       <Footer />
-      <AudioControl />
     </main>
   );
 }

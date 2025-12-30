@@ -3,6 +3,7 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { Analytics } from "@vercel/analytics/react";
+import { AudioControl } from "@/components/ui/AudioControl";
 
 export const metadata: Metadata = {
   title: "The Dominus Code | F*ck Monogamy. Build A Dynasty.",
@@ -48,6 +49,7 @@ export default function RootLayout({
           <div className="bg-texture" aria-hidden="true" />
           
           {children}
+          <AudioControl />
         </Providers>
       </body>
     </html>
