@@ -10,7 +10,7 @@ import { useApp } from "@/components/Providers";
 
 const navLinks = [
   { href: "/", label: "The Gate" },
-  { href: "/calibration", label: "Calibration" },
+  { href: "/oracle", label: "The Oracle" },
   { href: "/council", label: "The Council" },
   { href: "/media", label: "Media" },
 ];

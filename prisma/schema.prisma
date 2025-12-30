@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -225,5 +225,37 @@ model LiveStatus {
   endedAt   DateTime?
 
   @@map("live_status")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// APPLICATIONS (Council & Dynasty)
+// ═══════════════════════════════════════════════════════════════
+
+model Application {
+  id              String            @id @default(cuid())
+  type            ApplicationType
+  name            String?
+  email           String?
+  formData        Json              // Store all answers as JSON
+  aiVerdict       String?           // APPROVED, REJECT, RECEIVED, etc.
+  aiAnalysis      String?           // AI's analysis text
+  status          ApplicationStatus @default(PENDING)
+  submittedAt     DateTime          @default(now())
+  reviewedAt      DateTime?
+  notes           String?           // Admin notes
+
+  @@map("applications")
+}
+
+enum ApplicationType {
+  COUNCIL
+  DYNASTY
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  WAITLIST
 }
 

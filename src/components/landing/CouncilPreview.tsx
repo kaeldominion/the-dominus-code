@@ -124,18 +124,20 @@ export function CouncilPreview() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 1, duration: 0.8 }}
         >
-          <Link href="/council">
-            <Button
-              variant={mode === "dominus" ? "blood" : "primary"}
-              size="lg"
-              icon
-            >
-              Learn More
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/council">
+              <Button
+                variant={mode === "dominus" ? "blood" : "primary"}
+                size="lg"
+                icon
+              >
+                Apply for The Council
+              </Button>
+            </Link>
+          </div>
           
           <p className="font-system text-[10px] tracking-[0.2em] text-sovereign/60 uppercase mt-6">
-            Coming Soon • Application Required
+            For Men Ready to Execute • Application Required
           </p>
         </motion.div>
       </div>

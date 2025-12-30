@@ -59,16 +59,18 @@ export default function CouncilPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 border border-gold/30 mb-4">
-              <Lock className="w-4 h-4 text-gold" />
-              <span className="font-display text-xs tracking-[0.3em] text-gold">
-                APPLICATION REQUIRED
-              </span>
-            </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 border border-sovereign/50 mb-8">
-              <span className="font-display text-xs tracking-[0.3em] text-sovereign">
-                COMING SOON
-              </span>
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 border border-gold/30">
+                <Lock className="w-4 h-4 text-gold" />
+                <span className="font-display text-xs tracking-[0.3em] text-gold">
+                  APPLICATION REQUIRED
+                </span>
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 border border-sovereign/50">
+                <span className="font-display text-xs tracking-[0.3em] text-sovereign">
+                  COMING SOON
+                </span>
+              </div>
             </div>
             <h1 className="font-display text-4xl md:text-6xl tracking-[0.1em] text-ivory mb-6">
               THE COUNCIL
@@ -85,13 +87,13 @@ export default function CouncilPage() {
               The Council is launching soon. Submit your application to join the waitlist.
             </p>
             
-            <Link href="/council/apply">
+            <Link href="/apply/council">
               <Button
                 variant={mode === "dominus" ? "blood" : "primary"}
                 size="lg"
                 icon
               >
-                Apply Now
+                Apply for The Council
               </Button>
             </Link>
           </motion.div>
@@ -203,7 +205,7 @@ export default function CouncilPage() {
               <p className="font-body text-ivory/60 mb-8">
                 or $4,997/year (save 2 months)
               </p>
-              <Link href="/council/apply" className="block">
+              <Link href="/apply/council" className="block">
                 <Button
                   variant={mode === "dominus" ? "blood" : "primary"}
                   size="lg"
@@ -249,6 +251,47 @@ export default function CouncilPage() {
               — THE DOMINUS CODE
             </cite>
           </motion.footer>
+        </div>
+      </section>
+
+      {/* The Dynasty Section - For Women */}
+      <section className="py-20 border-t border-gold/10 bg-void/50">
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 border border-sovereign/30 mb-4">
+              <span className="font-display text-xs tracking-[0.3em] text-sovereign">
+                FOR WOMEN
+              </span>
+            </div>
+            <h2 className="font-display text-3xl md:text-4xl tracking-[0.1em] text-ivory mb-4">
+              THE DYNASTY
+            </h2>
+            <p className="font-body text-lg text-ivory/60 max-w-2xl mx-auto mb-6 italic">
+              &ldquo;I don&apos;t hunt. I cast. I am looking for the woman who can hold the gaze of a King without flinching.&rdquo;
+            </p>
+            <p className="font-body text-base text-ivory/50 max-w-xl mx-auto mb-8">
+              You are not applying for a relationship. You are applying for a position in a Dynasty. 
+              The Phalanx structure. The Hearth. Legacy. Read &apos;The Dominus Code&apos; before proceeding.
+            </p>
+            <Link href="/apply/dynasty">
+              <Button
+                variant="secondary"
+                size="lg"
+                icon
+              >
+                Cast for The Dynasty
+              </Button>
+            </Link>
+            <p className="font-body text-xs text-sovereign/60 mt-4">
+              Application required. Weakness is not tolerated.
+            </p>
+          </motion.div>
         </div>
       </section>
 

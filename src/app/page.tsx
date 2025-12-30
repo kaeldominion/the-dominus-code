@@ -4,7 +4,7 @@ import { HeroSection } from "@/components/landing/HeroSection";
 import { ManifestoSection } from "@/components/landing/ManifestoSection";
 import { BookSection } from "@/components/landing/BookSection";
 import { AuthorSection } from "@/components/landing/AuthorSection";
-import { StatusDashboard } from "@/components/landing/StatusDashboard";
+import { OraclePreview } from "@/components/landing/OraclePreview";
 import { CouncilPreview } from "@/components/landing/CouncilPreview";
 import { Footer } from "@/components/landing/Footer";
 import { AudioControl } from "@/components/ui/AudioControl";
@@ -72,10 +72,10 @@ export default async function Home({
     <main className="min-h-screen">
       <Header />
       <HeroSection />
+      <OraclePreview />
       <ManifestoSection />
       <BookSection />
       <AuthorSection />
-      <StatusDashboard />
       <CouncilPreview />
       <Footer />
       <AudioControl />

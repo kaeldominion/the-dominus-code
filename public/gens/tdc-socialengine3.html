@@ -33,7 +33,7 @@
             --print-height: 825px;
             --spine-width: 52px;
             
-            --hc-width: 1152px; 
+            --hc-width: 1161px; 
             --hc-height: 925px;
             
             --digital-width: 640px; 
@@ -326,7 +326,18 @@
             height: calc(100% - 100px);
         }
 
+        #hardcover-wrap .front-panel {
+            padding-left: 68px;
+            padding-right: 52px;
+        }
+
+        #hardcover-wrap .back-panel {
+            padding-left: 32px;
+            padding-right: 48px;
+        }
+
         #hardcover-wrap .spine-panel {
+            width: 61px;
             height: 100%;
             padding-top: 90px;
             background: rgba(255,255,255,0.03);
@@ -335,7 +346,15 @@
         }
 
         #hardcover-wrap .spine-author {
-            bottom: 170px;
+            bottom: 190px;
+        }
+
+        #hardcover-wrap .front-panel .author-name {
+            transform: translateY(-20px);
+        }
+
+        #hardcover-wrap .back-panel .back-website {
+            bottom: 70px;
         }
 
         .back-panel, .front-panel {
