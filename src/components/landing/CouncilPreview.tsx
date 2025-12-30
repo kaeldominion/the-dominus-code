@@ -60,8 +60,8 @@ export function CouncilPreview() {
           <p className="font-system text-xs tracking-[0.4em] text-concrete/50 uppercase mb-4">
             For Those Ready to Execute
           </p>
-          <div className="inline-flex items-center gap-2 px-3 py-1 border border-sovereign/50 mb-4">
-            <span className="font-system text-[10px] tracking-[0.3em] text-sovereign uppercase">
+          <div className={`inline-flex items-center gap-2 px-3 py-1 border mb-4 ${mode === "dominus" ? "border-blood/50" : "border-sovereign/50"}`}>
+            <span className={`font-system text-[10px] tracking-[0.3em] uppercase ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
               COMING SOON
             </span>
           </div>
@@ -136,7 +136,7 @@ export function CouncilPreview() {
             </Link>
           </div>
           
-          <p className="font-system text-[10px] tracking-[0.2em] text-sovereign/60 uppercase mt-6">
+          <p className={`font-system text-[10px] tracking-[0.2em] uppercase mt-6 ${mode === "dominus" ? "text-blood/60" : "text-sovereign/60"}`}>
             For Men Ready to Execute • Application Required
           </p>
         </motion.div>

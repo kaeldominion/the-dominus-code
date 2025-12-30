@@ -96,7 +96,7 @@ export function Header() {
             {isAudioPlaying && (
               <button
                 onClick={handlePauseAudio}
-                className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                className={`text-concrete/60 transition-colors duration-500 ${mode === "dominus" ? "hover:text-blood" : "hover:text-sovereign"}`}
                 title="Pause audio"
                 aria-label="Pause audio"
               >
@@ -109,7 +109,7 @@ export function Header() {
                 href="https://instagram.com/thedominuscode"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                className={`text-concrete/60 transition-colors duration-500 ${mode === "dominus" ? "hover:text-blood" : "hover:text-sovereign"}`}
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" strokeWidth={1} />
@@ -118,7 +118,7 @@ export function Header() {
                 href="https://tiktok.com/@thedominuscode"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                className={`text-concrete/60 transition-colors duration-500 ${mode === "dominus" ? "hover:text-blood" : "hover:text-sovereign"}`}
                 aria-label="TikTok"
               >
                 <Music2 className="w-5 h-5" strokeWidth={1} />
@@ -127,7 +127,7 @@ export function Header() {
                 href="https://youtube.com/@thedominuscode"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                className={`text-concrete/60 transition-colors duration-500 ${mode === "dominus" ? "hover:text-blood" : "hover:text-sovereign"}`}
                 aria-label="YouTube"
               >
                 <Youtube className="w-5 h-5" strokeWidth={1} />
@@ -178,7 +178,7 @@ export function Header() {
                     <Link
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="font-law text-xl tracking-[0.2em] uppercase text-empire/80 hover:text-sovereign transition-colors duration-500"
+                      className={`font-law text-xl tracking-[0.2em] uppercase text-empire/80 transition-colors duration-500 ${mode === "dominus" ? "hover:text-blood" : "hover:text-sovereign"}`}
                     >
                       {link.label}
                     </Link>
@@ -198,7 +198,7 @@ export function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileOpen(false)}
-                  className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                  className={`text-concrete/60 transition-colors duration-500 ${mode === "dominus" ? "hover:text-blood" : "hover:text-sovereign"}`}
                   aria-label="Instagram"
                 >
                   <Instagram className="w-6 h-6" strokeWidth={1} />
@@ -208,7 +208,7 @@ export function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileOpen(false)}
-                  className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                  className={`text-concrete/60 transition-colors duration-500 ${mode === "dominus" ? "hover:text-blood" : "hover:text-sovereign"}`}
                   aria-label="TikTok"
                 >
                   <Music2 className="w-6 h-6" strokeWidth={1} />
@@ -218,7 +218,7 @@ export function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileOpen(false)}
-                  className="text-concrete/60 hover:text-sovereign transition-colors duration-500"
+                  className={`text-concrete/60 transition-colors duration-500 ${mode === "dominus" ? "hover:text-blood" : "hover:text-sovereign"}`}
                   aria-label="YouTube"
                 >
                   <Youtube className="w-6 h-6" strokeWidth={1} />

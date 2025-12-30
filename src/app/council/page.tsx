@@ -66,8 +66,8 @@ export default function CouncilPage() {
                   APPLICATION REQUIRED
                 </span>
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 border border-sovereign/50">
-                <span className="font-display text-xs tracking-[0.3em] text-sovereign">
+              <div className={`inline-flex items-center gap-2 px-4 py-2 border ${mode === "dominus" ? "border-blood/50" : "border-sovereign/50"}`}>
+                <span className={`font-display text-xs tracking-[0.3em] ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                   COMING SOON
                 </span>
               </div>
@@ -83,7 +83,7 @@ export default function CouncilPage() {
               the highest level. Direct access. Real accountability. No
               bullshit.
             </p>
-            <p className="font-body text-lg text-sovereign/80 max-w-xl mx-auto mb-10 italic">
+            <p className={`font-body text-lg max-w-xl mx-auto mb-10 italic ${mode === "dominus" ? "text-blood/80" : "text-sovereign/80"}`}>
               The Council is launching soon. Submit your application to join the waitlist.
             </p>
             
@@ -214,7 +214,7 @@ export default function CouncilPage() {
                   Apply for The Council
                 </Button>
               </Link>
-              <p className="font-body text-xs text-sovereign/60 mt-4">
+              <p className={`font-body text-xs mt-4 ${mode === "dominus" ? "text-blood/60" : "text-sovereign/60"}`}>
                 The Council is launching soon. Submit your application to join the waitlist.
               </p>
             </div>
@@ -264,8 +264,8 @@ export default function CouncilPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 border border-sovereign/30 mb-4">
-              <span className="font-display text-xs tracking-[0.3em] text-sovereign">
+            <div className={`inline-flex items-center gap-2 px-4 py-2 border mb-4 ${mode === "dominus" ? "border-blood/30" : "border-sovereign/30"}`}>
+              <span className={`font-display text-xs tracking-[0.3em] ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                 FOR WOMEN
               </span>
             </div>
@@ -288,7 +288,7 @@ export default function CouncilPage() {
                 Cast for The Dynasty
               </Button>
             </Link>
-            <p className="font-body text-xs text-sovereign/60 mt-4">
+            <p className={`font-body text-xs mt-4 ${mode === "dominus" ? "text-blood/60" : "text-sovereign/60"}`}>
               Application required. Weakness is not tolerated.
             </p>
           </motion.div>
