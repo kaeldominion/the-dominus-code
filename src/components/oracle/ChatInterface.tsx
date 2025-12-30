@@ -182,7 +182,9 @@ export function ChatInterface() {
                 className={`max-w-[85%] p-4 text-sm md:text-base leading-relaxed font-scripture border ${
                   msg.role === "user"
                     ? "bg-void border-concrete/30 text-empire/80"
-                    : "bg-sovereign/10 border-sovereign/30 text-sovereign/90 shadow-[0_0_15px_rgba(229,195,114,0.1)]"
+                    : mode === "dominus" 
+                      ? "bg-blood/10 border-blood/30 text-blood/90 shadow-[0_0_15px_rgba(138,3,3,0.1)]"
+                      : "bg-sovereign/10 border-sovereign/30 text-sovereign/90 shadow-[0_0_15px_rgba(229,195,114,0.1)]"
                 }`}
               >
                 {msg.role === "model" && (
@@ -194,42 +196,42 @@ export function ChatInterface() {
                   <ReactMarkdown
                     components={{
                       p: ({ children }) => (
-                        <p className="mb-4 last:mb-0 font-scripture text-sovereign/90 leading-relaxed">
+                        <p className={`mb-4 last:mb-0 font-scripture leading-relaxed ${mode === "dominus" ? "text-blood/90" : "text-sovereign/90"}`}>
                           {children}
                         </p>
                       ),
                       strong: ({ children }) => (
-                        <strong className="font-bold text-sovereign font-law">
+                        <strong className={`font-bold font-law ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                           {children}
                         </strong>
                       ),
                       em: ({ children }) => (
-                        <em className="italic text-sovereign/80">
+                        <em className={`italic ${mode === "dominus" ? "text-blood/80" : "text-sovereign/80"}`}>
                           {children}
                         </em>
                       ),
                       h1: ({ children }) => (
-                        <h1 className="text-xl font-law text-sovereign mb-3 mt-4 first:mt-0 tracking-wide">
+                        <h1 className={`text-xl font-law mb-3 mt-4 first:mt-0 tracking-wide ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                           {children}
                         </h1>
                       ),
                       h2: ({ children }) => (
-                        <h2 className="text-lg font-law text-sovereign mb-2 mt-4 first:mt-0 tracking-wide">
+                        <h2 className={`text-lg font-law mb-2 mt-4 first:mt-0 tracking-wide ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                           {children}
                         </h2>
                       ),
                       h3: ({ children }) => (
-                        <h3 className="text-base font-law text-sovereign/90 mb-2 mt-3 first:mt-0 tracking-wide">
+                        <h3 className={`text-base font-law mb-2 mt-3 first:mt-0 tracking-wide ${mode === "dominus" ? "text-blood/90" : "text-sovereign/90"}`}>
                           {children}
                         </h3>
                       ),
                       ul: ({ children }) => (
-                        <ul className="list-disc list-outside ml-6 mb-4 space-y-2 text-sovereign/90">
+                        <ul className={`list-disc list-outside ml-6 mb-4 space-y-2 ${mode === "dominus" ? "text-blood/90" : "text-sovereign/90"}`}>
                           {children}
                         </ul>
                       ),
                       ol: ({ children }) => (
-                        <ol className="list-decimal list-outside ml-6 mb-4 space-y-2 text-sovereign/90">
+                        <ol className={`list-decimal list-outside ml-6 mb-4 space-y-2 ${mode === "dominus" ? "text-blood/90" : "text-sovereign/90"}`}>
                           {children}
                         </ol>
                       ),
@@ -239,12 +241,12 @@ export function ChatInterface() {
                         </li>
                       ),
                       blockquote: ({ children }) => (
-                        <blockquote className="border-l-2 border-sovereign/40 pl-4 my-4 italic text-sovereign/80 font-scripture">
+                        <blockquote className={`border-l-2 pl-4 my-4 italic font-scripture ${mode === "dominus" ? "border-blood/40 text-blood/80" : "border-sovereign/40 text-sovereign/80"}`}>
                           {children}
                         </blockquote>
                       ),
                       code: ({ children }) => (
-                        <code className="bg-void/50 px-1.5 py-0.5 rounded text-xs font-mono text-sovereign/70 border border-concrete/20">
+                        <code className={`bg-void/50 px-1.5 py-0.5 rounded text-xs font-mono border border-concrete/20 ${mode === "dominus" ? "text-blood/70" : "text-sovereign/70"}`}>
                           {children}
                         </code>
                       ),
@@ -266,13 +268,13 @@ export function ChatInterface() {
         {isTyping && (
           <div className="flex justify-start">
             <div className="bg-void/50 border border-concrete/20 p-3 flex gap-1">
-              <div className="w-1.5 h-1.5 bg-sovereign animate-bounce" />
+              <div className={`w-1.5 h-1.5 animate-bounce ${mode === "dominus" ? "bg-blood" : "bg-sovereign"}`} />
               <div
-                className="w-1.5 h-1.5 bg-sovereign animate-bounce"
+                className={`w-1.5 h-1.5 animate-bounce ${mode === "dominus" ? "bg-blood" : "bg-sovereign"}`}
                 style={{ animationDelay: "0.1s" }}
               />
               <div
-                className="w-1.5 h-1.5 bg-sovereign animate-bounce"
+                className={`w-1.5 h-1.5 animate-bounce ${mode === "dominus" ? "bg-blood" : "bg-sovereign"}`}
                 style={{ animationDelay: "0.2s" }}
               />
             </div>
@@ -295,7 +297,7 @@ export function ChatInterface() {
                 <button
                   key={lang.value}
                   onClick={() => handleLanguageSelect(lang.value)}
-                  className="px-2 py-3 bg-void border border-concrete/30 hover:border-sovereign hover:text-sovereign text-concrete/60 font-law uppercase tracking-widest text-[10px] transition-all truncate"
+                  className={`px-2 py-3 bg-void border border-concrete/30 text-concrete/60 font-law uppercase tracking-widest text-[10px] transition-all truncate ${mode === "dominus" ? "hover:border-blood hover:text-blood" : "hover:border-sovereign hover:text-sovereign"}`}
                 >
                   {lang.label}
                 </button>
@@ -313,13 +315,13 @@ export function ChatInterface() {
           >
             <button
               onClick={() => handleGenderSelect("Man")}
-              className="px-8 py-3 bg-void border border-concrete/30 hover:border-sovereign hover:text-sovereign text-concrete/60 font-law uppercase tracking-widest text-xs transition-all"
+              className={`px-8 py-3 bg-void border border-concrete/30 text-concrete/60 font-law uppercase tracking-widest text-xs transition-all ${mode === "dominus" ? "hover:border-blood hover:text-blood" : "hover:border-sovereign hover:text-sovereign"}`}
             >
               I am a Man
             </button>
             <button
               onClick={() => handleGenderSelect("Woman")}
-              className="px-8 py-3 bg-void border border-concrete/30 hover:border-sovereign hover:text-sovereign text-concrete/60 font-law uppercase tracking-widest text-xs transition-all"
+              className={`px-8 py-3 bg-void border border-concrete/30 text-concrete/60 font-law uppercase tracking-widest text-xs transition-all ${mode === "dominus" ? "hover:border-blood hover:text-blood" : "hover:border-sovereign hover:text-sovereign"}`}
             >
               I am a Woman
             </button>
@@ -340,12 +342,12 @@ export function ChatInterface() {
                 ? "Declare yourself above..."
                 : "Ask the Dominus..."
             }
-            className="w-full bg-void border border-concrete/30 p-4 pr-32 text-empire focus:outline-none focus:border-sovereign transition-colors font-scripture placeholder-concrete/40 resize-none h-24 disabled:opacity-50"
+            className={`w-full bg-void border border-concrete/30 p-4 pr-32 text-empire focus:outline-none transition-colors font-scripture placeholder-concrete/40 resize-none h-24 disabled:opacity-50 ${mode === "dominus" ? "focus:border-blood" : "focus:border-sovereign"}`}
           />
           <button
             onClick={() => handleSend()}
             disabled={!input || isTyping || setupStep !== "CHAT"}
-            className="absolute right-3 bottom-3 px-6 py-2 bg-sovereign hover:bg-empire text-void font-law font-bold uppercase tracking-wider text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`absolute right-3 bottom-3 px-6 py-2 hover:bg-empire text-void font-law font-bold uppercase tracking-wider text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${mode === "dominus" ? "bg-blood" : "bg-sovereign"}`}
           >
             Send
           </button>

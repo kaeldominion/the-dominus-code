@@ -6,36 +6,48 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 export function AudioControl() {
-  const { audioEnabled, setAudioEnabled, mode } = useApp();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { audioEnabled, setAudioEnabled, mode, forewordAudioRef, setForewordAudioRef } = useApp();
   const [isHovered, setIsHovered] = useState(false);
+  const localAudioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Initialize audio only once and share it via context
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      audioRef.current = new Audio("/audio/The_Dominus_Code_Foreword_Read_This_First.mp3");
-      audioRef.current.loop = true;
-      audioRef.current.volume = 0.3;
+    if (typeof window !== "undefined" && !forewordAudioRef) {
+      const audio = new Audio("/audio/The_Dominus_Code_Foreword_Read_This_First.mp3");
+      audio.loop = true;
+      audio.volume = 0.3;
+      localAudioRef.current = audio;
+      
+      // Create a ref object and share it via context
+      const refObject = { current: audio };
+      setForewordAudioRef(refObject);
     }
-
+    
+    // Cleanup: don't destroy audio on unmount, just pause it
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
+      // Don't destroy the audio, just pause if needed
+      // The audio will persist across page navigations
     };
-  }, []);
+  }, [forewordAudioRef, setForewordAudioRef]);
+
+  // Use the shared audio ref from context, fallback to local
+  const audioRef = forewordAudioRef || { current: localAudioRef.current };
 
   useEffect(() => {
-    if (audioRef.current) {
+    const audio = audioRef?.current || localAudioRef.current;
+    if (audio) {
       if (audioEnabled) {
-        audioRef.current.play().catch(() => {
-          // Autoplay blocked - user needs to interact first
-        });
+        // Don't restart if already playing
+        if (audio.paused) {
+          audio.play().catch(() => {
+            // Autoplay blocked - user needs to interact first
+          });
+        }
       } else {
-        audioRef.current.pause();
+        audio.pause();
       }
     }
-  }, [audioEnabled]);
+  }, [audioEnabled, audioRef]);
 
   // Audio visualizer bars
   const bars = [1, 2, 3, 4];
