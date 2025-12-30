@@ -216,10 +216,10 @@ export function HeroSection() {
                   <p className="font-law font-normal text-4xl md:text-6xl lg:text-7xl tracking-[0.08em] uppercase mb-2 leading-none text-empire">
                     The
                   </p>
-                  <h1 className="font-law text-5xl md:text-7xl lg:text-8xl tracking-[0.08em] text-sovereign leading-none">
+                  <h1 className={`font-law text-5xl md:text-7xl lg:text-8xl tracking-[0.08em] leading-none ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                     DOMINUS
                   </h1>
-                  <h1 className="font-law text-5xl md:text-7xl lg:text-8xl tracking-[0.08em] text-sovereign leading-none">
+                  <h1 className={`font-law text-5xl md:text-7xl lg:text-8xl tracking-[0.08em] leading-none ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                     CODE
                   </h1>
                 </motion.div>
