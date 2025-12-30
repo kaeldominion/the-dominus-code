@@ -55,10 +55,10 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
     return formData[question.id] || '';
   };
 
-  const canProceed = () => {
+  const canProceed = (): boolean => {
     if (question.type === QuestionType.INFO) return true;
     const val = getFieldValue();
-    return val && val.length > 0;
+    return Boolean(val && val.length > 0);
   };
 
   // Keyboard navigation
