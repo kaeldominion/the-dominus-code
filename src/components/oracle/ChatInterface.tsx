@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { track } from "@vercel/analytics";
+import ReactMarkdown from "react-markdown";
 import { Crown } from "@/components/ui/Crown";
 import { LANGUAGES } from "@/lib/oracle-constants";
 
@@ -187,7 +188,74 @@ export function ChatInterface() {
                     Dominus
                   </span>
                 )}
-                <div style={{ whiteSpace: "pre-wrap" }}>{msg.text}</div>
+                <div className="markdown-content">
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => (
+                        <p className="mb-4 last:mb-0 font-scripture text-sovereign/90 leading-relaxed">
+                          {children}
+                        </p>
+                      ),
+                      strong: ({ children }) => (
+                        <strong className="font-bold text-sovereign font-law">
+                          {children}
+                        </strong>
+                      ),
+                      em: ({ children }) => (
+                        <em className="italic text-sovereign/80">
+                          {children}
+                        </em>
+                      ),
+                      h1: ({ children }) => (
+                        <h1 className="text-xl font-law text-sovereign mb-3 mt-4 first:mt-0 tracking-wide">
+                          {children}
+                        </h1>
+                      ),
+                      h2: ({ children }) => (
+                        <h2 className="text-lg font-law text-sovereign mb-2 mt-4 first:mt-0 tracking-wide">
+                          {children}
+                        </h2>
+                      ),
+                      h3: ({ children }) => (
+                        <h3 className="text-base font-law text-sovereign/90 mb-2 mt-3 first:mt-0 tracking-wide">
+                          {children}
+                        </h3>
+                      ),
+                      ul: ({ children }) => (
+                        <ul className="list-disc list-outside ml-6 mb-4 space-y-2 text-sovereign/90">
+                          {children}
+                        </ul>
+                      ),
+                      ol: ({ children }) => (
+                        <ol className="list-decimal list-outside ml-6 mb-4 space-y-2 text-sovereign/90">
+                          {children}
+                        </ol>
+                      ),
+                      li: ({ children }) => (
+                        <li className="font-scripture leading-relaxed">
+                          {children}
+                        </li>
+                      ),
+                      blockquote: ({ children }) => (
+                        <blockquote className="border-l-2 border-sovereign/40 pl-4 my-4 italic text-sovereign/80 font-scripture">
+                          {children}
+                        </blockquote>
+                      ),
+                      code: ({ children }) => (
+                        <code className="bg-void/50 px-1.5 py-0.5 rounded text-xs font-mono text-sovereign/70 border border-concrete/20">
+                          {children}
+                        </code>
+                      ),
+                      pre: ({ children }) => (
+                        <pre className="bg-void/50 p-3 rounded my-4 overflow-x-auto border border-concrete/20">
+                          {children}
+                        </pre>
+                      ),
+                    }}
+                  >
+                    {msg.text}
+                  </ReactMarkdown>
+                </div>
               </div>
             </motion.div>
           ))}
