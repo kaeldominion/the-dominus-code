@@ -6,6 +6,7 @@ import { track } from "@vercel/analytics";
 import ReactMarkdown from "react-markdown";
 import { Crown } from "@/components/ui/Crown";
 import { LANGUAGES } from "@/lib/oracle-constants";
+import { useApp } from "@/components/Providers";
 
 type SetupStep = "LANGUAGE" | "GENDER" | "CHAT";
 
@@ -17,6 +18,7 @@ interface Message {
 const MAX_MESSAGES = 25; // Max messages per conversation
 
 export function ChatInterface() {
+  const { mode } = useApp();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "model",
@@ -142,9 +144,9 @@ export function ChatInterface() {
       {/* Chat Header */}
       <div className="p-4 border-b border-concrete/20 flex items-center justify-between bg-void/50">
         <div className="flex items-center gap-3">
-          <Crown size={32} variant="gold" />
+          <Crown size={32} variant={mode === "dominus" ? "blood" : "gold"} />
           <div>
-            <h3 className="font-law text-sovereign text-lg tracking-widest">
+            <h3 className={`font-law text-lg tracking-widest ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
               THE ORACLE
             </h3>
             <p className="text-[10px] text-concrete/50 uppercase font-system tracking-wider">

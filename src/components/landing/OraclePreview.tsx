@@ -4,10 +4,12 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
 import { Crown } from "@/components/ui/Crown";
+import { useApp } from "@/components/Providers";
 
 export function OraclePreview() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { mode } = useApp();
 
   return (
     <section
@@ -35,8 +37,8 @@ export function OraclePreview() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              <Crown size={32} variant="gold" />
-              <span className="font-system text-[10px] text-sovereign uppercase tracking-[0.3em]">
+              <Crown size={32} variant={mode === "dominus" ? "blood" : "gold"} />
+              <span className={`font-system text-[10px] uppercase tracking-[0.3em] ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                 AI Protocol v3.0
               </span>
             </motion.div>
@@ -62,7 +64,7 @@ export function OraclePreview() {
                 ease: [0.25, 0.1, 0.25, 1],
               }}
             >
-              <TerminalPreview />
+              <TerminalPreview mode={mode} />
             </motion.div>
 
             {/* Description */}
@@ -114,7 +116,7 @@ export function OraclePreview() {
               ease: [0.25, 0.1, 0.25, 1],
             }}
           >
-            <TerminalPreview />
+            <TerminalPreview mode={mode} />
           </motion.div>
         </div>
       </div>
@@ -122,10 +124,10 @@ export function OraclePreview() {
   );
 }
 
-function TerminalPreview() {
+function TerminalPreview({ mode }: { mode: "realist" | "dominus" }) {
   return (
     <div className="relative">
-      <div className="absolute -inset-1 bg-gradient-to-r from-sovereign/20 to-concrete/20 blur opacity-20" />
+      <div className={`absolute -inset-1 bg-gradient-to-r ${mode === "dominus" ? "from-blood/20" : "from-sovereign/20"} to-concrete/20 blur opacity-20`} />
       <div className="relative bg-void border border-concrete/20 overflow-hidden shadow-2xl">
         {/* Terminal Header */}
         <div className="bg-void/80 border-b border-concrete/20 p-3 flex items-center justify-between">
@@ -151,10 +153,10 @@ function TerminalPreview() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <span className="text-sovereign uppercase text-[9px]">
+            <span className={`uppercase text-[9px] ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
               The Dominus
             </span>
-            <div className="text-sovereign/80 border-l-2 border-sovereign pl-3 leading-relaxed">
+            <div className={`${mode === "dominus" ? "text-blood/80 border-l-2 border-blood" : "text-sovereign/80 border-l-2 border-sovereign"} pl-3 leading-relaxed`}>
               <span className="text-empire">
                 You are not lost; you are drifting.
               </span>
@@ -164,7 +166,7 @@ function TerminalPreview() {
             </div>
           </div>
 
-          <div className="h-4 w-2 bg-sovereign animate-slow-pulse" />
+          <div className={`h-4 w-2 animate-slow-pulse ${mode === "dominus" ? "bg-blood" : "bg-sovereign"}`} />
         </div>
       </div>
     </div>
