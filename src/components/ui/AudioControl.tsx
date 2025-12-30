@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 export function AudioControl() {
-  const { audioEnabled, setAudioEnabled } = useApp();
+  const { audioEnabled, setAudioEnabled, mode } = useApp();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -51,13 +51,13 @@ export function AudioControl() {
         onClick={() => setAudioEnabled(!audioEnabled)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="flex items-center gap-3 border border-concrete/30 bg-void/80 backdrop-blur-md p-3 shadow-2xl hover:border-sovereign/30 transition-all duration-500 group"
+        className={`flex items-center gap-3 border border-concrete/30 bg-void/80 backdrop-blur-md p-3 shadow-2xl transition-all duration-500 group ${mode === "dominus" ? "hover:border-blood/30" : "hover:border-sovereign/30"}`}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         aria-label={audioEnabled ? "Mute audio" : "Enable audio"}
       >
         {/* Play/Pause Button */}
-        <div className="w-8 h-8 flex items-center justify-center bg-sovereign group-hover:bg-empire transition-colors text-void">
+        <div className={`w-8 h-8 flex items-center justify-center group-hover:bg-empire transition-colors text-void ${mode === "dominus" ? "bg-blood" : "bg-sovereign"}`}>
           {audioEnabled ? (
             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
               <rect x="6" y="4" width="4" height="16" />
@@ -72,10 +72,10 @@ export function AudioControl() {
 
         {/* Text Labels */}
         <div className="flex flex-col">
-          <span className="font-system text-[8px] uppercase tracking-[0.2em] text-sovereign">
+          <span className={`font-system text-[8px] uppercase tracking-[0.2em] ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
             Audio Experience
           </span>
-          <span className="font-law text-xs text-empire group-hover:text-sovereign transition-colors tracking-wider">
+          <span className={`font-law text-xs text-empire transition-colors tracking-wider ${mode === "dominus" ? "group-hover:text-blood" : "group-hover:text-sovereign"}`}>
             The Foreword
           </span>
         </div>
@@ -85,7 +85,7 @@ export function AudioControl() {
           {bars.map((_, i) => (
             <motion.div
               key={i}
-              className="w-0.5 bg-sovereign/50"
+              className={`w-0.5 ${mode === "dominus" ? "bg-blood/50" : "bg-sovereign/50"}`}
               animate={{
                 height: audioEnabled
                   ? [`${20 + Math.random() * 30}%`, `${50 + Math.random() * 50}%`, `${20 + Math.random() * 30}%`]
@@ -112,7 +112,7 @@ export function AudioControl() {
           transition={{ duration: 0.3 }}
         >
           {audioEnabled ? (
-            <Volume2 className="w-4 h-4 text-sovereign" />
+            <Volume2 className={`w-4 h-4 ${mode === "dominus" ? "text-blood" : "text-sovereign"}`} />
           ) : (
             <VolumeX className="w-4 h-4 text-concrete/50" />
           )}
