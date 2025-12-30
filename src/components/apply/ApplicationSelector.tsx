@@ -2,8 +2,10 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useApp } from "@/components/Providers";
 
 export function ApplicationSelector() {
+  const { mode } = useApp();
   return (
     <div className="w-full max-w-6xl mx-auto py-16 md:py-24 px-6">
       <motion.div
@@ -32,7 +34,7 @@ export function ApplicationSelector() {
 
             <div className="relative z-10 flex flex-col h-full items-center justify-between">
               <div>
-                <div className="mt-6 md:mt-8 mb-6 p-4 border border-concrete/30 bg-void group-hover:border-sovereign group-hover:text-sovereign transition-colors inline-block">
+                <div className={`mt-6 md:mt-8 mb-6 p-4 border border-concrete/30 bg-void transition-colors inline-block ${mode === "dominus" ? "group-hover:border-blood group-hover:text-blood" : "group-hover:border-sovereign group-hover:text-sovereign"}`}>
                   <svg
                     width="32"
                     height="32"
@@ -45,7 +47,7 @@ export function ApplicationSelector() {
                     <polyline points="12 5 19 12 12 19" />
                   </svg>
                 </div>
-                <span className="block font-law text-4xl md:text-5xl text-empire group-hover:text-sovereign transition-colors mb-2 tracking-wide">
+                <span className={`block font-law text-4xl md:text-5xl text-empire transition-colors mb-2 tracking-wide ${mode === "dominus" ? "group-hover:text-blood" : "group-hover:text-sovereign"}`}>
                   The Council
                 </span>
                 <span className="block font-system text-[10px] text-concrete/60 uppercase tracking-widest mb-8">
@@ -58,7 +60,7 @@ export function ApplicationSelector() {
                 </p>
               </div>
 
-              <div className="mt-8 px-8 py-3 border border-concrete/30 text-empire uppercase tracking-[0.2em] text-xs group-hover:bg-sovereign group-hover:text-void group-hover:border-sovereign transition-all font-bold w-full md:w-auto">
+              <div className={`mt-8 px-8 py-3 border border-concrete/30 text-empire uppercase tracking-[0.2em] text-xs transition-all font-bold w-full md:w-auto ${mode === "dominus" ? "group-hover:bg-blood group-hover:text-void group-hover:border-blood" : "group-hover:bg-sovereign group-hover:text-void group-hover:border-sovereign"}`}>
                 BEGIN APPLICATION
               </div>
             </div>
@@ -80,7 +82,7 @@ export function ApplicationSelector() {
 
             <div className="relative z-10 flex flex-col h-full items-center justify-between">
               <div>
-                <div className="mt-6 md:mt-8 mb-6 p-4 border border-concrete/30 bg-void group-hover:border-sovereign group-hover:text-sovereign transition-colors inline-block">
+                <div className={`mt-6 md:mt-8 mb-6 p-4 border border-concrete/30 bg-void transition-colors inline-block ${mode === "dominus" ? "group-hover:border-blood group-hover:text-blood" : "group-hover:border-sovereign group-hover:text-sovereign"}`}>
                   <svg
                     width="32"
                     height="32"
@@ -94,7 +96,7 @@ export function ApplicationSelector() {
                   </svg>
                 </div>
 
-                <span className="block font-law text-4xl md:text-5xl text-empire group-hover:text-sovereign transition-colors mb-2 tracking-wide">
+                <span className={`block font-law text-4xl md:text-5xl text-empire transition-colors mb-2 tracking-wide ${mode === "dominus" ? "group-hover:text-blood" : "group-hover:text-sovereign"}`}>
                   The Dynasty
                 </span>
                 <span className="block font-system text-[10px] text-concrete/60 uppercase tracking-widest mb-8">
@@ -107,7 +109,7 @@ export function ApplicationSelector() {
                 </p>
               </div>
 
-              <div className="mt-8 px-8 py-3 border border-concrete/30 text-empire uppercase tracking-[0.2em] text-xs group-hover:bg-sovereign group-hover:text-void group-hover:border-sovereign transition-all font-bold w-full md:w-auto">
+              <div className={`mt-8 px-8 py-3 border border-concrete/30 text-empire uppercase tracking-[0.2em] text-xs transition-all font-bold w-full md:w-auto ${mode === "dominus" ? "group-hover:bg-blood group-hover:text-void group-hover:border-blood" : "group-hover:bg-sovereign group-hover:text-void group-hover:border-sovereign"}`}>
                 BEGIN APPLICATION
               </div>
             </div>

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
 import { Crown } from "@/components/ui/Crown";
 import { Question, QuestionType } from "@/lib/oracle-constants";
+import { useApp } from "@/components/Providers";
 
 interface ApplicationFormProps {
   questions: Question[];
@@ -23,6 +24,7 @@ export function ApplicationForm({
   title,
   applicationType,
 }: ApplicationFormProps) {
+  const { mode } = useApp();
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [formData, setFormData] = useState<FormData>({});
@@ -150,8 +152,8 @@ export function ApplicationForm({
           animate={{ opacity: 1 }}
           className="text-center"
         >
-          <Crown size={96} variant="gold" className="mx-auto mb-8 animate-slow-pulse" />
-          <h2 className="font-law text-2xl text-sovereign tracking-widest mb-4">
+          <Crown size={96} variant={mode === "dominus" ? "blood" : "gold"} className="mx-auto mb-8 animate-slow-pulse" />
+          <h2 className={`font-law text-2xl tracking-widest mb-4 ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
             ACCESSING THE AXIS...
           </h2>
           <p className="text-concrete/60 font-system text-xs uppercase animate-pulse">
@@ -182,7 +184,7 @@ export function ApplicationForm({
           <div className="border border-concrete/20 bg-void/80 p-8 w-full backdrop-blur-md">
             <h1
               className={`font-law text-4xl md:text-5xl mb-2 ${
-                isRejected ? "text-blood" : "text-sovereign"
+                isRejected ? "text-blood" : mode === "dominus" ? "text-blood" : "text-sovereign"
               }`}
             >
               {aiResult.verdict || "RECEIVED"}
@@ -198,14 +200,14 @@ export function ApplicationForm({
             </p>
             
             {/* Auto-logged confirmation */}
-            <p className="text-xs font-system text-sovereign/50 uppercase tracking-widest mb-6 text-center">
+            <p className={`text-xs font-system uppercase tracking-widest mb-6 text-center ${mode === "dominus" ? "text-blood/50" : "text-sovereign/50"}`}>
               ✓ Application logged to The Axis
             </p>
             
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => router.push("/oracle")}
-                className="w-full py-4 bg-sovereign text-void font-law font-bold uppercase tracking-widest hover:bg-empire transition-colors"
+                className={`w-full py-4 text-void font-law font-bold uppercase tracking-widest hover:bg-empire transition-colors ${mode === "dominus" ? "bg-blood" : "bg-sovereign"}`}
               >
                 Consult The Oracle
               </button>
@@ -234,7 +236,7 @@ export function ApplicationForm({
       {/* Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-void z-50">
         <motion.div
-          className="h-full bg-sovereign shadow-[0_0_10px_rgba(229,195,114,0.5)]"
+          className={`h-full shadow-[0_0_10px_rgba(229,195,114,0.5)] ${mode === "dominus" ? "bg-blood" : "bg-sovereign"}`}
           initial={{ width: 0 }}
           animate={{
             width: `${Math.min(((currentIndex + 1) / questions.length) * 100, 100)}%`,
@@ -246,7 +248,7 @@ export function ApplicationForm({
       <div className="w-full max-w-4xl mx-auto px-6 md:px-12 py-12 md:py-24">
         {/* Header */}
         <div className="mb-8 flex justify-between items-end border-b border-concrete/20 pb-4">
-          <div className="text-sovereign/50 font-system text-[10px] tracking-[0.3em] uppercase">
+          <div className={`font-system text-[10px] tracking-[0.3em] uppercase ${mode === "dominus" ? "text-blood/50" : "text-sovereign/50"}`}>
             {title} Protocol // {currentIndex === 0 ? "INIT" : `0${currentIndex}`}
           </div>
           <button
@@ -276,8 +278,8 @@ export function ApplicationForm({
             )}
 
             {question.quote && (
-              <div className="mb-12 pl-6 border-l-2 border-sovereign/40">
-                <p className="text-lg text-sovereign font-scripture opacity-90 italic">
+              <div className={`mb-12 pl-6 border-l-2 ${mode === "dominus" ? "border-blood/40" : "border-sovereign/40"}`}>
+                <p className={`text-lg font-scripture opacity-90 italic ${mode === "dominus" ? "text-blood" : "text-sovereign"}`}>
                   &ldquo;{question.quote}&rdquo;
                 </p>
               </div>
@@ -302,7 +304,7 @@ export function ApplicationForm({
                     handleNext()
                   }
                   placeholder={question.placeholder}
-                  className="w-full max-w-2xl bg-transparent border-b-2 border-concrete/30 text-2xl md:text-4xl py-2 md:py-4 text-empire focus:outline-none focus:border-sovereign transition-colors placeholder-concrete/30 font-scripture"
+                  className={`w-full max-w-2xl bg-transparent border-b-2 border-concrete/30 text-2xl md:text-4xl py-2 md:py-4 text-empire focus:outline-none transition-colors placeholder-concrete/30 font-scripture ${mode === "dominus" ? "focus:border-blood" : "focus:border-sovereign"}`}
                   autoFocus
                 />
               )}
@@ -313,7 +315,7 @@ export function ApplicationForm({
                   onChange={(e) => updateField(e.target.value)}
                   placeholder={question.placeholder}
                   rows={4}
-                  className="w-full max-w-2xl bg-void/50 border-l-2 border-concrete/30 p-3 md:p-4 text-base md:text-xl text-empire focus:outline-none focus:border-sovereign transition-colors placeholder-concrete/30 resize-none font-scripture"
+                  className={`w-full max-w-2xl bg-void/50 border-l-2 border-concrete/30 p-3 md:p-4 text-base md:text-xl text-empire focus:outline-none transition-colors placeholder-concrete/30 resize-none font-scripture ${mode === "dominus" ? "focus:border-blood" : "focus:border-sovereign"}`}
                   autoFocus
                 />
               )}
@@ -326,14 +328,14 @@ export function ApplicationForm({
                       onClick={() => updateField(option)}
                       className={`text-left px-4 md:px-6 py-3 md:py-4 border transition-all duration-300 group ${
                         getFieldValue() === option
-                          ? "border-sovereign bg-sovereign/10 text-empire"
-                          : "border-concrete/20 text-concrete/60 hover:border-sovereign/50 hover:text-empire"
+                          ? mode === "dominus" ? "border-blood bg-blood/10 text-empire" : "border-sovereign bg-sovereign/10 text-empire"
+                          : mode === "dominus" ? "border-concrete/20 text-concrete/60 hover:border-blood/50 hover:text-empire" : "border-concrete/20 text-concrete/60 hover:border-sovereign/50 hover:text-empire"
                       }`}
                     >
                       <span
                         className={`inline-block w-6 h-6 border mr-3 md:mr-4 text-center leading-5 text-xs ${
                           getFieldValue() === option
-                            ? "border-sovereign text-sovereign"
+                            ? mode === "dominus" ? "border-blood text-blood" : "border-sovereign text-sovereign"
                             : "border-concrete/30 text-concrete/30 group-hover:border-concrete/50"
                         }`}
                       >
@@ -353,7 +355,7 @@ export function ApplicationForm({
               {currentIndex > 0 && (
                 <button
                   onClick={handlePrev}
-                  className="px-6 py-3 border border-concrete/30 text-concrete/50 hover:text-sovereign hover:border-sovereign transition-colors duration-300 uppercase tracking-widest text-xs font-semibold font-system"
+                  className={`px-6 py-3 border border-concrete/30 text-concrete/50 transition-colors duration-300 uppercase tracking-widest text-xs font-semibold font-system ${mode === "dominus" ? "hover:text-blood hover:border-blood" : "hover:text-sovereign hover:border-sovereign"}`}
                 >
                   Back
                 </button>
@@ -361,7 +363,7 @@ export function ApplicationForm({
               <button
                 onClick={handleNext}
                 disabled={!canProceed()}
-                className={`px-8 py-3 bg-sovereign text-void uppercase tracking-widest text-xs font-bold hover:bg-empire transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-system ${
+                className={`px-8 py-3 text-void uppercase tracking-widest text-xs font-bold hover:bg-empire transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-system ${mode === "dominus" ? "bg-blood" : "bg-sovereign"} ${
                   currentIndex === questions.length - 1
                     ? "bg-empire text-void hover:bg-concrete"
                     : ""
