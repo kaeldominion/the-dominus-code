@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 import { Crown } from "@/components/ui/Crown";
 import { Question, QuestionType } from "@/lib/oracle-constants";
 
@@ -35,6 +36,13 @@ export function ApplicationForm({
   } | null>(null);
 
   const question = questions[currentIndex];
+
+  // Track application start
+  useEffect(() => {
+    track("application_started", {
+      type: applicationType,
+    });
+  }, [applicationType]);
 
   const handleNext = useCallback(() => {
     if (currentIndex < questions.length - 1) {
@@ -98,6 +106,12 @@ export function ApplicationForm({
       });
 
       const result = await response.json();
+      
+      // Track application completion (saved to database)
+      track("application_completed", {
+        type: applicationType,
+        verdict: result.verdict || "RECEIVED",
+      });
       
       // Handle error responses or malformed data
       if (result.error || !result.verdict) {

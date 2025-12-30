@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { DYNASTY_SYSTEM, COUNCIL_SYSTEM } from "@/lib/oracle-constants";
 import prisma from "@/lib/prisma";
+import { track } from "@vercel/analytics";
 
 export async function POST(request: NextRequest) {
   try {
@@ -100,6 +101,13 @@ export async function POST(request: NextRequest) {
         },
       });
       console.log(`✅ Application logged: ${applicationType} - ${formData.name || "Anonymous"}`);
+      
+      // Track application saved to database
+      track("application_saved", {
+        type: applicationType,
+        verdict: aiResult.verdict,
+        status: aiResult.verdict?.includes("REJECT") ? "REJECTED" : "PENDING",
+      });
     } catch (dbError) {
       console.error("Database logging failed:", dbError);
       // Continue even if DB fails - still return result to user

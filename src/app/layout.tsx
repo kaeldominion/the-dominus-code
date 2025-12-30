@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "The Dominus Code | F*ck Monogamy. Build A Dynasty.",
@@ -38,6 +39,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
         <GoogleAnalytics />
+        <Analytics />
         <Providers>
           {/* Noise Overlay */}
           <div className="noise-overlay" aria-hidden="true" />

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { track } from "@vercel/analytics";
 import { Crown } from "@/components/ui/Crown";
 import { LANGUAGES } from "@/lib/oracle-constants";
 
@@ -93,6 +94,12 @@ export function ChatInterface() {
         if (data.remaining !== undefined) {
           setRemainingMessages(data.remaining);
         }
+        
+        // Track Oracle chat message
+        track("oracle_chat", {
+          language: selectedLanguage,
+          messageCount: userMessageCount + 1,
+        });
       } else {
         setMessages((prev) => [
           ...prev,
