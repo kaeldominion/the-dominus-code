@@ -21,7 +21,7 @@
     "db:migrate:prod": "./scripts/migrate-production.sh",
     "db:migrate:create": "./scripts/create-migration.sh",
     "db:setup:prod": "./scripts/setup-production-env.sh",
-    "postinstall": "prisma generate"
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@google/genai": "^1.34.0",
