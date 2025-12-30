@@ -92,7 +92,12 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
         }
       });
 
-      const result = JSON.parse(response.text);
+      const responseText = response.text || "";
+      if (!responseText) {
+        throw new Error("Empty response from AI");
+      }
+
+      const result = JSON.parse(responseText);
       setAiResult(result);
     } catch (e) {
       console.error("AI Analysis failed", e);
