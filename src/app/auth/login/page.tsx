@@ -62,38 +62,35 @@ export default function LoginPage() {
       }
 
       if (result?.ok) {
-        // Wait for session to be available (retry up to 5 times)
-        let session: any = null;
-        for (let i = 0; i < 5; i++) {
-          await new Promise(resolve => setTimeout(resolve, 200));
-          try {
-            const sessionResponse = await fetch("/api/auth/session", {
-              cache: "no-store",
-              credentials: "include",
-            });
-            session = await sessionResponse.json();
-            if (session?.user) {
-              break;
-            }
-          } catch (err) {
-            console.error("Error fetching session:", err);
-          }
-        }
+        // Wait a moment for session to be set
+        await new Promise(resolve => setTimeout(resolve, 300));
         
-        // Determine redirect URL
-        let redirectUrl = callbackUrl;
-        if (session?.user?.role === "ADMIN") {
-          // If callback is admin route or user is admin, go to admin dashboard
-          if (callbackUrl.startsWith("/admin") || !callbackUrl.startsWith("/")) {
+        // Check session to determine redirect
+        try {
+          const sessionResponse = await fetch("/api/auth/session", {
+            cache: "no-store",
+            credentials: "include",
+          });
+          const session = await sessionResponse.json();
+          
+          // Determine redirect URL based on user role
+          let redirectUrl = callbackUrl;
+          if (session?.user?.role === "ADMIN") {
+            redirectUrl = "/admin/dashboard";
+          } else if (session?.user) {
+            redirectUrl = callbackUrl.startsWith("/admin") ? "/dashboard" : callbackUrl;
+          } else {
+            // Session not available yet, try redirect anyway
             redirectUrl = "/admin/dashboard";
           }
-        } else if (session?.user) {
-          // Regular user - go to dashboard or callback
-          redirectUrl = callbackUrl.startsWith("/admin") ? "/dashboard" : callbackUrl;
+          
+          // Use window.location for full page reload to ensure session is available
+          window.location.href = redirectUrl;
+        } catch (err) {
+          console.error("Error checking session:", err);
+          // Fallback: redirect to admin dashboard
+          window.location.href = "/admin/dashboard";
         }
-        
-        // Use window.location for full page reload to ensure session is available
-        window.location.href = redirectUrl;
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
