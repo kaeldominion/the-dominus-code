@@ -1,15 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-export async function GET(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
+export const dynamic = "force-dynamic";
 
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export async function GET() {
+  try {
+    await requireAdmin();
 
     // Get stats
     const [
@@ -53,16 +50,18 @@ export async function GET(request: NextRequest) {
       },
       {
         headers: {
-          "Cache-Control": "private, max-age=30", // Cache for 30 seconds
+          "Cache-Control": "private, max-age=30",
         },
       }
     );
   } catch (error) {
     console.error("Stats API error:", error);
+    if (error instanceof Error && (error.message === "Unauthorized" || error.message === "Forbidden")) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     return NextResponse.json(
       { error: "Failed to fetch stats" },
       { status: 500 }
     );
   }
 }
-

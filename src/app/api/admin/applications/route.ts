@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    await requireAdmin();
 
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type");
@@ -18,7 +15,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "50");
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: Record<string, string> = {};
     if (type) where.type = type.toUpperCase();
     if (status) where.status = status.toUpperCase();
 
@@ -44,12 +41,15 @@ export async function GET(request: NextRequest) {
       },
       {
         headers: {
-          "Cache-Control": "private, no-cache", // Don't cache, always fresh
+          "Cache-Control": "private, no-cache",
         },
       }
     );
   } catch (error) {
     console.error("Applications API error:", error);
+    if (error instanceof Error && (error.message === "Unauthorized" || error.message === "Forbidden")) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     return NextResponse.json(
       { error: "Failed to fetch applications" },
       { status: 500 }
@@ -59,11 +59,7 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    await requireAdmin();
 
     const { id, status, notes } = await request.json();
 
@@ -86,10 +82,12 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ application });
   } catch (error) {
     console.error("Update application error:", error);
+    if (error instanceof Error && (error.message === "Unauthorized" || error.message === "Forbidden")) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     return NextResponse.json(
       { error: "Failed to update application" },
       { status: 500 }
     );
   }
 }
-

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import { Redis } from "@upstash/redis";
+
+export const dynamic = "force-dynamic";
 
 const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
   ? new Redis({
@@ -12,11 +13,7 @@ const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_RE
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    await requireAdmin();
 
     const { ip } = await request.json();
 
@@ -44,6 +41,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Clear rate limit error:", error);
+    if (error instanceof Error && (error.message === "Unauthorized" || error.message === "Forbidden")) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     return NextResponse.json(
       { error: "Failed to clear rate limit" },
       { status: 500 }
@@ -51,17 +51,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Clear all Oracle rate limits
-export async function DELETE(request: NextRequest) {
+export async function DELETE() {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    await requireAdmin();
 
     if (redis) {
-      // Get all keys matching the pattern
       const keys = await redis.keys("ratelimit:oracle:*");
       if (keys.length > 0) {
         await redis.del(...keys);
@@ -79,10 +73,12 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error) {
     console.error("Clear all rate limits error:", error);
+    if (error instanceof Error && (error.message === "Unauthorized" || error.message === "Forbidden")) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     return NextResponse.json(
       { error: "Failed to clear rate limits" },
       { status: 500 }
     );
   }
 }
-

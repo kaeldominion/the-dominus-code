@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import { 
   FileText, 
   Clock, 
   MessageSquare, 
-  Users,
   ArrowRight,
   Loader2,
   Zap
@@ -32,29 +30,41 @@ interface Stats {
   }>;
 }
 
+interface AuthUser {
+  id: string;
+  email: string;
+  name: string | null;
+  role: string;
+}
+
 export default function AdminDashboard() {
   const { mode } = useApp();
-  const { data: session } = useSession();
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
-    try {
-      const response = await fetch("/api/admin/stats");
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
+    async function init() {
+      try {
+        // Get current user
+        const userResponse = await fetch("/api/auth/me", { credentials: "include" });
+        const userData = await userResponse.json();
+        setUser(userData.user);
+        
+        // Get stats
+        const statsResponse = await fetch("/api/admin/stats", { credentials: "include" });
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json();
+          setStats(statsData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to fetch stats:", error);
-    } finally {
-      setLoading(false);
     }
-  };
+    init();
+  }, []);
 
   if (loading) {
     return (
@@ -102,7 +112,7 @@ export default function AdminDashboard() {
           ADMIN DASHBOARD
         </h1>
         <p className="font-body text-ivory/60">
-          Welcome back, {session?.user?.email}
+          Welcome back, {user?.email}
         </p>
       </motion.div>
 
@@ -318,4 +328,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-

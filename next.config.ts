@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -11,7 +12,6 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Block indexing of docs folder
         source: "/docs/:path*",
         headers: [
           {
@@ -25,7 +25,6 @@ const nextConfig = {
         ],
       },
       {
-        // Block indexing of gens folder
         source: "/gens/:path*",
         headers: [
           {
@@ -35,7 +34,6 @@ const nextConfig = {
         ],
       },
       {
-        // Cache static assets
         source: "/images/:path*",
         headers: [
           {
@@ -45,7 +43,6 @@ const nextConfig = {
         ],
       },
       {
-        // Cache textures
         source: "/textures/:path*",
         headers: [
           {
@@ -55,7 +52,6 @@ const nextConfig = {
         ],
       },
       {
-        // Cache audio
         source: "/audio/:path*",
         headers: [
           {

@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    await requireAdmin();
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
@@ -20,7 +17,6 @@ export async function GET(request: NextRequest) {
     const conversationId = searchParams.get("conversationId");
 
     if (conversationId) {
-      // Get specific conversation with messages
       const conversation = await prisma.oracleConversation.findUnique({
         where: { id: conversationId },
         include: {
@@ -40,12 +36,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ conversation });
     }
 
-    // Get conversations list
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (startDate || endDate) {
       where.startedAt = {};
-      if (startDate) where.startedAt.gte = new Date(startDate);
-      if (endDate) where.startedAt.lte = new Date(endDate);
+      if (startDate) (where.startedAt as Record<string, Date>).gte = new Date(startDate);
+      if (endDate) (where.startedAt as Record<string, Date>).lte = new Date(endDate);
     }
 
     const [conversations, total] = await Promise.all([
@@ -74,10 +69,12 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Oracle API error:", error);
+    if (error instanceof Error && (error.message === "Unauthorized" || error.message === "Forbidden")) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     return NextResponse.json(
       { error: "Failed to fetch oracle data" },
       { status: 500 }
     );
   }
 }
-

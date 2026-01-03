@@ -24,10 +24,9 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: { type?: string } | Promise<{ type?: string }>;
+  searchParams: Promise<{ type?: string }>;
 }): Promise<Metadata> {
-  // Handle both sync and async searchParams
-  const params = searchParams instanceof Promise ? await searchParams : searchParams;
+  const params = await searchParams;
   const type = params?.type;
   const ogImage = type && OG_IMAGE_MAP[type] ? OG_IMAGE_MAP[type] : DEFAULT_OG_IMAGE;
 
@@ -60,13 +59,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ type?: string }> | { type?: string };
-}) {
-  // Handle both sync and async searchParams for Next.js compatibility
-  const params = searchParams instanceof Promise ? await searchParams : searchParams;
+export default async function Home() {
   return (
     <main className="min-h-screen">
       <Header />

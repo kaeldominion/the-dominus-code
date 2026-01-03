@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { signIn } from "next-auth/react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Header } from "@/components/navigation/Header";
 import { Crown } from "@/components/ui/Crown";
@@ -21,27 +20,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Check for error in URL query params (from NextAuth redirects)
-  useEffect(() => {
-    const errorParam = searchParams?.get("error");
-    if (errorParam) {
-      const errorMessages: Record<string, string> = {
-        Configuration: "There is a problem with the server configuration.",
-        AccessDenied: "You do not have permission to sign in.",
-        Verification: "The verification token has expired or has already been used.",
-        Default: "An error occurred during authentication.",
-      };
-      setError(errorMessages[errorParam] || errorMessages.Default);
-      
-      // Clean up URL by removing error parameter
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.delete("error");
-      router.replace(newUrl.pathname + newUrl.search);
-    }
-  }, [searchParams, router]);
-
   // Get callback URL for redirect after login
-  const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
+  const callbackUrl = searchParams?.get("callbackUrl") || "/admin/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,50 +29,29 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
       });
 
-      if (result?.error) {
-        setError("Invalid email or password");
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Invalid email or password");
         setLoading(false);
         return;
       }
 
-      if (result?.ok) {
-        // Wait a moment for session to be set
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        // Check session to determine redirect
-        try {
-          const sessionResponse = await fetch("/api/auth/session", {
-            cache: "no-store",
-            credentials: "include",
-          });
-          const session = await sessionResponse.json();
-          
-          // Determine redirect URL based on user role
-          let redirectUrl = callbackUrl;
-          if (session?.user?.role === "ADMIN") {
-            redirectUrl = "/admin/dashboard";
-          } else if (session?.user) {
-            redirectUrl = callbackUrl.startsWith("/admin") ? "/dashboard" : callbackUrl;
-          } else {
-            // Session not available yet, try redirect anyway
-            redirectUrl = "/admin/dashboard";
-          }
-          
-          // Use window.location for full page reload to ensure session is available
-          window.location.href = redirectUrl;
-        } catch (err) {
-          console.error("Error checking session:", err);
-          // Fallback: redirect to admin dashboard
-          window.location.href = "/admin/dashboard";
-        }
+      // Check if user is admin
+      if (data.user?.role === "ADMIN") {
+        window.location.href = "/admin/dashboard";
+      } else {
+        window.location.href = callbackUrl;
       }
     } catch (err) {
+      console.error("Login error:", err);
       setError("An error occurred. Please try again.");
       setLoading(false);
     }
@@ -239,4 +198,3 @@ export default function LoginPage() {
     </main>
   );
 }
-

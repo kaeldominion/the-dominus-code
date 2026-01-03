@@ -1,8 +1,7 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Crown } from "@/components/ui/Crown";
 import { useApp } from "@/components/Providers";
 import Link from "next/link";
@@ -10,12 +9,17 @@ import {
   LayoutDashboard, 
   FileText, 
   MessageSquare, 
-  Settings, 
   LogOut,
   Zap,
   Loader2
 } from "lucide-react";
-import { motion } from "framer-motion";
+
+interface AuthUser {
+  id: string;
+  email: string;
+  name: string | null;
+  role: string;
+}
 
 export default function AdminLayout({
   children,
@@ -23,19 +27,32 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { mode } = useApp();
-  const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
-    } else if (status === "authenticated" && session?.user?.role !== "ADMIN") {
-      router.push("/dashboard");
+    async function checkAuth() {
+      try {
+        const response = await fetch("/api/auth/me", { credentials: "include" });
+        const data = await response.json();
+        
+        if (data.user?.role === "ADMIN") {
+          setUser(data.user);
+        } else {
+          router.push("/auth/login");
+        }
+      } catch {
+        router.push("/auth/login");
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [status, session, router]);
+    checkAuth();
+  }, [router]);
 
-  if (status === "loading") {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
@@ -43,12 +60,13 @@ export default function AdminLayout({
     );
   }
 
-  if (!session || session.user.role !== "ADMIN") {
+  if (!user) {
     return null;
   }
 
   const handleLogout = async () => {
-    await signOut({ redirect: true, callbackUrl: "/auth/login" });
+    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+    window.location.href = "/auth/login";
   };
 
   const navItems = [
@@ -73,7 +91,7 @@ export default function AdminLayout({
             </h1>
           </div>
           <p className="font-body text-xs text-ivory/50">
-            {session.user.email}
+            {user.email}
           </p>
         </div>
 
@@ -146,4 +164,3 @@ export default function AdminLayout({
     </div>
   );
 }
-

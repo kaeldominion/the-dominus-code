@@ -1,16 +1,21 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/navigation/Header";
 import { Footer } from "@/components/landing/Footer";
 import { Crown } from "@/components/ui/Crown";
 import { Button } from "@/components/ui/Button";
 import { useApp } from "@/components/Providers";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ExternalLink, Image, FileText, Zap, FileDown, Target, CheckCircle, XCircle, Loader2 } from "lucide-react";
-import Link from "next/link";
+
+interface AuthUser {
+  id: string;
+  email: string;
+  name: string | null;
+  role: string;
+}
 
 const tools = [
   {
@@ -50,10 +55,10 @@ const tools = [
 export default function GensPage() {
   const { mode } = useApp();
   const router = useRouter();
-  const { data: session, status } = useSession();
   const stanceSelectorRef = useRef<HTMLDivElement>(null);
   
-  const isAuthenticated = session?.user?.role === "ADMIN";
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
   
   // Tweet Strike feature state
   const [tweetUrl, setTweetUrl] = useState("");
@@ -63,37 +68,47 @@ export default function GensPage() {
   const [resultTweetId, setResultTweetId] = useState<string | null>(null);
   const [urlProcessed, setUrlProcessed] = useState(false);
 
-  // Redirect if not admin
+  // Check auth on mount
   useEffect(() => {
-    if (status === "unauthenticated" || (status === "authenticated" && !isAuthenticated)) {
-      router.push("/auth/login");
+    async function checkAuth() {
+      try {
+        const response = await fetch("/api/auth/me", { credentials: "include" });
+        const data = await response.json();
+        
+        if (data.user?.role === "ADMIN") {
+          setUser(data.user);
+        } else {
+          router.push("/auth/login");
+        }
+      } catch {
+        router.push("/auth/login");
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [status, isAuthenticated, router]);
+    checkAuth();
+  }, [router]);
 
-  // Capture tweet URL from query string (for iOS Shortcut integration) - using window.location to avoid SSR issues
+  // Capture tweet URL from query string (for iOS Shortcut integration)
   useEffect(() => {
-    if (!isAuthenticated || typeof window === "undefined" || urlProcessed) return;
+    if (!user || typeof window === "undefined" || urlProcessed) return;
     
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const urlParam = urlParams.get("url");
       if (urlParam) {
-        // Decode the URL in case it's encoded
         const decodedUrl = decodeURIComponent(urlParam);
         setTweetUrl(decodedUrl);
         setUrlProcessed(true);
         
-        // Clear the query parameter from URL
         urlParams.delete("url");
         const newQueryString = urlParams.toString();
         const newUrl = newQueryString 
           ? `${window.location.pathname}?${newQueryString}`
           : window.location.pathname;
         
-        // Replace URL without reload
         router.replace(newUrl);
         
-        // Scroll to stance selector after a short delay to ensure DOM is ready
         setTimeout(() => {
           if (stanceSelectorRef.current) {
             stanceSelectorRef.current.scrollIntoView({ 
@@ -106,16 +121,14 @@ export default function GensPage() {
     } catch (error) {
       console.error("Error processing URL parameter:", error);
     }
-  }, [isAuthenticated, router, urlProcessed]);
-
+  }, [user, router, urlProcessed]);
 
   const handleExecuteStrike = async (e: React.FormEvent) => {
     e.preventDefault();
     setStrikeResult(null);
-    setResultTweetId(null); // Clear previous tweet ID
+    setResultTweetId(null);
     setIsExecuting(true);
 
-    // Validate tweet URL
     const trimmedUrl = tweetUrl.trim();
     if (!trimmedUrl) {
       setStrikeResult({ success: false, message: "Please enter a Tweet URL" });
@@ -123,7 +136,6 @@ export default function GensPage() {
       return;
     }
 
-    // Basic URL validation
     if (!trimmedUrl.includes("x.com/") && !trimmedUrl.includes("twitter.com/")) {
       setStrikeResult({ success: false, message: "Please enter a valid X/Twitter URL" });
       setIsExecuting(false);
@@ -131,12 +143,9 @@ export default function GensPage() {
     }
 
     try {
-      // Call our internal API route (proxy to N8N)
       const response = await fetch("/api/strike", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tweet_url: trimmedUrl,
           stance: stance,
@@ -149,56 +158,24 @@ export default function GensPage() {
         throw new Error(data.error || `HTTP error! status: ${response.status}`);
       }
 
-      // Debug: Log the response to see its structure
-      console.log("API Response:", data);
-      console.log("Response type:", Array.isArray(data) ? "array" : typeof data);
-
-      // Extract tweet_id from response (format: [{ "status": "success", "tweet_id": "..." }])
       let tweetId: string | null = null;
       
-      // Handle array response format
       if (Array.isArray(data) && data.length > 0) {
-        const firstItem = data[0];
-        console.log("First item in array:", firstItem);
-        if (firstItem.tweet_id) {
-          tweetId = firstItem.tweet_id;
-        }
-      } 
-      // Handle object response format
-      else if (data && typeof data === 'object') {
-        // Check for tweet_id at root level
+        if (data[0].tweet_id) tweetId = data[0].tweet_id;
+      } else if (data && typeof data === 'object') {
         if (data.tweet_id) {
           tweetId = data.tweet_id;
-        }
-        // Check for nested response (e.g., { response: [{ tweet_id: ... }] })
-        else if (data.response && Array.isArray(data.response) && data.response.length > 0) {
-          const firstItem = data.response[0];
-          if (firstItem.tweet_id) {
-            tweetId = firstItem.tweet_id;
-          }
-        }
-        // Check for data property (e.g., { data: [{ tweet_id: ... }] })
-        else if (data.data && Array.isArray(data.data) && data.data.length > 0) {
-          const firstItem = data.data[0];
-          if (firstItem.tweet_id) {
-            tweetId = firstItem.tweet_id;
-          }
+        } else if (data.response && Array.isArray(data.response) && data.response.length > 0) {
+          if (data.response[0].tweet_id) tweetId = data.response[0].tweet_id;
+        } else if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+          if (data.data[0].tweet_id) tweetId = data.data[0].tweet_id;
         }
       }
 
-      console.log("Extracted tweet_id:", tweetId);
+      if (tweetId) setResultTweetId(tweetId);
 
-      if (tweetId) {
-        setResultTweetId(tweetId);
-      } else {
-        console.warn("No tweet_id found in response. Response structure:", JSON.stringify(data, null, 2));
-      }
-
-      setStrikeResult({ 
-        success: true, 
-        message: "Strike Sent" 
-      });
-      setTweetUrl(""); // Clear the input on success
+      setStrikeResult({ success: true, message: "Strike Sent" });
+      setTweetUrl("");
     } catch (error) {
       console.error("Error executing strike:", error);
       setStrikeResult({ 
@@ -210,7 +187,7 @@ export default function GensPage() {
     }
   };
 
-  if (status === "loading") {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
@@ -218,8 +195,8 @@ export default function GensPage() {
     );
   }
 
-  if (!isAuthenticated) {
-    return null; // Will redirect via useEffect
+  if (!user) {
+    return null;
   }
 
   return (
@@ -376,7 +353,6 @@ export default function GensPage() {
                     : "border-sovereign bg-gradient-to-br from-sovereign/20 to-sovereign/5"
                 }`}
               >
-                {/* Decorative elements */}
                 <div className="absolute top-4 right-4 opacity-20">
                   <Target 
                     className={`w-12 h-12 ${
@@ -416,10 +392,8 @@ export default function GensPage() {
                     className="group"
                     type="button"
                     onClick={(e) => {
-                      // Prevent any form submission or page navigation
                       e.preventDefault();
                       e.stopPropagation();
-                      // Open the tweet in a new tab
                       if (resultTweetId) {
                         window.open(`https://x.com/i/status/${resultTweetId}`, '_blank', 'noopener,noreferrer');
                       }
@@ -519,4 +493,3 @@ export default function GensPage() {
     </main>
   );
 }
-

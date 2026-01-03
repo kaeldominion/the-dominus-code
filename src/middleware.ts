@@ -1,39 +1,48 @@
-import { withAuth } from "next-auth/middleware";
+// Simple middleware - no NextAuth dependency
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { jwtVerify } from "jose";
 
-export default withAuth(
-  function middleware(req) {
-    const token = req.nextauth.token;
-    const isAdmin = token?.role === "ADMIN";
-    const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.NEXTAUTH_SECRET || "fallback-secret-change-in-production"
+);
 
-    if (isAdminRoute && !isAdmin) {
-      // Redirect to login with callback URL
-      const loginUrl = new URL("/auth/login", req.url);
-      loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
+export async function middleware(request: NextRequest) {
+  const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
+  
+  if (!isAdminRoute) {
+    return NextResponse.next();
+  }
+
+  // Get token from cookie
+  const token = request.cookies.get("auth-token")?.value;
+
+  if (!token) {
+    const loginUrl = new URL("/auth/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  try {
+    // Verify token
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    
+    // Check if admin
+    if (payload.role !== "ADMIN") {
+      const loginUrl = new URL("/auth/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
       return NextResponse.redirect(loginUrl);
     }
 
     return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
-        if (isAdminRoute) {
-          return token?.role === "ADMIN";
-        }
-        return !!token;
-      },
-    },
-    pages: {
-      signIn: "/auth/login",
-    },
+  } catch {
+    // Invalid token - redirect to login
+    const loginUrl = new URL("/auth/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
   }
-);
+}
 
-// Only protect admin routes - don't interfere with auth API
 export const config = {
   matcher: ["/admin/:path*"],
 };
-
