@@ -84,10 +84,25 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/login", // Redirect errors to login page
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  debug: false, // Disable debug to prevent _log endpoint calls
+  logger: {
+    error(code, metadata) {
+      console.error("NextAuth error:", code, metadata);
+    },
+    warn(code) {
+      console.warn("NextAuth warning:", code);
+    },
+    debug(code, metadata) {
+      // Only log in development
+      if (process.env.NODE_ENV === "development") {
+        console.debug("NextAuth debug:", code, metadata);
+      }
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);
 
+// Export all HTTP methods that NextAuth might need
 export { handler as GET, handler as POST };
 

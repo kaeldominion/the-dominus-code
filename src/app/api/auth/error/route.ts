@@ -13,3 +13,8 @@ export async function GET(request: NextRequest) {
   return NextResponse.redirect(loginUrl);
 }
 
+// Handle other methods
+export async function POST(request: NextRequest) {
+  return GET(request);
+}
+
