@@ -23,7 +23,7 @@ export default function LoginPage() {
 
   // Check for error in URL query params (from NextAuth redirects)
   useEffect(() => {
-    const errorParam = searchParams.get("error");
+    const errorParam = searchParams?.get("error");
     if (errorParam) {
       const errorMessages: Record<string, string> = {
         Configuration: "There is a problem with the server configuration.",
