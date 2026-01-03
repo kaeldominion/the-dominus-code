@@ -1,15 +1,32 @@
 // Explicit session route for NextAuth
 // This ensures /api/auth/session works correctly
-// Actually, let's delegate to the catch-all handler to avoid conflicts
-import { NextRequest } from "next/server";
-import NextAuth from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { authOptions } from "../[...nextauth]/route";
 
-// Use the same handler as the catch-all
-const handler = NextAuth(authOptions);
-
-// Delegate to catch-all handler - this ensures consistency
 export async function GET(request: NextRequest) {
-  return handler(request);
+  try {
+    const session = await getServerSession(authOptions);
+    
+    // NextAuth client expects either a session object or null
+    // Return as JSON with proper headers
+    return NextResponse.json(session, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store, max-age=0, must-revalidate",
+      },
+    });
+  } catch (error: any) {
+    console.error("Session API error:", error);
+    // Return null on error - NextAuth expects null, not an error object
+    return NextResponse.json(null, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store, max-age=0, must-revalidate",
+      },
+    });
+  }
 }
 
