@@ -1,7 +1,6 @@
 // Explicit callback route for credentials provider
 // This handles the actual login POST request
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../[...nextauth]/route";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { encode } from "next-auth/jwt";
@@ -10,13 +9,31 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const csrfToken = formData.get("csrfToken") as string;
-    const callbackUrl = formData.get("callbackUrl") as string || "/";
+    // Try to parse as JSON first (from signIn()), then formData
+    let email: string | null = null;
+    let password: string | null = null;
+    let callbackUrl = "/";
+    let isJsonRequest = false;
+
+    const contentType = request.headers.get("content-type") || "";
+    
+    if (contentType.includes("application/json")) {
+      isJsonRequest = true;
+      const body = await request.json();
+      email = body.email;
+      password = body.password;
+      callbackUrl = body.callbackUrl || body.redirect || "/";
+    } else {
+      const formData = await request.formData();
+      email = formData.get("email") as string;
+      password = formData.get("password") as string;
+      callbackUrl = (formData.get("callbackUrl") as string) || "/";
+    }
 
     if (!email || !password) {
+      if (isJsonRequest) {
+        return NextResponse.json({ error: "CredentialsSignin", ok: false, status: 401, url: null }, { status: 401 });
+      }
       return NextResponse.redirect(new URL("/auth/login?error=CredentialsSignin", request.url));
     }
 
@@ -26,12 +43,18 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user || !user.passwordHash) {
+      if (isJsonRequest) {
+        return NextResponse.json({ error: "CredentialsSignin", ok: false, status: 401, url: null }, { status: 401 });
+      }
       return NextResponse.redirect(new URL("/auth/login?error=CredentialsSignin", request.url));
     }
 
     const isValid = await bcrypt.compare(password, user.passwordHash);
 
     if (!isValid) {
+      if (isJsonRequest) {
+        return NextResponse.json({ error: "CredentialsSignin", ok: false, status: 401, url: null }, { status: 401 });
+      }
       return NextResponse.redirect(new URL("/auth/login?error=CredentialsSignin", request.url));
     }
 
@@ -47,10 +70,29 @@ export async function POST(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET!,
     });
 
-    // Create response with redirect
+    // For JSON requests (signIn()), return JSON response with cookie
+    if (isJsonRequest) {
+      const response = NextResponse.json({
+        error: null,
+        ok: true,
+        status: 200,
+        url: callbackUrl,
+      });
+      
+      response.cookies.set("next-auth.session-token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+      });
+      
+      return response;
+    }
+
+    // For form submissions, redirect
     const response = NextResponse.redirect(new URL(callbackUrl, request.url));
     
-    // Set the session cookie
     response.cookies.set("next-auth.session-token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -62,7 +104,7 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error("Callback error:", error);
-    return NextResponse.redirect(new URL("/auth/login?error=Default", request.url));
+    return NextResponse.json({ error: "Default", ok: false, status: 500, url: null }, { status: 500 });
   }
 }
 
