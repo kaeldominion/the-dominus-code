@@ -105,28 +105,6 @@ export const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 // Export GET and POST - NextAuth handles all routes via catch-all
-// Wrap in try-catch to handle errors gracefully
-export async function GET(req: Request) {
-  try {
-    return await handler(req);
-  } catch (error: any) {
-    console.error("NextAuth GET error:", error);
-    return new Response(
-      JSON.stringify({ error: "Authentication error", message: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
-  }
-}
-
-export async function POST(req: Request) {
-  try {
-    return await handler(req);
-  } catch (error: any) {
-    console.error("NextAuth POST error:", error);
-    return new Response(
-      JSON.stringify({ error: "Authentication error", message: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
-  }
-}
+// NextAuth handler works directly with Next.js App Router
+export { handler as GET, handler as POST };
 
