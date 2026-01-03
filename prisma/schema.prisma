@@ -251,6 +251,9 @@ model Application {
   reviewedAt      DateTime?
   notes           String?           // Admin notes
 
+  @@index([type, status])
+  @@index([status, submittedAt])
+  @@index([submittedAt])
   @@map("applications")
 }
 
@@ -280,6 +283,8 @@ model OracleConversation {
 
   messages OracleMessage[]
 
+  @@index([clientIP, language, startedAt])
+  @@index([clientIP, startedAt])
   @@map("oracle_conversations")
 }
 

@@ -41,15 +41,22 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    return NextResponse.json({
-      totalApplications,
-      pendingApplications,
-      councilApplications,
-      dynastyApplications,
-      oracleConversations,
-      oracleMessages,
-      recentApplications,
-    });
+    return NextResponse.json(
+      {
+        totalApplications,
+        pendingApplications,
+        councilApplications,
+        dynastyApplications,
+        oracleConversations,
+        oracleMessages,
+        recentApplications,
+      },
+      {
+        headers: {
+          "Cache-Control": "private, max-age=30", // Cache for 30 seconds
+        },
+      }
+    );
   } catch (error) {
     console.error("Stats API error:", error);
     return NextResponse.json(

@@ -39,6 +39,36 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // Cache static assets
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        // Cache textures
+        source: "/textures/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        // Cache audio
+        source: "/audio/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400",
+          },
+        ],
+      },
     ];
   },
 };

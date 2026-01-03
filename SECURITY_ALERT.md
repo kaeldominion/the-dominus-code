@@ -41,3 +41,4 @@ You shared your Neon database connection string publicly. **You need to rotate y
 
 **Never commit credentials to git!**
 
+

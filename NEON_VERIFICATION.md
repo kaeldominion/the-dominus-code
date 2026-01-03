@@ -102,3 +102,4 @@ After setting up, test the connection:
 - Run migrations: `npx prisma migrate deploy`
 - Or manually create tables using Prisma schema
 
+

@@ -62,3 +62,4 @@ After updating:
 
 Once you've updated the password in Neon and added the new connection string to Vercel, you're secure again.
 
+

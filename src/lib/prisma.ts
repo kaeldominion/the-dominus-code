@@ -10,7 +10,12 @@ export const prisma =
   new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
     // Connection pooling is handled by Neon automatically
-    // No need for extra connection pool config
+    // Optimize for serverless: reduce connection overhead
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
+    },
   });
 
 // Prevent multiple instances in development

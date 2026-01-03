@@ -162,3 +162,4 @@ Or use Vercel Postgres dashboard to view data.
 
 Your app is now production-ready. No separate backend server needed - everything runs on Vercel's serverless infrastructure.
 
+

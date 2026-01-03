@@ -32,15 +32,22 @@ export async function GET(request: NextRequest) {
       prisma.application.count({ where }),
     ]);
 
-    return NextResponse.json({
-      applications,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
+    return NextResponse.json(
+      {
+        applications,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
       },
-    });
+      {
+        headers: {
+          "Cache-Control": "private, no-cache", // Don't cache, always fresh
+        },
+      }
+    );
   } catch (error) {
     console.error("Applications API error:", error);
     return NextResponse.json(

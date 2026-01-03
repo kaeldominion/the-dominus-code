@@ -32,3 +32,4 @@ echo ""
 echo "🚀 Next step: Deploy to production"
 echo "   npm run db:migrate:prod"
 
+

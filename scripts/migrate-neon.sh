@@ -30,3 +30,4 @@ npx prisma migrate deploy
 
 echo "✅ Migration complete!"
 
+

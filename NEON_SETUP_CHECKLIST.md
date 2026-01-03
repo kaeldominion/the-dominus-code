@@ -95,3 +95,4 @@ npx prisma studio   # Should open with your tables
 3. **Deploy** your project
 4. **Run migration:** `npx prisma migrate deploy` (or use Neon SQL editor)
 
+

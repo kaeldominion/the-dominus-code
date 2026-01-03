@@ -60,3 +60,4 @@ NEXTAUTH_SECRET=generate_random_secret
 
 See the updated files below.
 
+

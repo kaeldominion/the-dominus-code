@@ -19,6 +19,9 @@ interface RateLimitEntry {
 
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
+// Simple in-memory cache for rate limit results (5 second TTL)
+const rateLimitCache = new Map<string, { result: { allowed: boolean; remaining: number; resetAt: number }; expires: number }>();
+
 // Clean up old entries every 5 minutes
 if (!redis) {
   setInterval(() => {
@@ -31,6 +34,16 @@ if (!redis) {
   }, 5 * 60 * 1000);
 }
 
+// Clean up rate limit cache every minute
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitCache.entries()) {
+    if (entry.expires < now) {
+      rateLimitCache.delete(key);
+    }
+  }
+}, 60 * 1000);
+
 export async function checkRateLimit(
   identifier: string,
   maxRequests: number = 30,
@@ -39,37 +52,56 @@ export async function checkRateLimit(
   const now = Date.now();
   const key = `ratelimit:${identifier}`;
 
+  // Check cache first (only for Redis, skip for in-memory)
+  if (redis) {
+    const cacheKey = `cache:${key}`;
+    const cached = rateLimitCache.get(cacheKey);
+    if (cached && cached.expires > now) {
+      return cached.result;
+    }
+  }
+
   // Use Redis in production
   if (redis) {
     try {
       const current = await redis.get<number>(key);
       
       if (current === null) {
-        // First request
+        // First request - set with expiration
         await redis.setex(key, Math.floor(windowMs / 1000), 1);
-        return {
+        const result = {
           allowed: true,
           remaining: maxRequests - 1,
           resetAt: now + windowMs,
         };
+        // Cache result for 5 seconds
+        rateLimitCache.set(`cache:${key}`, { result, expires: now + 5000 });
+        return result;
       }
 
       if (current >= maxRequests) {
         const ttl = await redis.ttl(key);
-        return {
+        const result = {
           allowed: false,
           remaining: 0,
           resetAt: now + (ttl * 1000),
         };
+        // Cache result for 5 seconds
+        rateLimitCache.set(`cache:${key}`, { result, expires: now + 5000 });
+        return result;
       }
 
       // Increment counter
       const newCount = await redis.incr(key);
-      return {
+      const ttl = await redis.ttl(key);
+      const result = {
         allowed: true,
         remaining: maxRequests - newCount,
-        resetAt: now + (await redis.ttl(key)) * 1000,
+        resetAt: now + (ttl * 1000),
       };
+      // Cache result for 5 seconds
+      rateLimitCache.set(`cache:${key}`, { result, expires: now + 5000 });
+      return result;
     } catch (error) {
       console.error("Redis rate limit error:", error);
       // Fall through to in-memory fallback
@@ -122,4 +154,5 @@ export function getClientIP(request: Request): string {
   // Fallback
   return "unknown";
 }
+
 
