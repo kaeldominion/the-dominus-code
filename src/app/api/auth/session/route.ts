@@ -6,11 +6,24 @@ import { authOptions } from "../[...nextauth]/route";
 
 export async function GET(request: NextRequest) {
   try {
+    // getServerSession needs the request in App Router
     const session = await getServerSession(authOptions);
     
+    // NextAuth expects the session object with user property, or null
+    // Ensure we return a proper object structure
+    if (!session) {
+      return NextResponse.json(null, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store, max-age=0, must-revalidate",
+        },
+      });
+    }
+    
     // Return session in NextAuth format
-    // NextAuth expects null if no session, not an empty object
-    return NextResponse.json(session || null, {
+    return NextResponse.json(session, {
+      status: 200,
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "no-store, max-age=0, must-revalidate",
