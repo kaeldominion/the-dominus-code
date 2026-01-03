@@ -4,6 +4,10 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+// Force dynamic rendering for auth routes
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const authOptions: NextAuthOptions = {
   // No adapter needed for JWT strategy - sessions stored in JWT, not database
   providers: [
