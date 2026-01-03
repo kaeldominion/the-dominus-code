@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/navigation/Header";
 import { Footer } from "@/components/landing/Footer";
@@ -8,11 +9,8 @@ import { Crown } from "@/components/ui/Crown";
 import { Button } from "@/components/ui/Button";
 import { useApp } from "@/components/Providers";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, ExternalLink, Image, FileText, Zap, FileDown, Target, CheckCircle, XCircle } from "lucide-react";
+import { ExternalLink, Image, FileText, Zap, FileDown, Target, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
-
-const CORRECT_USERNAME = "dominus";
-const CORRECT_PASSWORD = "spenceriscool!23";
 
 const tools = [
   {
@@ -52,17 +50,10 @@ const tools = [
 export default function GensPage() {
   const { mode } = useApp();
   const router = useRouter();
+  const { data: session, status } = useSession();
   const stanceSelectorRef = useRef<HTMLDivElement>(null);
   
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("gens_authenticated") === "true";
-    }
-    return false;
-  });
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const isAuthenticated = session?.user?.role === "ADMIN";
   
   // Tweet Strike feature state
   const [tweetUrl, setTweetUrl] = useState("");
@@ -71,6 +62,13 @@ export default function GensPage() {
   const [strikeResult, setStrikeResult] = useState<{ success: boolean; message: string } | null>(null);
   const [resultTweetId, setResultTweetId] = useState<string | null>(null);
   const [urlProcessed, setUrlProcessed] = useState(false);
+
+  // Redirect if not admin
+  useEffect(() => {
+    if (status === "unauthenticated" || (status === "authenticated" && !isAuthenticated)) {
+      router.push("/auth/login");
+    }
+  }, [status, isAuthenticated, router]);
 
   // Capture tweet URL from query string (for iOS Shortcut integration) - using window.location to avoid SSR issues
   useEffect(() => {
@@ -110,25 +108,6 @@ export default function GensPage() {
     }
   }, [isAuthenticated, router, urlProcessed]);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    // Trim whitespace and compare
-    const trimmedUsername = username.trim();
-    const trimmedPassword = password.trim();
-
-    if (trimmedUsername === CORRECT_USERNAME && trimmedPassword === CORRECT_PASSWORD) {
-      setIsAuthenticated(true);
-      // Store authentication in localStorage
-      if (typeof window !== "undefined") {
-        localStorage.setItem("gens_authenticated", "true");
-      }
-    } else {
-      setError("Invalid credentials. Access denied.");
-      setPassword("");
-    }
-  };
 
   const handleExecuteStrike = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -231,87 +210,16 @@ export default function GensPage() {
     }
   };
 
-  if (!isAuthenticated) {
+  if (status === "loading") {
     return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="max-w-md w-full px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-8"
-          >
-            <Crown
-              size={48}
-              variant={mode === "dominus" ? "blood" : "gold"}
-              className="mx-auto mb-6"
-            />
-            <h1 className="font-law text-3xl tracking-[0.1em] text-empire mb-2 uppercase">
-              ACCESS REQUIRED
-            </h1>
-            <p className="font-system text-sm text-concrete/50 uppercase tracking-wider">
-              Generator Tools
-            </p>
-          </motion.div>
-
-          <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            onSubmit={handleLogin}
-            className="space-y-6"
-          >
-            <div>
-              <label className="block font-system text-xs tracking-[0.2em] text-concrete/60 uppercase mb-2">
-                Username
-              </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 bg-void border border-concrete/20 text-empire font-system focus:outline-none focus:border-sovereign transition-colors"
-                required
-                autoFocus
-              />
-            </div>
-
-            <div>
-              <label className="block font-system text-xs tracking-[0.2em] text-concrete/60 uppercase mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-void border border-concrete/20 text-empire font-system focus:outline-none focus:border-sovereign transition-colors"
-                required
-              />
-            </div>
-
-            {error && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="font-system text-sm text-blood text-center"
-              >
-                {error}
-              </motion.p>
-            )}
-
-            <Button
-              type="submit"
-              variant={mode === "dominus" ? "blood" : "primary"}
-              size="lg"
-              className="w-full"
-              icon
-            >
-              <Lock className="w-4 h-4" />
-              Enter
-            </Button>
-          </motion.form>
-        </div>
-      </main>
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+      </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    return null; // Will redirect via useEffect
   }
 
   return (

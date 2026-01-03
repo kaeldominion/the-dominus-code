@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Header } from "@/components/navigation/Header";
 import { Crown } from "@/components/ui/Crown";
 import { Button } from "@/components/ui/Button";
@@ -11,19 +13,47 @@ import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const { mode } = useApp();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate login - replace with actual auth
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setLoading(false);
-    // Redirect to dashboard
-    window.location.href = "/dashboard";
+    setError("");
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Invalid email or password");
+        setLoading(false);
+        return;
+      }
+
+      if (result?.ok) {
+        // Check if user is admin by fetching session
+        const sessionResponse = await fetch("/api/auth/session");
+        const session = await sessionResponse.json();
+        
+        if (session?.user?.role === "ADMIN") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/dashboard");
+        }
+        router.refresh();
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -112,6 +142,12 @@ export default function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
+
+              {error && (
+                <div className="p-3 border border-blood/50 bg-blood/10 text-blood text-sm text-center">
+                  {error}
+                </div>
+              )}
 
               <Button
                 type="submit"

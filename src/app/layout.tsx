@@ -4,6 +4,7 @@ import { Providers } from "@/components/Providers";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { Analytics } from "@vercel/analytics/react";
 import { AudioControl } from "@/components/ui/AudioControl";
+import { SessionProviderWrapper } from "@/components/SessionProviderWrapper";
 
 export const metadata: Metadata = {
   title: "The Dominus Code | F*ck Monogamy. Build A Dynasty.",
@@ -41,16 +42,18 @@ export default function RootLayout({
       <body className="antialiased">
         <GoogleAnalytics />
         <Analytics />
-        <Providers>
-          {/* Noise Overlay */}
-          <div className="noise-overlay" aria-hidden="true" />
-          
-          {/* Background Texture */}
-          <div className="bg-texture" aria-hidden="true" />
-          
-          {children}
-          <AudioControl />
-        </Providers>
+        <SessionProviderWrapper>
+          <Providers>
+            {/* Noise Overlay */}
+            <div className="noise-overlay" aria-hidden="true" />
+            
+            {/* Background Texture */}
+            <div className="bg-texture" aria-hidden="true" />
+            
+            {children}
+            <AudioControl />
+          </Providers>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
