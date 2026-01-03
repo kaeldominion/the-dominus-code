@@ -40,6 +40,9 @@ export default function LoginPage() {
     }
   }, [searchParams, router]);
 
+  // Get callback URL for redirect after login
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -59,16 +62,38 @@ export default function LoginPage() {
       }
 
       if (result?.ok) {
-        // Check if user is admin by fetching session
-        const sessionResponse = await fetch("/api/auth/session");
-        const session = await sessionResponse.json();
-        
-        if (session?.user?.role === "ADMIN") {
-          router.push("/admin/dashboard");
-        } else {
-          router.push("/dashboard");
+        // Wait for session to be available (retry up to 5 times)
+        let session: any = null;
+        for (let i = 0; i < 5; i++) {
+          await new Promise(resolve => setTimeout(resolve, 200));
+          try {
+            const sessionResponse = await fetch("/api/auth/session", {
+              cache: "no-store",
+              credentials: "include",
+            });
+            session = await sessionResponse.json();
+            if (session?.user) {
+              break;
+            }
+          } catch (err) {
+            console.error("Error fetching session:", err);
+          }
         }
-        router.refresh();
+        
+        // Determine redirect URL
+        let redirectUrl = callbackUrl;
+        if (session?.user?.role === "ADMIN") {
+          // If callback is admin route or user is admin, go to admin dashboard
+          if (callbackUrl.startsWith("/admin") || !callbackUrl.startsWith("/")) {
+            redirectUrl = "/admin/dashboard";
+          }
+        } else if (session?.user) {
+          // Regular user - go to dashboard or callback
+          redirectUrl = callbackUrl.startsWith("/admin") ? "/dashboard" : callbackUrl;
+        }
+        
+        // Use window.location for full page reload to ensure session is available
+        window.location.href = redirectUrl;
       }
     } catch (err) {
       setError("An error occurred. Please try again.");

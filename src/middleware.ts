@@ -8,7 +8,10 @@ export default withAuth(
     const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
 
     if (isAdminRoute && !isAdmin) {
-      return NextResponse.redirect(new URL("/auth/login", req.url));
+      // Redirect to login with callback URL
+      const loginUrl = new URL("/auth/login", req.url);
+      loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
+      return NextResponse.redirect(loginUrl);
     }
 
     return NextResponse.next();
@@ -22,6 +25,9 @@ export default withAuth(
         }
         return !!token;
       },
+    },
+    pages: {
+      signIn: "/auth/login",
     },
   }
 );
