@@ -41,7 +41,7 @@ export default function LoginPage() {
   }, [searchParams, router]);
 
   // Get callback URL for redirect after login
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
