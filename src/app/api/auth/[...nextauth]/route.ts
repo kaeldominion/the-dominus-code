@@ -82,6 +82,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/login",
     error: "/auth/login", // Redirect errors to login page
+    // Don't define forgot password page - will use default NextAuth behavior (no page)
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: false, // Disable debug to prevent _log endpoint calls
