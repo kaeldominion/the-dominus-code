@@ -36,6 +36,11 @@ export async function GET(request: NextRequest) {
       hasPassword: !!user.passwordHash,
       passwordMatch,
       passwordHashLength: user.passwordHash?.length || 0,
+      env: {
+        nextAuthUrl: process.env.NEXTAUTH_URL || "NOT SET",
+        nextAuthSecret: process.env.NEXTAUTH_SECRET ? "SET" : "NOT SET",
+        databaseUrl: process.env.DATABASE_URL ? "SET" : "NOT SET",
+      },
     });
   } catch (error: any) {
     return NextResponse.json(
