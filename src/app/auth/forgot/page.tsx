@@ -81,7 +81,7 @@ export default function ForgotPasswordPage() {
 
               <Button
                 type="submit"
-                variant={mode === "dominus" ? "blood" : "gold"}
+                variant={mode === "dominus" ? "blood" : "primary"}
                 disabled={loading}
                 className="w-full"
               >
