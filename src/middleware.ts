@@ -32,6 +32,7 @@ export default withAuth(
   }
 );
 
+// Only protect admin routes - don't interfere with auth API
 export const config = {
   matcher: ["/admin/:path*"],
 };

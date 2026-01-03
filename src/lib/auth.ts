@@ -1,15 +1,10 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+// Shared auth options - imported by both Pages API route and admin routes
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-// Removed PrismaAdapter - we're using JWT sessions, not database sessions
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-// Force dynamic rendering for auth routes
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
-
 export const authOptions: NextAuthOptions = {
-  // No adapter needed for JWT strategy - sessions stored in JWT, not database
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -64,6 +59,7 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -85,30 +81,9 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/auth/login",
-    error: "/auth/login", // Redirect errors to login page
-    // Don't define forgot password page - will use default NextAuth behavior (no page)
+    error: "/auth/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: false, // Disable debug to prevent _log endpoint calls
-  logger: {
-    error(code, metadata) {
-      console.error("NextAuth error:", code, metadata);
-    },
-    warn(code) {
-      console.warn("NextAuth warning:", code);
-    },
-    debug(code, metadata) {
-      // Only log in development
-      if (process.env.NODE_ENV === "development") {
-        console.debug("NextAuth debug:", code, metadata);
-      }
-    },
-  },
+  debug: false,
 };
-
-const handler = NextAuth(authOptions);
-
-// Export GET and POST - NextAuth handles all routes via catch-all
-// NextAuth handler works directly with Next.js App Router
-export { handler as GET, handler as POST };
 
