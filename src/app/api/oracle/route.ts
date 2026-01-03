@@ -131,13 +131,26 @@ export async function POST(request: NextRequest) {
 
     // Rate limiting by IP
     const clientIP = getClientIP(request);
-    const rateLimit = await checkRateLimit(`oracle:${clientIP}`, MAX_MESSAGES_PER_HOUR);
+    
+    // Log IP for debugging (remove in production if needed)
+    if (process.env.NODE_ENV === "development") {
+      console.log("Oracle API - Client IP:", clientIP);
+    }
+    
+    // If IP is unknown, use a more specific identifier to avoid shared rate limits
+    const rateLimitKey = clientIP === "unknown" 
+      ? `oracle:unknown:${request.headers.get("user-agent")?.slice(0, 50) || "unknown"}` 
+      : `oracle:${clientIP}`;
+    
+    const rateLimit = await checkRateLimit(rateLimitKey, MAX_MESSAGES_PER_HOUR);
     
     if (!rateLimit.allowed) {
       const resetIn = Math.ceil((rateLimit.resetAt - Date.now()) / 1000 / 60);
+      console.warn(`Rate limit exceeded for ${rateLimitKey}: ${resetIn} minutes remaining`);
       return NextResponse.json(
         { 
-          error: `The signal is weak. You have exceeded the limit. Return in ${resetIn} minutes.` 
+          error: `The signal is weak. You have exceeded the limit. Return in ${resetIn} minutes.`,
+          debug: process.env.NODE_ENV === "development" ? { ip: clientIP, key: rateLimitKey } : undefined,
         },
         { 
           status: 429,

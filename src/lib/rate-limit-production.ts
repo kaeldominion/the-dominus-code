@@ -2,6 +2,7 @@
 // Falls back to in-memory for local development
 
 import { Redis } from "@upstash/redis";
+import { NextRequest } from "next/server";
 
 // Initialize Redis client (will be undefined if env vars not set)
 const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
@@ -81,6 +82,18 @@ export async function checkRateLimit(
 
       if (current >= maxRequests) {
         const ttl = await redis.ttl(key);
+        // If TTL is negative or zero, the key should have expired - reset it
+        if (ttl <= 0) {
+          await redis.del(key);
+          await redis.setex(key, Math.floor(windowMs / 1000), 1);
+          const result = {
+            allowed: true,
+            remaining: maxRequests - 1,
+            resetAt: now + windowMs,
+          };
+          rateLimitCache.set(`cache:${key}`, { result, expires: now + 5000 });
+          return result;
+        }
         const result = {
           allowed: false,
           remaining: 0,
@@ -139,19 +152,39 @@ export async function checkRateLimit(
   };
 }
 
-export function getClientIP(request: Request): string {
+export function getClientIP(request: Request | NextRequest): string {
   // Try to get real IP from headers (for proxies/Vercel)
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
-    return forwarded.split(",")[0].trim();
+    const firstIP = forwarded.split(",")[0].trim();
+    if (firstIP && firstIP !== "unknown") {
+      return firstIP;
+    }
   }
   
   const realIP = request.headers.get("x-real-ip");
-  if (realIP) {
+  if (realIP && realIP !== "unknown") {
     return realIP;
   }
   
-  // Fallback
+  // Try Vercel-specific header
+  const vercelIP = request.headers.get("x-vercel-forwarded-for");
+  if (vercelIP) {
+    const firstIP = vercelIP.split(",")[0].trim();
+    if (firstIP && firstIP !== "unknown") {
+      return firstIP;
+    }
+  }
+  
+  // Fallback - use a session-based identifier if IP is truly unknown
+  // This prevents all users from sharing the same rate limit
+  const cfConnectingIP = request.headers.get("cf-connecting-ip");
+  if (cfConnectingIP) {
+    return cfConnectingIP;
+  }
+  
+  // Last resort: return unknown but log it
+  console.warn("Could not determine client IP, using 'unknown' - this may cause rate limit issues");
   return "unknown";
 }
 
