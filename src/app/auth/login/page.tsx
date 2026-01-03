@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Header } from "@/components/navigation/Header";
 import { Crown } from "@/components/ui/Crown";
 import { Button } from "@/components/ui/Button";
@@ -14,11 +14,31 @@ import { Eye, EyeOff } from "lucide-react";
 export default function LoginPage() {
   const { mode } = useApp();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Check for error in URL query params (from NextAuth redirects)
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      const errorMessages: Record<string, string> = {
+        Configuration: "There is a problem with the server configuration.",
+        AccessDenied: "You do not have permission to sign in.",
+        Verification: "The verification token has expired or has already been used.",
+        Default: "An error occurred during authentication.",
+      };
+      setError(errorMessages[errorParam] || errorMessages.Default);
+      
+      // Clean up URL by removing error parameter
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete("error");
+      router.replace(newUrl.pathname + newUrl.search);
+    }
+  }, [searchParams, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
